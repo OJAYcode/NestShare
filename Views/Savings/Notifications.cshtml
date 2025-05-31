@@ -1,0 +1,413 @@
+@{
+    ViewData["Title"] = "Savings Notifications";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 py-6 relative overflow-hidden">
+    <!-- Floating background elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 opacity-20">
+        <div class="absolute top-20 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
+        <div class="absolute bottom-32 left-16 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: -3s;"></div>
+        <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: -6s;"></div>
+        
+        <!-- Floating celebration icons -->
+        <div class="absolute top-1/4 left-1/4 text-purple-200 animate-float" style="animation-delay: -1s;">
+            <i class="fas fa-trophy text-4xl"></i>
+        </div>
+        <div class="absolute bottom-1/3 right-1/4 text-indigo-200 animate-float" style="animation-delay: -4s;">
+            <i class="fas fa-star text-3xl"></i>
+        </div>
+        <div class="absolute top-3/4 left-1/3 text-pink-200 animate-float" style="animation-delay: -2s;">
+            <i class="fas fa-medal text-3xl"></i>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+        <!-- Header Section -->
+        <div class="text-center mb-8 animate-fadeInUp">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white mb-4 shadow-lg">
+                <i class="fas fa-bell text-2xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Savings Notifications
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Stay updated with your savings progress, achievements, and important milestones
+            </p>
+        </div>
+
+        <!-- Notification Categories -->
+        <div class="flex justify-center mb-8 animate-fadeInUp" style="animation-delay: 0.1s;">
+            <div class="bg-white rounded-xl shadow-lg p-2 flex space-x-2">
+                <button class="notification-filter active px-6 py-3 rounded-lg font-medium transition-all duration-300" data-filter="all">
+                    All Notifications
+                </button>
+                <button class="notification-filter px-6 py-3 rounded-lg font-medium transition-all duration-300" data-filter="achievements">
+                    Achievements
+                </button>
+                <button class="notification-filter px-6 py-3 rounded-lg font-medium transition-all duration-300" data-filter="milestones">
+                    Milestones
+                </button>
+                <button class="notification-filter px-6 py-3 rounded-lg font-medium transition-all duration-300" data-filter="reminders">
+                    Reminders
+                </button>
+            </div>
+        </div>
+
+        <!-- Notifications Feed -->
+        <div class="max-w-4xl mx-auto">
+            <!-- Achievement Notification -->
+            <div class="notification-item achievement bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6 mb-6 animate-fadeInUp hover:transform hover:scale-[1.02] transition-all duration-300" style="animation-delay: 0.2s;">
+                <div class="flex items-start space-x-4">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center text-white shadow-lg animate-pulse">
+                        <i class="fas fa-trophy text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">🎉 Goal Completed!</h3>
+                            <span class="text-sm text-gray-500">2 hours ago</span>
+                        </div>
+                        <p class="text-gray-600 mb-3">
+                            Congratulations! You've successfully completed your <strong>"Vacation Fund"</strong> goal. 
+                            You saved $2,500 in just 8 months!
+                        </p>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                                Achievement Unlocked
+                            </div>
+                            <button class="text-purple-600 hover:text-purple-700 font-medium text-sm">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Milestone Notification -->
+            <div class="notification-item milestone bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6 mb-6 animate-fadeInUp hover:transform hover:scale-[1.02] transition-all duration-300" style="animation-delay: 0.3s;">
+                <div class="flex items-start space-x-4">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white shadow-lg">
+                        <i class="fas fa-star text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">🌟 50% Milestone Reached!</h3>
+                            <span class="text-sm text-gray-500">1 day ago</span>
+                        </div>
+                        <p class="text-gray-600 mb-3">
+                            You're halfway to your <strong>"New Car Fund"</strong> goal! 
+                            You've saved $5,000 out of $10,000. Keep up the great work!
+                        </p>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-sm font-medium">
+                                Milestone
+                            </div>
+                            <button class="text-purple-600 hover:text-purple-700 font-medium text-sm">
+                                Add Funds
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reminder Notification -->
+            <div class="notification-item reminder bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6 mb-6 animate-fadeInUp hover:transform hover:scale-[1.02] transition-all duration-300" style="animation-delay: 0.4s;">
+                <div class="flex items-start space-x-4">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white shadow-lg">
+                        <i class="fas fa-bell text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">⏰ Monthly Savings Reminder</h3>
+                            <span class="text-sm text-gray-500">3 days ago</span>
+                        </div>
+                        <p class="text-gray-600 mb-3">
+                            It's time for your monthly savings contribution! You have $300 scheduled for your 
+                            <strong>"Emergency Fund"</strong>. Would you like to make this deposit now?
+                        </p>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
+                                Reminder
+                            </div>
+                            <button class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 text-sm font-medium">
+                                Make Deposit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Update Notification -->
+            <div class="notification-item milestone bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6 mb-6 animate-fadeInUp hover:transform hover:scale-[1.02] transition-all duration-300" style="animation-delay: 0.5s;">
+                <div class="flex items-start space-x-4">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white shadow-lg">
+                        <i class="fas fa-chart-line text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">📈 Savings Streak!</h3>
+                            <span class="text-sm text-gray-500">1 week ago</span>
+                        </div>
+                        <p class="text-gray-600 mb-3">
+                            Amazing! You've maintained a savings streak for 6 consecutive months. 
+                            You're building excellent financial habits!
+                        </p>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                                Streak Achievement
+                            </div>
+                            <button class="text-purple-600 hover:text-purple-700 font-medium text-sm">
+                                Share Achievement
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Goal Deadline Warning -->
+            <div class="notification-item reminder bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6 mb-6 animate-fadeInUp hover:transform hover:scale-[1.02] transition-all duration-300" style="animation-delay: 0.6s;">
+                <div class="flex items-start space-x-4">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white shadow-lg">
+                        <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-xl font-bold text-gray-800">⚠️ Goal Deadline Approaching</h3>
+                            <span class="text-sm text-gray-500">2 weeks ago</span>
+                        </div>
+                        <p class="text-gray-600 mb-3">
+                            Your <strong>"Home Down Payment"</strong> goal deadline is in 30 days. 
+                            You're currently at 72% completion. Consider increasing your monthly contribution!
+                        </p>
+                        <div class="flex items-center space-x-4">
+                            <div class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-medium">
+                                Deadline Alert
+                            </div>
+                            <button class="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 text-sm font-medium">
+                                Adjust Goal
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State for No Notifications -->
+            <div id="emptyState" class="hidden text-center py-12">
+                <div class="w-24 h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-bell-slash text-3xl text-gray-400"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-600 mb-2">No notifications found</h3>
+                <p class="text-gray-500">You're all caught up with your savings updates!</p>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="max-w-4xl mx-auto mt-8 animate-fadeInUp" style="animation-delay: 0.7s;">
+            <div class="bg-gradient-to-r from-slate-800 to-gray-900 rounded-2xl p-8 text-white shadow-xl">
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl font-bold mb-2">Notification Settings</h3>
+                    <p class="text-gray-300">Customize when and how you receive savings updates</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <button class="flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200">
+                        <i class="fas fa-cog"></i>
+                        <span>Notification Settings</span>
+                    </button>
+                    
+                    <button class="flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200">
+                        <i class="fas fa-check-double"></i>
+                        <span>Mark All Read</span>
+                    </button>
+                    
+                    <a asp-action="Index" class="flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-200">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Goals</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+            50% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            75% {
+                transform: translateY(-5px) rotate(-1deg);
+            }
+        }
+
+        @@keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .notification-filter.active {
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            color: white;
+        }
+
+        .notification-filter:not(.active) {
+            color: #6b7280;
+        }
+
+        .notification-filter:not(.active):hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #7c3aed, #2563eb);
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize notification filtering
+            initializeNotificationFilters();
+            
+            // Add interactive effects
+            addNotificationEffects();
+        });
+
+        function initializeNotificationFilters() {
+            const filterButtons = document.querySelectorAll('.notification-filter');
+            const notificationItems = document.querySelectorAll('.notification-item');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.dataset.filter;
+                    
+                    // Update active filter button
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter notifications
+                    let visibleCount = 0;
+                    notificationItems.forEach(item => {
+                        if (filter === 'all' || item.classList.contains(filter)) {
+                            item.style.display = 'block';
+                            visibleCount++;
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                    
+                    // Show/hide empty state
+                    const emptyState = document.getElementById('emptyState');
+                    if (visibleCount === 0) {
+                        emptyState.classList.remove('hidden');
+                    } else {
+                        emptyState.classList.add('hidden');
+                    }
+                });
+            });
+        }
+
+        function addNotificationEffects() {
+            // Add click handlers for notification actions
+            document.querySelectorAll('.notification-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (!e.target.closest('button')) {
+                        // Mark as read or expand notification
+                        this.style.opacity = '0.8';
+                        showNotification('Notification marked as read', 'success');
+                    }
+                });
+            });
+            
+            // Add confetti effect for achievements
+            document.querySelectorAll('.achievement').forEach(achievement => {
+                achievement.addEventListener('mouseenter', function() {
+                    // Simple celebration effect
+                    this.style.transform = 'scale(1.02) rotate(0.5deg)';
+                });
+                
+                achievement.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1) rotate(0deg)';
+                });
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white transform translate-x-full transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-blue-500'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+}

@@ -1,0 +1,130 @@
+@using Thrift.Areas.Identity.Pages.Account.Manage
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+
+<nav class="space-y-3">
+    <a asp-page="./Index" id="profile" 
+       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 hover:translate-x-1 text-gray-300 hover:text-white hover:bg-white/10 @ManageNavPages.IndexNavClass(ViewContext)">
+        <div class="mr-3 h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+            <i class="fas fa-user text-indigo-400 group-hover:text-indigo-300 transition-colors duration-300"></i>
+        </div>
+        <span class="flex-1">Profile</span>
+        <span class="inline-flex items-center justify-center ml-3 transform transition-transform duration-300 group-hover:translate-x-1">
+            <i class="fas fa-chevron-right text-xs text-gray-500 group-hover:text-white"></i>
+        </span>
+    </a>
+
+    <a asp-page="./Email" id="email" 
+       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 hover:translate-x-1 text-gray-300 hover:text-white hover:bg-white/10 @ManageNavPages.EmailNavClass(ViewContext)">
+        <div class="mr-3 h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+            <i class="fas fa-envelope text-indigo-400 group-hover:text-indigo-300 transition-colors duration-300"></i>
+        </div>
+        <span class="flex-1">Email</span>
+        <span class="inline-flex items-center justify-center ml-3 transform transition-transform duration-300 group-hover:translate-x-1">
+            <i class="fas fa-chevron-right text-xs text-gray-500 group-hover:text-white"></i>
+        </span>
+    </a>
+
+    <a asp-page="./ChangePassword" id="change-password" 
+       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 hover:translate-x-1 text-gray-300 hover:text-white hover:bg-white/10 @ManageNavPages.ChangePasswordNavClass(ViewContext)">
+        <div class="mr-3 h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+            <i class="fas fa-lock text-indigo-400 group-hover:text-indigo-300 transition-colors duration-300"></i>
+        </div>
+        <span class="flex-1">Password</span>
+        <span class="inline-flex items-center justify-center ml-3 transform transition-transform duration-300 group-hover:translate-x-1">
+            <i class="fas fa-chevron-right text-xs text-gray-500 group-hover:text-white"></i>
+        </span>
+    </a>
+            </svg>
+        </span>
+    </a>
+
+    <a asp-page="./ChangePassword" id="change-password" 
+       class="group flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-300 hover:translate-x-1 @ManageNavPages.ChangePasswordNavClass(ViewContext)">
+        <div class="mr-3 h-8 w-8 flex items-center justify-center rounded-md bg-opacity-80 bg-purple-50 group-hover:bg-purple-100 transition-all duration-300">
+            <svg class="h-5 w-5 text-accent group-hover:text-accent-dark transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </div>
+        <span class="flex-1">Password</span>
+        <span class="inline-flex items-center justify-center ml-3 transform transition-transform duration-300 group-hover:translate-x-1">
+            <svg class="w-4 h-4 text-gray-400 group-hover:text-accent" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+            </svg>
+        </span>
+    </a>    @if (hasExternalLogins)
+    {
+        <a asp-page="./ExternalLogins" id="external-login" 
+           class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 hover:translate-x-1 text-gray-300 hover:text-white hover:bg-white/10 @ManageNavPages.ExternalLoginsNavClass(ViewContext)">
+            <div class="mr-3 h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+                <i class="fas fa-link text-indigo-400 group-hover:text-indigo-300 transition-colors duration-300"></i>
+            </div>
+            <span class="flex-1">External logins</span>
+            <span class="inline-flex items-center justify-center ml-3 transform transition-transform duration-300 group-hover:translate-x-1">
+                <i class="fas fa-chevron-right text-xs text-gray-500 group-hover:text-white"></i>
+            </span>
+        </a>
+    }
+
+    <a asp-page="./TwoFactorAuthentication" id="two-factor" 
+       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 hover:translate-x-1 text-gray-300 hover:text-white hover:bg-white/10 @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)">
+        <div class="mr-3 h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+            <i class="fas fa-shield-alt text-indigo-400 group-hover:text-indigo-300 transition-colors duration-300"></i>
+        </div>
+        <span class="flex-1">Two-factor authentication</span>
+        <span class="inline-flex items-center justify-center ml-3 transform transition-transform duration-300 group-hover:translate-x-1">
+            <i class="fas fa-chevron-right text-xs text-gray-500 group-hover:text-white"></i>
+        </span>
+    </a>
+
+    <a asp-page="./PersonalData" id="personal-data" 
+       class="group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-300 hover:translate-x-1 text-gray-300 hover:text-white hover:bg-white/10 @ManageNavPages.PersonalDataNavClass(ViewContext)">
+        <div class="mr-3 h-10 w-10 flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 group-hover:from-indigo-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+            <i class="fas fa-database text-indigo-400 group-hover:text-indigo-300 transition-colors duration-300"></i>
+        </div>
+        <span class="flex-1">Personal data</span>
+        <span class="inline-flex items-center justify-center ml-3 transform transition-transform duration-300 group-hover:translate-x-1">
+            <i class="fas fa-chevron-right text-xs text-gray-500 group-hover:text-white"></i>
+        </span>
+    </a>
+</nav>
+
+<div class="mt-8 p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg shadow-sm border border-purple-100">
+    <div class="flex items-center">
+        <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+        <div class="ml-3">
+            <p class="text-xs text-gray-600">Need help with account settings? <a href="#" class="text-accent hover:text-accent-dark font-medium transition-colors duration-200">Contact support</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .@ManageNavPages.IndexNavClass(ViewContext),
+    .@ManageNavPages.EmailNavClass(ViewContext),
+    .@ManageNavPages.ChangePasswordNavClass(ViewContext),
+    .@ManageNavPages.ExternalLoginsNavClass(ViewContext),
+    .@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext),
+    .@ManageNavPages.PersonalDataNavClass(ViewContext) {
+        background-color: rgba(138, 92, 246, 0.1);
+        color: #6d28d9;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        border-left: 4px solid #8a5cf6;
+        transform: translateX(0.25rem);
+    }
+
+    .@ManageNavPages.IndexNavClass(ViewContext):hover,
+    .@ManageNavPages.EmailNavClass(ViewContext):hover,
+    .@ManageNavPages.ChangePasswordNavClass(ViewContext):hover,
+    .@ManageNavPages.ExternalLoginsNavClass(ViewContext):hover,
+    .@ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext):hover,
+    .@ManageNavPages.PersonalDataNavClass(ViewContext):hover {
+        background-color: rgba(138, 92, 246, 0.15);
+    }
+</style>

@@ -1,0 +1,1303 @@
+@model Thrift.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Account";
+}
+
+<style>
+    .fade-in {
+        opacity: 0;
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+    
+    .slide-up {
+        transform: translateY(30px);
+        opacity: 0;
+        animation: slideUp 0.8s ease-out forwards;
+    }
+    
+    .slide-left {
+        transform: translateX(30px);
+        opacity: 0;
+        animation: slideLeft 0.8s ease-out forwards;
+    }
+    
+    @@keyframes fadeIn {
+        to { opacity: 1; }
+    }
+    
+    @@keyframes slideUp {
+        to { 
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    @@keyframes slideLeft {
+        to { 
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    .hover-lift {
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .gradient-border {
+        background: linear-gradient(white, white) padding-box,
+                    linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
+        border: 2px solid transparent;
+    }
+    
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .premium-input:focus {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 4px 20px rgba(99, 102, 241, 0.15);
+    }
+    
+    .security-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+    <!-- Elegant Header with Floating Elements -->
+    <div class="relative bg-white shadow-lg border-b overflow-hidden">
+        <!-- Decorative background elements -->
+        <div class="absolute inset-0 bg-gradient-to-r from-indigo-50/50 to-purple-50/50"></div>
+        <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-indigo-100/30 to-transparent rounded-full -translate-y-32 translate-x-32"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-purple-100/30 to-transparent rounded-full translate-y-24 -translate-x-24"></div>
+        
+        <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center fade-in">
+                <div class="relative inline-block mb-6">
+                    <div class="w-24 h-24 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                        <i class="fas fa-user-circle text-white text-3xl"></i>
+                    </div>
+                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
+                </div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-3">
+                    Account <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Management</span>
+                </h1>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    Manage your profile settings, security preferences, and account details with our premium interface
+                </p>
+                <div class="flex justify-center mt-4">
+                    <div class="flex space-x-1">
+                        <div class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                        <div class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Elegant Status Messages -->
+        @if (TempData["StatusMessage"] != null)
+        {
+            <div class="mb-8 fade-in">
+                <div class="glass-effect rounded-2xl p-6 border-l-4 border-green-400 shadow-lg">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 mr-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                                <i class="fas fa-check text-white"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Success!</h3>
+                            <p class="text-gray-700">@TempData["StatusMessage"]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            <!-- Profile Section -->
+            <div class="xl:col-span-3">
+                <div class="glass-effect rounded-3xl shadow-xl hover-lift slide-up overflow-hidden">
+                    <div class="px-8 py-6 bg-gradient-to-r from-indigo-500/5 to-purple-500/5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                                <i class="fas fa-user-edit text-white"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Profile Information</h2>
+                                <p class="text-gray-600">Update your personal details and preferences</p>
+                            </div>
+                        </div>
+                    </div>
+                      <div class="p-8">
+                        <form asp-action="Profile" method="post" class="space-y-8" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div class="space-y-2">
+                                    <label asp-for="FirstName" class="block text-sm font-semibold text-gray-700 mb-3">First Name</label>
+                                    <input asp-for="FirstName" 
+                                           class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all premium-input bg-gray-50/50"
+                                           placeholder="Enter your first name" />
+                                    <span asp-validation-for="FirstName" class="text-red-500 text-sm block"></span>
+                                </div>
+                                
+                                <div class="space-y-2">
+                                    <label asp-for="LastName" class="block text-sm font-semibold text-gray-700 mb-3">Last Name</label>
+                                    <input asp-for="LastName" 
+                                           class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all premium-input bg-gray-50/50"
+                                           placeholder="Enter your last name" />
+                                    <span asp-validation-for="LastName" class="text-red-500 text-sm block"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label asp-for="Email" class="block text-sm font-semibold text-gray-700 mb-3">Email Address</label>
+                                <div class="relative">
+                                    <input asp-for="Email" type="email"
+                                           class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all premium-input bg-gray-50/50 pl-12"
+                                           placeholder="Enter your email" />
+                                    <i class="fas fa-envelope absolute left-4 top-5 text-gray-400"></i>
+                                </div>
+                                <span asp-validation-for="Email" class="text-red-500 text-sm block"></span>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label asp-for="PhoneNumber" class="block text-sm font-semibold text-gray-700 mb-3">Phone Number</label>
+                                <div class="relative">
+                                    <input asp-for="PhoneNumber" type="tel"
+                                           class="w-full px-5 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all premium-input bg-gray-50/50 pl-12"
+                                           placeholder="Enter your phone number" />
+                                    <i class="fas fa-phone absolute left-4 top-5 text-gray-400"></i>
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-red-500 text-sm block"></span>
+                            </div>
+                            
+                            <!-- Profile Picture Upload -->
+                            <div class="space-y-2">
+                                <label class="block text-sm font-semibold text-gray-700 mb-3">Profile Picture</label>
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-200 flex items-center justify-center bg-gray-50">
+                                        <i class="fas fa-user-circle text-gray-300 text-4xl"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <input type="file" name="ProfilePicture" accept="image/*" 
+                                               class="hidden" id="profilePictureInput" 
+                                               onchange="previewProfilePicture(this)">
+                                        <label for="profilePictureInput" 
+                                               class="cursor-pointer bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-2 rounded-xl font-semibold text-center block hover:from-indigo-600 hover:to-purple-700 transition-all">
+                                            <i class="fas fa-upload mr-2"></i>
+                                            Upload Picture
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="profilePicturePreview" class="mt-4"></div>
+                            </div>
+                            
+                            <div class="pt-6">
+                                <button type="submit" 
+                                        class="w-full lg:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+                                    <i class="fas fa-save mr-2"></i>
+                                    Update Profile
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Security Section -->
+                <div class="glass-effect rounded-3xl shadow-xl hover-lift slide-up mt-8 overflow-hidden" style="animation-delay: 0.1s;">
+                    <div class="px-8 py-6 bg-gradient-to-r from-red-500/5 to-orange-500/5 border-b border-gray-100">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                                <i class="fas fa-shield-alt text-white"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900">Security Settings</h2>
+                                <p class="text-gray-600">Manage your account security and authentication</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-8 space-y-6">
+                        <!-- Change Password -->
+                        <div class="gradient-border rounded-2xl p-6 hover:shadow-lg transition-all">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-4">
+                                        <i class="fas fa-key text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Change Password</h3>
+                                        <p class="text-sm text-gray-600">Update your account password for better security</p>                                    </div>
+                                </div>
+                                <button onclick="console.log('Change password clicked'); openPasswordModal();" 
+                                        class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105 shadow-lg group-hover:shadow-xl">
+                                    Change
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Two-Factor Authentication -->
+                        <div class="gradient-border rounded-2xl p-6 hover:shadow-lg transition-all">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mr-4">
+                                        <i class="fas fa-mobile-alt text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">Two-Factor Authentication</h3>
+                                        <p class="text-sm text-gray-600">Add an extra layer of security to your account</p>
+                                        <span id="2fa-status" class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mt-1">
+                                            <i class="fas fa-clock mr-1"></i>Not Enabled
+                                        </span>                                    </div>
+                                </div>
+                                <button onclick="console.log('2FA button clicked'); open2FAModal();" 
+                                        class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105 shadow-lg group-hover:shadow-xl">
+                                    Setup
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Sidebar -->
+            <div class="space-y-8">
+                <!-- Account Overview -->
+                <div class="glass-effect rounded-3xl shadow-xl hover-lift slide-left" style="animation-delay: 0.2s;">
+                    <div class="p-6">
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                <i class="fas fa-crown text-white text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900">Account Status</h3>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-sm font-medium text-gray-600">Member Since</span>
+                                <span class="text-sm font-bold text-gray-900">Jan 2024</span>
+                            </div>
+                            <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                                <span class="text-sm font-medium text-gray-600">Account Type</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800">
+                                    <i class="fas fa-star mr-1"></i>Premium
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="text-sm font-medium text-gray-600">Status</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800">
+                                    <div class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
+                                    Active
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="glass-effect rounded-3xl shadow-xl hover-lift slide-left" style="animation-delay: 0.3s;">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 mb-6 text-center">Quick Actions</h3>
+                        
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-center p-4 text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 rounded-xl transition-all hover-lift">
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-download text-white text-xs"></i>
+                                </div>
+                                <span class="font-medium">Export Data</span>
+                            </a>
+                            <a href="#" class="flex items-center p-4 text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 rounded-xl transition-all hover-lift">
+                                <div class="w-8 h-8 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-bell text-white text-xs"></i>
+                                </div>
+                                <span class="font-medium">Notifications</span>
+                            </a>
+                            <a href="#" class="flex items-center p-4 text-gray-700 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 rounded-xl transition-all hover-lift">
+                                <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-shield-alt text-white text-xs"></i>
+                                </div>
+                                <span class="font-medium">Privacy Settings</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support -->
+                <div class="glass-effect rounded-3xl shadow-xl hover-lift slide-left overflow-hidden" style="animation-delay: 0.4s;">
+                    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 p-6 text-white text-center">
+                        <i class="fas fa-headset text-3xl mb-4 opacity-90"></i>
+                        <h3 class="text-xl font-bold mb-2">Need Help?</h3>
+                        <p class="text-indigo-100 text-sm mb-4">Our support team is here to assist you 24/7</p>
+                        <a href="#" class="inline-flex items-center bg-white text-indigo-600 px-4 py-2 rounded-lg font-semibold hover:bg-indigo-50 transition-all transform hover:scale-105">
+                            Contact Support
+                            <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Timeline Card -->
+    <div class="perspective-card slide-in-right" style="animation-delay: 0.8s;">
+        <div class="card-inner glassmorphism rounded-3xl shadow-2xl overflow-hidden card-hover">
+            <!-- Timeline Header -->
+            <div class="relative p-6 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+                <div class="absolute inset-0 bg-black/20"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                <i class="fas fa-history text-xl text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Recent Activity</h3>
+                                <p class="text-white/80 text-sm">Your account timeline</p>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                            <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Timeline Content -->
+            <div class="p-6 bg-white/5 backdrop-blur-sm">
+                <div class="space-y-6">
+                    <!-- Activity Item 1 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 relative">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center">
+                                <i class="fas fa-sign-in-alt text-white text-sm"></i>
+                            </div>
+                            <div class="absolute top-10 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-white/20"></div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-semibold text-white">Login Activity</p>
+                                <span class="text-xs text-white/60">2 hours ago</span>
+                            </div>
+                            <p class="text-xs text-white/60 mt-1">Successful login from Chrome browser</p>
+                            <div class="flex items-center mt-2 space-x-2">
+                                <span class="px-2 py-1 bg-green-400/20 text-green-300 rounded-full text-xs font-medium">
+                                    <i class="fas fa-check mr-1"></i>Secure
+                                </span>
+                                <span class="text-xs text-white/40">IP: 192.168.1.1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Item 2 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 relative">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500 flex items-center justify-center">
+                                <i class="fas fa-user-edit text-white text-sm"></i>
+                            </div>
+                            <div class="absolute top-10 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-white/20"></div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-semibold text-white">Profile Updated</p>
+                                <span class="text-xs text-white/60">1 day ago</span>
+                            </div>
+                            <p class="text-xs text-white/60 mt-1">Phone number and preferences updated</p>
+                            <div class="flex items-center mt-2">
+                                <span class="px-2 py-1 bg-blue-400/20 text-blue-300 rounded-full text-xs font-medium">
+                                    <i class="fas fa-edit mr-1"></i>Modified
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Item 3 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 relative">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-pink-500 flex items-center justify-center">
+                                <i class="fas fa-shield-alt text-white text-sm"></i>
+                            </div>
+                            <div class="absolute top-10 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-white/20"></div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-semibold text-white">Security Review</p>
+                                <span class="text-xs text-white/60">3 days ago</span>
+                            </div>
+                            <p class="text-xs text-white/60 mt-1">Automatic security scan completed</p>
+                            <div class="flex items-center mt-2">
+                                <span class="px-2 py-1 bg-purple-400/20 text-purple-300 rounded-full text-xs font-medium">
+                                    <i class="fas fa-shield-check mr-1"></i>Verified
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Item 4 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 relative">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center">
+                                <i class="fas fa-download text-white text-sm"></i>
+                            </div>
+                            <div class="absolute top-10 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-white/20"></div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-semibold text-white">Data Export</p>
+                                <span class="text-xs text-white/60">1 week ago</span>
+                            </div>
+                            <p class="text-xs text-white/60 mt-1">Account data exported to CSV format</p>
+                            <div class="flex items-center mt-2">
+                                <span class="px-2 py-1 bg-orange-400/20 text-orange-300 rounded-full text-xs font-medium">
+                                    <i class="fas fa-file-export mr-1"></i>Exported
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Item 5 -->
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-500 flex items-center justify-center">
+                                <i class="fas fa-user-plus text-white text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm font-semibold text-white">Account Created</p>
+                                <span class="text-xs text-white/60">Jan 15, 2024</span>
+                            </div>
+                            <p class="text-xs text-white/60 mt-1">Welcome to Thrift! Your financial journey begins</p>
+                            <div class="flex items-center mt-2">
+                                <span class="px-2 py-1 bg-emerald-400/20 text-emerald-300 rounded-full text-xs font-medium">
+                                    <i class="fas fa-star mr-1"></i>Milestone
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- View All Button -->
+                <div class="mt-6 pt-4 border-t border-white/10">
+                    <button class="w-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-white/20 text-white py-3 rounded-xl font-semibold hover:from-indigo-500/30 hover:to-purple-500/30 transition-all transform hover:scale-105 backdrop-blur-sm">
+                        <i class="fas fa-list mr-2"></i>View All Activity
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="passwordModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 transform scale-95 transition-all duration-300">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-key text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Change Password</h3>
+                    </div>
+                    <button onclick="closePasswordModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+              <form asp-action="ChangePassword" method="post" class="p-8">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-red-600 mb-4"></div>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
+                        <div class="relative">
+                            <input type="password" name="OldPassword" required
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all pl-12"
+                                   placeholder="Enter current password" />
+                            <i class="fas fa-lock absolute left-4 top-4 text-gray-400"></i>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
+                        <div class="relative">
+                            <input type="password" name="NewPassword" required
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all pl-12"
+                                   placeholder="Enter new password" />
+                            <i class="fas fa-key absolute left-4 top-4 text-gray-400"></i>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm New Password</label>
+                        <div class="relative">
+                            <input type="password" name="ConfirmPassword" required
+                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all pl-12"
+                                   placeholder="Confirm new password" />
+                            <i class="fas fa-shield-alt absolute left-4 top-4 text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4 mt-8">
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105">
+                        Update Password
+                    </button>
+                    <button type="button" onclick="closePasswordModal()"
+                            class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2FA Setup Modal -->
+    <div id="2faModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full mx-4 transform scale-95 transition-all duration-300">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-mobile-alt text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Setup 2FA</h3>
+                    </div>
+                    <button onclick="close2FAModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+          <div class="p-8">
+            @Html.AntiForgeryToken()            <div id="step1" class="space-y-6">
+                <div class="text-center">
+                    <div class="w-32 h-32 mx-auto bg-gray-100 rounded-2xl flex items-center justify-center mb-4" id="qrCodeContainer">
+                        <div class="w-24 h-24 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-qrcode text-gray-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Scan QR Code</h4>
+                    <p class="text-gray-600 text-sm mb-4">Use your authenticator app to scan this QR code</p>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4 mb-4">
+                        <p class="text-xs text-gray-600 mb-2">Manual Setup Key:</p>
+                        <code class="text-lg font-mono bg-white px-3 py-2 rounded-lg" id="manualKey">Loading...</code>
+                    </div>
+                    
+                    <p class="text-xs text-gray-500">
+                        Download Google Authenticator, Authy, or any TOTP authenticator app
+                    </p>
+                </div>
+                
+                <button onclick="showStep2()" 
+                        class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105">
+                    I've Scanned the Code
+                </button>
+            </div>
+              <div id="step2" class="space-y-6 hidden">
+                <div class="text-center">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-2">Verify Setup</h4>
+                    <p class="text-gray-600 text-sm mb-6">Enter the 6-digit code from your authenticator app</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Verification Code</label>
+                        <input type="text" name="verification-code" maxlength="6" pattern="[0-9]{6}" required
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all text-center text-xl font-mono tracking-widest"
+                               placeholder="000000" />
+                    </div>
+                </div>
+                
+                <div class="flex space-x-4 mt-6">
+                    <button type="button" onclick="verifyAndEnable2FA()"
+                            class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all transform hover:scale-105">
+                        Enable 2FA
+                    </button>
+                    <button type="button" onclick="showStep1()"
+                            class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-all">
+                        Back
+                    </button>
+                </div>
+            </div>
+            
+            <button onclick="close2FAModal()" 
+                    class="w-full mt-4 text-gray-500 py-2 text-sm hover:text-gray-700 transition-colors">
+                Cancel Setup
+            </button>
+        </div>
+    </div>
+
+    <!-- Privacy Settings Modal -->
+    <div id="privacyModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 transform scale-95 transition-all duration-300 max-h-[90vh] overflow-y-auto">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-user-secret text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Privacy Settings</h3>
+                    </div>
+                    <button onclick="closePrivacyModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8 space-y-6">
+                <!-- Data Visibility -->
+                <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-eye mr-2 text-purple-600"></i>Data Visibility
+                    </h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="font-medium text-gray-900">Profile Public</h5>
+                                <p class="text-sm text-gray-600">Allow others to see your profile information</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="font-medium text-gray-900">Activity Status</h5>
+                                <p class="text-sm text-gray-600">Show when you were last active</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Collection -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-database mr-2 text-blue-600"></i>Data Collection
+                    </h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="font-medium text-gray-900">Analytics Data</h5>
+                                <p class="text-sm text-gray-600">Help improve our service with usage analytics</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="font-medium text-gray-900">Personalization</h5>
+                                <p class="text-sm text-gray-600">Use your data to personalize your experience</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Communication Preferences -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-envelope mr-2 text-green-600"></i>Communication
+                    </h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h5 class="font-medium text-gray-900">Third-party Sharing</h5>
+                                <p class="text-sm text-gray-600">Allow sharing data with trusted partners</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                    <button onclick="savePrivacySettings()" 
+                            class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
+                        <i class="fas fa-save mr-2"></i>Save Settings
+                    </button>
+                    <button onclick="closePrivacyModal()" 
+                            class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Management Modal -->
+    <div id="dataModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 transform scale-95 transition-all duration-300 max-h-[90vh] overflow-y-auto">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center mr-3">
+                            <i class="fas fa-database text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900">Data Management</h3>
+                    </div>
+                    <button onclick="closeDataModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-8 space-y-6">
+                <!-- Export Data -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-download mr-2 text-blue-600"></i>Export Your Data
+                    </h4>
+                    <p class="text-gray-600 mb-4">Download a copy of all your account data including transactions, budgets, and savings goals.</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="exportData('json')" 
+                                class="bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all transform hover:scale-105">
+                            <i class="fas fa-file-code mr-2"></i>JSON Format
+                        </button>
+                        <button onclick="exportData('csv')" 
+                                class="bg-green-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-green-700 transition-all transform hover:scale-105">
+                            <i class="fas fa-file-csv mr-2"></i>CSV Format
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Backup & Restore -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-shield-alt mr-2 text-green-600"></i>Backup & Restore
+                    </h4>
+                    <p class="text-gray-600 mb-4">Create backups of your data or restore from a previous backup.</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button onclick="createBackup()" 
+                                class="bg-green-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-green-700 transition-all transform hover:scale-105">
+                            <i class="fas fa-cloud-upload-alt mr-2"></i>Create Backup
+                        </button>
+                        <button onclick="restoreBackup()" 
+                                class="bg-orange-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-orange-700 transition-all transform hover:scale-105">
+                            <i class="fas fa-cloud-download-alt mr-2"></i>Restore Data
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-6 border-2 border-red-200">
+                    <h4 class="text-lg font-semibold text-red-900 mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-2 text-red-600"></i>Danger Zone
+                    </h4>
+                    <p class="text-red-700 mb-4">These actions cannot be undone. Please be careful.</p>
+                    <div class="space-y-3">
+                        <button onclick="deleteAllData()" 
+                                class="w-full bg-red-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-red-700 transition-all transform hover:scale-105">
+                            <i class="fas fa-trash mr-2"></i>Delete All Data
+                        </button>
+                        <button onclick="deleteAccount()" 
+                                class="w-full bg-gray-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all transform hover:scale-105">
+                            <i class="fas fa-user-times mr-2"></i>Delete Account
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end pt-6">
+                    <button onclick="closeDataModal()" 
+                            class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include Account Modals -->
+    @{
+        await Html.RenderPartialAsync("_AccountModals");
+    }
+
+    @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Initialize page animations and enhanced features
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add staggered animations to elements
+            const animatedElements = document.querySelectorAll('.fade-in, .slide-up, .slide-left, .fade-in-up, .slide-in-right');
+            animatedElements.forEach((element, index) => {
+                element.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            // Initialize theme switching
+            initializeThemeSelector();
+            
+            // Initialize notification preferences
+            initializeNotificationToggles();
+            
+            // Check 2FA status on page load
+            check2FAStatus();
+        });
+
+        // Theme switching functionality
+        function initializeThemeSelector() {
+            const themeSelector = document.querySelector('select[asp-for="DefaultTheme"]');
+            if (themeSelector) {
+                themeSelector.addEventListener('change', function() {
+                    const selectedTheme = this.value;
+                    applyThemePreview(selectedTheme);
+                });
+            }
+        }
+
+        function applyThemePreview(theme) {
+            // This would apply a preview of the selected theme
+            showNotification(`Theme preview: ${theme}`, 'info');
+        }
+
+        // Notification toggles functionality
+        function initializeNotificationToggles() {
+            const toggles = document.querySelectorAll('input[type="checkbox"]');
+            toggles.forEach(toggle => {
+                toggle.addEventListener('change', function() {
+                    const setting = this.closest('.glassmorphism').querySelector('h5').textContent;
+                    const status = this.checked ? 'enabled' : 'disabled';
+                    showNotification(`${setting} ${status}`, 'info');
+                });
+            });
+        }
+
+        // Check 2FA status
+        function check2FAStatus() {
+            // This would check the actual 2FA status from the server
+            fetch('/Account/Get2FAStatus')
+                .then(response => response.json())
+                .then(data => {
+                    const statusElement = document.getElementById('2fa-status');
+                    if (statusElement && data.isEnabled) {
+                        statusElement.innerHTML = '<i class="fas fa-check mr-1"></i>Enabled';
+                        statusElement.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-400/20 text-green-300 border border-green-400/30';
+                    }
+                })
+                .catch(error => {
+                    console.log('Could not check 2FA status:', error);
+                });
+        }
+
+        // Enhanced form validation
+        function validateForm() {
+            const requiredFields = document.querySelectorAll('input[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('border-red-500');
+                    isValid = false;
+                } else {
+                    field.classList.remove('border-red-500');
+                }
+            });
+            
+            return isValid;
+        }
+
+        // Real-time form validation
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.hasAttribute('required') && !this.value.trim()) {
+                    this.classList.add('border-red-500');
+                } else {
+                    this.classList.remove('border-red-500');
+                }
+            });
+        });
+
+        // Enhanced auto-save functionality
+        let autoSaveTimeout;
+        function setupAutoSave() {
+            const formInputs = document.querySelectorAll('input, select, textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    clearTimeout(autoSaveTimeout);
+                    autoSaveTimeout = setTimeout(() => {
+                        // Auto-save draft (this would save to localStorage or server)
+                        console.log('Auto-saving draft...');
+                        showNotification('Draft saved automatically', 'info');
+                    }, 2000);
+                });
+            });
+        }
+
+        // Setup auto-save on page load
+        document.addEventListener('DOMContentLoaded', setupAutoSave);
+
+        // Modal Functions for Change Password
+        function openPasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.querySelector('.transform').classList.remove('scale-95');
+                modal.querySelector('.transform').classList.add('scale-100');
+            }, 10);
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.querySelector('.transform').classList.remove('scale-100');
+            modal.querySelector('.transform').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg transform translate-x-full transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                type === 'warning' ? 'bg-yellow-500 text-white' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas ${type === 'success' ? 'fa-check' : type === 'error' ? 'fa-times' : type === 'warning' ? 'fa-exclamation' : 'fa-info'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Slide in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Slide out and remove
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Modal Functions for 2FA Setup
+        function open2FAModal() {
+            // First get the 2FA setup data from the server
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            
+            fetch('/Account/Setup2FA', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `__RequestVerificationToken=${encodeURIComponent(token)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Populate the QR code and manual setup key
+                    const manualKeyElement = document.getElementById('manualKey');
+                    if (manualKeyElement) {
+                        manualKeyElement.textContent = data.data.sharedKey || 'Error loading key';
+                    }
+                    
+                    const qrCodeContainer = document.getElementById('qrCodeContainer');
+                    if (qrCodeContainer && data.data.qrCodeSetupImageUrl) {
+                        qrCodeContainer.innerHTML = `<img src="${data.data.qrCodeSetupImageUrl}" alt="QR Code" class="w-full h-full rounded-lg" />`;
+                    }
+                    
+                    // Show the first step
+                    document.getElementById('step1').classList.remove('hidden');
+                    document.getElementById('step2').classList.add('hidden');
+                    
+                    // Open the modal
+                    const modal = document.getElementById('2faModal');
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.querySelector('.transform').classList.remove('scale-95');
+                        modal.querySelector('.transform').classList.add('scale-100');
+                    }, 10);
+                    
+                    showNotification('2FA setup initiated successfully', 'success');
+                } else {
+                    showNotification('Failed to initiate 2FA setup. Please try again.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred while setting up 2FA. Please try again.', 'error');
+            });
+        }
+
+        function close2FAModal() {
+            const modal = document.getElementById('2faModal');
+            if (modal) {
+                modal.querySelector('.transform').classList.remove('scale-100');
+                modal.querySelector('.transform').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function showStep2() {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+        }
+
+        function showStep1() {
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step1').classList.remove('hidden');
+        }        function verifyAndEnable2FA() {
+            const verificationCode = document.querySelector('input[name="verification-code"]').value;
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            
+            if (!verificationCode || verificationCode.length !== 6) {
+                showNotification('Please enter a valid 6-digit verification code', 'error');
+                return;
+            }
+            
+            // Show loading state
+            const submitButton = event.target;
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Verifying...';
+            submitButton.disabled = true;
+            
+            fetch('/Account/Enable2FA', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `Code=${encodeURIComponent(verificationCode)}&__RequestVerificationToken=${encodeURIComponent(token)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message || '2FA has been enabled successfully!', 'success');
+                    close2FAModal();
+                    
+                    // Update 2FA status on the page
+                    const statusElement = document.getElementById('2fa-status');
+                    if (statusElement) {
+                        statusElement.innerHTML = '<i class="fas fa-check mr-1"></i>Enabled';
+                        statusElement.className = 'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-400/20 text-green-300 border border-green-400/30';
+                    }
+                    
+                    // If recovery codes are provided, show them
+                    if (data.recoveryCodes && data.recoveryCodes.length > 0) {
+                        showRecoveryCodes(data.recoveryCodes);
+                    }
+                } else {
+                    showNotification(data.message || 'Verification failed. Please check your code and try again.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred while enabling 2FA. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Restore button state
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            });
+        }
+        
+        function showRecoveryCodes(codes) {
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-50 flex items-center justify-center';
+            modal.innerHTML = `
+                <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 p-8">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-key text-yellow-600 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">Recovery Codes</h3>
+                        <p class="text-gray-600 text-sm">Save these codes in a safe place. You can use them to access your account if you lose your authenticator device.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-xl p-4 mb-6">
+                        <div class="grid grid-cols-2 gap-2 text-sm font-mono">
+                            ${codes.map(code => `<div class="bg-white p-2 rounded text-center">${code}</div>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="downloadRecoveryCodes(['${codes.join("','")}'])" 
+                                class="flex-1 bg-blue-500 text-white py-2 rounded-xl font-semibold hover:bg-blue-600 transition-all">
+                            Download
+                        </button>
+                        <button onclick="this.closest('.fixed').remove()" 
+                                class="flex-1 bg-gray-100 text-gray-700 py-2 rounded-xl font-semibold hover:bg-gray-200 transition-all">
+                            I've Saved Them
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        function downloadRecoveryCodes(codes) {
+            const text = 'Thrift Account Recovery Codes\n\n' + 
+                        'Important: Keep these codes safe and secure.\n' +
+                        'You can use these codes to access your account if you lose your authenticator device.\n\n' +
+                        codes.join('\n') + '\n\n' +
+                        'Generated on: ' + new Date().toLocaleString();
+            
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'thrift-recovery-codes.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Profile Picture Preview Function
+        function previewProfilePicture(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('profilePicturePreview');
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" class="w-full h-full rounded-full object-cover" />`;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Reset Form Function
+        function resetForm() {
+            document.querySelector('form[asp-action="Profile"]').reset();
+            showNotification('Form has been reset to original values.', 'info');
+        }
+
+        // Privacy Modal Functions
+        function openPrivacyModal() {
+            const modal = document.getElementById('privacyModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('.transform').classList.remove('scale-95');
+                    modal.querySelector('.transform').classList.add('scale-100');
+                }, 10);
+            }
+        }
+
+        function closePrivacyModal() {
+            const modal = document.getElementById('privacyModal');
+            if (modal) {
+                modal.querySelector('.transform').classList.remove('scale-100');
+                modal.querySelector('.transform').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        function savePrivacySettings() {
+            // Here you would normally send the privacy settings to the server
+            showNotification('Privacy settings saved successfully!', 'success');
+            closePrivacyModal();
+        }
+
+        // Data Management Modal Functions
+        function openDataModal() {
+            const modal = document.getElementById('dataModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('.transform').classList.remove('scale-95');
+                    modal.querySelector('.transform').classList.add('scale-100');
+                }, 10);
+            }
+        }
+
+        function closeDataModal() {
+            const modal = document.getElementById('dataModal');
+            if (modal) {
+                modal.querySelector('.transform').classList.remove('scale-100');
+                modal.querySelector('.transform').classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+        }
+
+        // Data Export Functions
+        function exportData(format = 'json') {
+            // Show loading notification
+            showNotification(`Preparing ${format.toUpperCase()} export...`, 'info');
+            
+            // Simulate export process
+            setTimeout(() => {
+                showNotification(`Data exported successfully as ${format.toUpperCase()}!`, 'success');
+                // Here you would normally trigger the actual download
+            }, 2000);
+        }
+
+        function createBackup() {
+            showNotification('Creating backup...', 'info');
+            setTimeout(() => {
+                showNotification('Backup created successfully!', 'success');
+            }, 3000);
+        }
+
+        function restoreBackup() {
+            if (confirm('Are you sure you want to restore from backup? This will overwrite your current data.')) {
+                showNotification('Restoring from backup...', 'info');
+                setTimeout(() => {
+                    showNotification('Data restored successfully!', 'success');
+                }, 3000);
+            }
+        }
+
+        function deleteAllData() {
+            if (confirm('Are you absolutely sure you want to delete ALL your data? This action cannot be undone.')) {
+                if (confirm('This will permanently delete all your transactions, budgets, savings goals, and settings. Type "DELETE" to confirm.')) {
+                    showNotification('Deleting all data...', 'error');
+                    setTimeout(() => {
+                        showNotification('All data has been deleted.', 'error');
+                    }, 2000);
+                }
+            }
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone and you will lose access to all your data.')) {
+                if (confirm('This will permanently delete your account and all associated data. Type "DELETE ACCOUNT" to confirm.')) {
+                    showNotification('Deleting account...', 'error');
+                    setTimeout(() => {
+                        showNotification('Account deletion initiated. You will be logged out shortly.', 'error');
+                        // Here you would normally redirect to a goodbye page
+                    }, 2000);
+                }
+            }
+        }
+    }
+</script>
+}

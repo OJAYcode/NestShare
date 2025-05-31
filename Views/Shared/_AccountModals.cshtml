@@ -1,0 +1,194 @@
+<!-- Privacy Settings Modal -->
+<div id="privacyModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 transform scale-95 transition-all duration-300 max-h-[90vh] overflow-y-auto">
+        <div class="px-8 py-6 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-user-secret text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">Privacy Settings</h3>
+                </div>
+                <button onclick="closePrivacyModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-8 space-y-6">
+            <!-- Data Visibility -->
+            <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-eye mr-2 text-purple-600"></i>Data Visibility
+                </h4>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h5 class="font-medium text-gray-900">Profile Public</h5>
+                            <p class="text-sm text-gray-600">Allow others to see your profile information</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h5 class="font-medium text-gray-900">Activity Status</h5>
+                            <p class="text-sm text-gray-600">Show when you were last active</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Collection -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-database mr-2 text-blue-600"></i>Data Collection
+                </h4>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h5 class="font-medium text-gray-900">Analytics Data</h5>
+                            <p class="text-sm text-gray-600">Help improve our service with usage analytics</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h5 class="font-medium text-gray-900">Personalization</h5>
+                            <p class="text-sm text-gray-600">Use your data to personalize your experience</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Communication Preferences -->
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-envelope mr-2 text-green-600"></i>Communication
+                </h4>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h5 class="font-medium text-gray-900">Third-party Sharing</h5>
+                            <p class="text-sm text-gray-600">Allow sharing data with trusted partners</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 pt-6">
+                <button onclick="savePrivacySettings()" 
+                        class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
+                    <i class="fas fa-save mr-2"></i>Save Settings
+                </button>
+                <button onclick="closePrivacyModal()" 
+                        class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Management Modal -->
+<div id="dataModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full mx-4 transform scale-95 transition-all duration-300 max-h-[90vh] overflow-y-auto">
+        <div class="px-8 py-6 border-b border-gray-100">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center mr-3">
+                        <i class="fas fa-database text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900">Data Management</h3>
+                </div>
+                <button onclick="closeDataModal()" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-8 space-y-6">
+            <!-- Export Data -->
+            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-download mr-2 text-blue-600"></i>Export Your Data
+                </h4>
+                <p class="text-gray-600 mb-4">Download a copy of all your account data including transactions, budgets, and savings goals.</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="exportData('json')" 
+                            class="bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all transform hover:scale-105">
+                        <i class="fas fa-file-code mr-2"></i>JSON Format
+                    </button>
+                    <button onclick="exportData('csv')" 
+                            class="bg-green-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-green-700 transition-all transform hover:scale-105">
+                        <i class="fas fa-file-csv mr-2"></i>CSV Format
+                    </button>
+                </div>
+            </div>
+
+            <!-- Backup & Restore -->
+            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6">
+                <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-shield-alt mr-2 text-green-600"></i>Backup & Restore
+                </h4>
+                <p class="text-gray-600 mb-4">Create backups of your data or restore from a previous backup.</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="createBackup()" 
+                            class="bg-green-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-green-700 transition-all transform hover:scale-105">
+                        <i class="fas fa-cloud-upload-alt mr-2"></i>Create Backup
+                    </button>
+                    <button onclick="restoreBackup()" 
+                            class="bg-orange-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-orange-700 transition-all transform hover:scale-105">
+                        <i class="fas fa-cloud-download-alt mr-2"></i>Restore Data
+                    </button>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-6 border-2 border-red-200">
+                <h4 class="text-lg font-semibold text-red-900 mb-4 flex items-center">
+                    <i class="fas fa-exclamation-triangle mr-2 text-red-600"></i>Danger Zone
+                </h4>
+                <p class="text-red-700 mb-4">These actions cannot be undone. Please be careful.</p>
+                <div class="space-y-3">
+                    <button onclick="deleteAllData()" 
+                            class="w-full bg-red-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-red-700 transition-all transform hover:scale-105">
+                        <i class="fas fa-trash mr-2"></i>Delete All Data
+                    </button>
+                    <button onclick="deleteAccount()" 
+                            class="w-full bg-gray-800 text-white px-4 py-3 rounded-xl font-semibold hover:bg-gray-900 transition-all transform hover:scale-105">
+                        <i class="fas fa-user-times mr-2"></i>Delete Account
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end pt-6">
+                <button onclick="closeDataModal()" 
+                        class="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-all">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

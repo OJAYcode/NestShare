@@ -1,0 +1,236 @@
+@model Thrift.ViewModels.AddFundsViewModel
+@{
+    ViewData["Title"] = $"Add Funds - {Model.GoalName}";
+}
+
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Add Funds</h1>
+                <p class="text-gray-600">Add money to your savings goal: <span class="font-semibold text-purple-600">@Model.GoalName</span></p>
+            </div>
+            <a asp-action="Details" asp-route-id="@Model.GoalId" 
+               class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Goal
+            </a>
+        </div>
+    </div>
+
+    <!-- Progress Overview Card -->
+    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 mb-8 border border-purple-100">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center">
+                <div class="text-2xl font-bold text-gray-900">@Model.CurrentAmount.ToString("C")</div>
+                <div class="text-sm text-gray-600">Current Amount</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-purple-600">@Model.TargetAmount.ToString("C")</div>
+                <div class="text-sm text-gray-600">Target Amount</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-green-600">@Model.ProgressPercentage.ToString("F1")%</div>
+                <div class="text-sm text-gray-600">Progress</div>
+            </div>
+        </div>
+        
+        <!-- Progress Bar -->
+        <div class="mt-6">
+            <div class="flex justify-between text-sm text-gray-600 mb-2">
+                <span>Progress</span>
+                <span>@((Model.TargetAmount - Model.CurrentAmount).ToString("C")) remaining</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-3">
+                <div class="bg-gradient-to-r from-purple-500 to-indigo-500 h-3 rounded-full transition-all duration-500"
+                     style="width: @(Math.Min(Model.ProgressPercentage, 100))%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Add Funds Form -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
+                    <h2 class="text-xl font-semibold text-white flex items-center">
+                        <i class="fas fa-plus-circle mr-3"></i>
+                        Add Funds
+                    </h2>
+                </div>
+                
+                <div class="p-6">
+                    <form asp-action="AddFunds" method="post" class="space-y-6">
+                        <input type="hidden" asp-for="GoalId" />
+                        <input type="hidden" asp-for="GoalName" />
+                        <input type="hidden" asp-for="CurrentAmount" />
+                        <input type="hidden" asp-for="TargetAmount" />
+                        <input type="hidden" asp-for="ProgressPercentage" />
+
+                        <!-- Amount Input -->
+                        <div>
+                            <label asp-for="Amount" class="block text-sm font-medium text-gray-700 mb-2">
+                                Amount to Add
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 text-lg font-semibold">$</span>
+                                </div>
+                                <input asp-for="Amount" 
+                                       class="block w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-lg font-medium"
+                                       placeholder="0.00"
+                                       step="0.01"
+                                       min="0.01"
+                                       id="amount-input" />
+                            </div>
+                            <span asp-validation-for="Amount" class="text-red-600 text-sm mt-1"></span>
+                        </div>
+
+                        <!-- Quick Amount Buttons -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Quick Add</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <button type="button" class="quick-amount-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-colors duration-200" data-amount="25">$25</button>
+                                <button type="button" class="quick-amount-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-colors duration-200" data-amount="50">$50</button>
+                                <button type="button" class="quick-amount-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-colors duration-200" data-amount="100">$100</button>
+                                <button type="button" class="quick-amount-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-colors duration-200" data-amount="@((Model.TargetAmount - Model.CurrentAmount).ToString("F0"))">Remaining</button>
+                            </div>
+                        </div>
+
+                        <!-- Note Input -->
+                        <div>
+                            <label asp-for="Note" class="block text-sm font-medium text-gray-700 mb-2">
+                                Note (Optional)
+                            </label>
+                            <textarea asp-for="Note" 
+                                      rows="3"
+                                      class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                      placeholder="Add a note about this deposit..."></textarea>
+                            <span asp-validation-for="Note" class="text-red-600 text-sm mt-1"></span>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-4">
+                            <button type="submit" 
+                                    class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-purple-500/30"
+                                    id="submit-btn">
+                                <i class="fas fa-plus mr-2"></i>
+                                Add Funds
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Sidebar -->
+        <div class="space-y-6">
+            <!-- Progress After Addition Preview -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                    <i class="fas fa-chart-line mr-2 text-green-500"></i>
+                    Progress Preview
+                </h3>
+                <div id="progress-preview" class="space-y-4">
+                    <div class="text-center">
+                        <div class="text-xl font-bold text-green-600" id="new-amount">@Model.CurrentAmount.ToString("C")</div>
+                        <div class="text-sm text-gray-600">New Amount</div>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3">
+                        <div class="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
+                             id="new-progress-bar"
+                             style="width: @(Math.Min(Model.ProgressPercentage, 100))%"></div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-lg font-semibold text-gray-900" id="new-percentage">@Model.ProgressPercentage.ToString("F1")%</div>
+                        <div class="text-sm text-gray-600">of goal completed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips Card -->
+            <div class="bg-blue-50 rounded-xl border border-blue-100 p-6">
+                <h3 class="text-lg font-semibold text-blue-900 mb-3 flex items-center">
+                    <i class="fas fa-lightbulb mr-2"></i>
+                    Savings Tips
+                </h3>
+                <ul class="space-y-3 text-sm text-blue-800">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle mr-2 mt-0.5 text-blue-500"></i>
+                        <span>Consider setting up automatic transfers to reach your goal faster</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle mr-2 mt-0.5 text-blue-500"></i>
+                        <span>Track your progress regularly to stay motivated</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle mr-2 mt-0.5 text-blue-500"></i>
+                        <span>Celebrate small milestones along the way</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountInput = document.getElementById('amount-input');
+            const quickAmountBtns = document.querySelectorAll('.quick-amount-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const currentAmount = @Model.CurrentAmount;
+            const targetAmount = @Model.TargetAmount;
+            
+            // Quick amount button functionality
+            quickAmountBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const amount = this.dataset.amount;
+                    amountInput.value = amount;
+                    updateProgressPreview();
+                    
+                    // Visual feedback
+                    quickAmountBtns.forEach(b => b.classList.remove('bg-purple-500', 'text-white'));
+                    this.classList.add('bg-purple-500', 'text-white');
+                });
+            });
+            
+            // Update progress preview when amount changes
+            amountInput.addEventListener('input', updateProgressPreview);
+            
+            function updateProgressPreview() {
+                const addAmount = parseFloat(amountInput.value) || 0;
+                const newAmount = currentAmount + addAmount;
+                const newPercentage = targetAmount > 0 ? (newAmount / targetAmount) * 100 : 0;
+                
+                document.getElementById('new-amount').textContent = '$' + newAmount.toFixed(2);
+                document.getElementById('new-percentage').textContent = newPercentage.toFixed(1) + '%';
+                document.getElementById('new-progress-bar').style.width = Math.min(newPercentage, 100) + '%';
+                
+                // Update progress bar color based on completion
+                const progressBar = document.getElementById('new-progress-bar');
+                if (newPercentage >= 100) {
+                    progressBar.className = 'bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500';
+                } else if (newPercentage >= 75) {
+                    progressBar.className = 'bg-gradient-to-r from-blue-500 to-cyan-500 h-3 rounded-full transition-all duration-500';
+                } else {
+                    progressBar.className = 'bg-gradient-to-r from-purple-500 to-indigo-500 h-3 rounded-full transition-all duration-500';
+                }
+            }
+            
+            // Form submission with loading state
+            submitBtn.addEventListener('click', function(e) {
+                if (amountInput.value && parseFloat(amountInput.value) > 0) {
+                    this.disabled = true;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+                }
+            });
+            
+            // Initialize progress preview
+            updateProgressPreview();
+        });
+    </script>
+}

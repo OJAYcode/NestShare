@@ -1,0 +1,226 @@
+@model Thrift.ViewModels.EditLoanViewModel
+
+@{
+    ViewData["Title"] = "Edit Loan";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-lg-flex">
+                        <div>
+                            <h5 class="mb-0">Edit Loan</h5>
+                            <p class="text-sm mb-0">Update your loan details</p>
+                        </div>
+                        <div class="ms-auto my-auto mt-lg-0 mt-4">
+                            <div class="ms-auto my-auto">
+                                <a href="@Url.Action("Index", "Loan")" class="btn btn-outline-primary btn-sm mb-0">
+                                    <i class="fas fa-arrow-left me-1"></i> Back to Loans
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" id="editLoanForm">
+                        <input asp-for="Id" type="hidden" />
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="LoanName" class="form-control-label">Loan Name</label>
+                                    <input asp-for="LoanName" class="form-control" placeholder="Enter loan name" />
+                                    <span asp-validation-for="LoanName" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="LoanType" class="form-control-label">Loan Type</label>
+                                    <select asp-for="LoanType" asp-items="Html.GetEnumSelectList<Thrift.Models.LoanType>()" class="form-control">
+                                        <option value="">Select loan type</option>
+                                    </select>
+                                    <span asp-validation-for="LoanType" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="PrincipalAmount" class="form-control-label">Principal Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input asp-for="PrincipalAmount" class="form-control" placeholder="0.00" step="0.01" min="0" />
+                                    </div>
+                                    <span asp-validation-for="PrincipalAmount" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="InterestRate" class="form-control-label">Interest Rate (%)</label>
+                                    <input asp-for="InterestRate" class="form-control" placeholder="0.00" step="0.01" min="0" max="100" />
+                                    <span asp-validation-for="InterestRate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="TermInMonths" class="form-control-label">Loan Term (Months)</label>
+                                    <input asp-for="TermInMonths" class="form-control" placeholder="Enter term in months" min="1" />
+                                    <span asp-validation-for="TermInMonths" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="PaymentFrequency" class="form-control-label">Payment Frequency</label>
+                                    <select asp-for="PaymentFrequency" asp-items="Html.GetEnumSelectList<Thrift.Models.PaymentFrequency>()" class="form-control">
+                                        <option value="">Select payment frequency</option>
+                                    </select>
+                                    <span asp-validation-for="PaymentFrequency" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="InterestType" class="form-control-label">Interest Type</label>
+                                    <select asp-for="InterestType" asp-items="Html.GetEnumSelectList<Thrift.Models.InterestType>()" class="form-control">
+                                        <option value="">Select interest type</option>
+                                    </select>
+                                    <span asp-validation-for="InterestType" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="StartDate" class="form-control-label">Start Date</label>
+                                    <input asp-for="StartDate" type="date" class="form-control" />
+                                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label asp-for="Description" class="form-control-label">Description</label>
+                                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Enter loan description (optional)"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calculated Payment Display -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card bg-gradient-info">
+                                    <div class="card-body p-3">
+                                        <div class="row">
+                                            <div class="col-8">
+                                                <div class="numbers">
+                                                    <p class="text-white text-sm mb-0 text-capitalize font-weight-bold">Calculated Monthly Payment</p>
+                                                    <h5 class="text-white font-weight-bolder mb-0" id="calculatedPayment">
+                                                        $0.00
+                                                    </h5>
+                                                </div>
+                                            </div>
+                                            <div class="col-4 text-end">
+                                                <div class="icon icon-shape bg-white shadow text-center border-radius-md">
+                                                    <i class="ni ni-money-coins text-dark text-lg opacity-10" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i> Update Loan
+                                </button>
+                                <a href="@Url.Action("Details", "Loan", new { id = Model.Id })" class="btn btn-outline-secondary ms-2">
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Calculate payment when form values change
+            function calculatePayment() {
+                const principal = parseFloat($('#PrincipalAmount').val()) || 0;
+                const rate = parseFloat($('#InterestRate').val()) || 0;
+                const term = parseInt($('#TermInMonths').val()) || 0;
+                const frequency = $('#PaymentFrequency').val();
+                
+                if (principal > 0 && rate > 0 && term > 0 && frequency) {
+                    // Convert annual rate to monthly and calculate monthly payment
+                    const monthlyRate = (rate / 100) / 12;
+                    const numPayments = term;
+                    
+                    let payment = 0;
+                    if (monthlyRate > 0) {
+                        payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) / 
+                                 (Math.pow(1 + monthlyRate, numPayments) - 1);
+                    } else {
+                        payment = principal / numPayments;
+                    }
+                    
+                    // Adjust for payment frequency
+                    switch (frequency) {
+                        case 'Weekly':
+                            payment = payment / 4.33;
+                            break;
+                        case 'BiWeekly':
+                            payment = payment / 2.17;
+                            break;
+                        case 'Quarterly':
+                            payment = payment * 3;
+                            break;
+                        case 'SemiAnnually':
+                            payment = payment * 6;
+                            break;
+                        case 'Annually':
+                            payment = payment * 12;
+                            break;
+                    }
+                    
+                    $('#calculatedPayment').text('$' + payment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                } else {
+                    $('#calculatedPayment').text('$0.00');
+                }
+            }
+            
+            // Bind calculation to form changes
+            $('#PrincipalAmount, #InterestRate, #TermInMonths, #PaymentFrequency').on('input change', calculatePayment);
+            
+            // Initial calculation
+            calculatePayment();
+            
+            // Form validation
+            $('#editLoanForm').on('submit', function(e) {
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                this.classList.add('was-validated');
+            });
+        });
+    </script>
+}

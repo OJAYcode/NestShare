@@ -1,0 +1,307 @@
+﻿@page
+@model Thrift.Areas.Identity.Pages.Account.Manage.EnableAuthenticatorModel
+@using Thrift.Areas.Identity.Pages.Account.Manage
+@{
+    ViewData["Title"] = "Configure Authenticator App";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<div class="space-y-6">
+    <!-- Header Section -->
+    <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-gray-900">
+            <span class="inline-block bg-clip-text text-transparent bg-gradient-to-r from-accent to-purple-600">
+                Set Up Authenticator App
+            </span>
+        </h2>
+        <span class="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full animate-pulse">
+            Security Enhancement
+        </span>
+    </div>
+    
+    <partial name="_StatusMessage" for="StatusMessage" />
+    
+    <!-- Main Card -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg">
+        <!-- Card Header -->
+        <div class="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-blue-50">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center">
+                    <div class="h-12 w-12 rounded-full bg-gradient-to-br from-green-500 to-accent flex items-center justify-center shadow-md">
+                        <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Secure Your Account with 2FA</h3>
+                        <p class="text-sm text-gray-600">Follow these steps to enhance your account security</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Card Content -->
+        <div class="p-6">
+            <!-- Setup Process Steps -->
+            <div class="space-y-8">
+                <!-- Step 1: Download App -->
+                <div class="relative pl-10">
+                    <div class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white font-bold text-lg shadow-sm">
+                        1
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="text-base font-semibold text-gray-900">Download an authenticator app</h4>
+                        <p class="text-sm text-gray-600">
+                            Install a two-factor authentication app on your mobile device:
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                            <!-- Microsoft Authenticator -->
+                            <div class="rounded-lg border border-gray-200 p-4 bg-gray-50 hover:bg-gray-100 transition-colors duration-300">
+                                <div class="flex items-center mb-2">
+                                    <svg class="h-6 w-6 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M0 0v24h24v-24h-24zm11.408 17.387c-1.759 0-3.408-.511-4.794-1.383l-5.235 2.603 2.634-5.148c-.958-1.427-1.52-3.153-1.52-5.009 0-4.919 3.98-8.915 8.915-8.915s8.915 3.996 8.915 8.915c0 4.919-3.98 8.915-8.915 8.915v.022z"/>
+                                    </svg>
+                                    <span class="font-medium">Microsoft Authenticator</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <a href="https://go.microsoft.com/fwlink/?Linkid=825072" target="_blank" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+                                        <svg class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M17.6,9.48l1.84-3.18c0.16-0.31,0.04-0.69-0.26-0.85c-0.29-0.15-0.65-0.06-0.83,0.22l-1.88,3.24 c-2.86-1.21-6.08-1.21-8.94,0L5.65,5.67c-0.19-0.29-0.58-0.38-0.87-0.2C4.5,5.65,4.41,6.01,4.56,6.3L6.4,9.48 C3.3,11.25,1.28,14.44,1,18h22C22.72,14.44,20.7,11.25,17.6,9.48z M7,15.25c-0.69,0-1.25-0.56-1.25-1.25 c0-0.69,0.56-1.25,1.25-1.25S8.25,13.31,8.25,14C8.25,14.69,7.69,15.25,7,15.25z M17,15.25c-0.69,0-1.25-0.56-1.25-1.25 c0-0.69,0.56-1.25,1.25-1.25s1.25,0.56,1.25,1.25C18.25,14.69,17.69,15.25,17,15.25z"/>
+                                        </svg>
+                                        Android
+                                    </a>
+                                    <a href="https://go.microsoft.com/fwlink/?Linkid=825073" target="_blank" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+                                        <svg class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M17.05,20.28c-0.98,0.95-2.05,0.8-3.08,0.35c-1.09-0.46-2.09-0.48-3.24,0c-1.44,0.62-2.2,0.44-3.06-0.35 C2.79,15.74,3.51,7.1,8.66,6.91c1.43-0.06,2.44,0.58,3.33,0.66c1.38,0.15,2.37-0.56,3.64-0.61c1.54-0.06,2.92,0.82,3.78,2.18 c-3.42,1.98-2.87,6.92,0.54,8.4C19.12,18.8,18.05,19.34,17.05,20.28L17.05,20.28L17.05,20.28z"/>
+                                            <path d="M12.03,6.25c-0.12-2.57,1.99-4.85,4.68-5c0.09,2.94-2.51,5.19-4.68,5"/>
+                                        </svg>
+                                        iOS
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <!-- Google Authenticator -->
+                            <div class="rounded-lg border border-gray-200 p-4 bg-gray-50 hover:bg-gray-100 transition-colors duration-300">
+                                <div class="flex items-center mb-2">
+                                    <svg class="h-6 w-6 text-red-500 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12,11v2h2v2H9V9h7c0-1.1-0.9-2-2-2H9C7.9,7,7,7.9,7,9v6c0,1.1,0.9,2,2,2h5c1.1,0,2-0.9,2-2v-4H12z"/>
+                                    </svg>
+                                    <span class="font-medium">Google Authenticator</span>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en" target="_blank" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+                                        <svg class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M17.6,9.48l1.84-3.18c0.16-0.31,0.04-0.69-0.26-0.85c-0.29-0.15-0.65-0.06-0.83,0.22l-1.88,3.24 c-2.86-1.21-6.08-1.21-8.94,0L5.65,5.67c-0.19-0.29-0.58-0.38-0.87-0.2C4.5,5.65,4.41,6.01,4.56,6.3L6.4,9.48 C3.3,11.25,1.28,14.44,1,18h22C22.72,14.44,20.7,11.25,17.6,9.48z M7,15.25c-0.69,0-1.25-0.56-1.25-1.25 c0-0.69,0.56-1.25,1.25-1.25S8.25,13.31,8.25,14C8.25,14.69,7.69,15.25,7,15.25z M17,15.25c-0.69,0-1.25-0.56-1.25-1.25 c0-0.69,0.56-1.25,1.25-1.25s1.25,0.56,1.25,1.25C18.25,14.69,17.69,15.25,17,15.25z"/>
+                                        </svg>
+                                        Android
+                                    </a>
+                                    <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank" class="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+                                        <svg class="h-4 w-4 mr-1" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M17.05,20.28c-0.98,0.95-2.05,0.8-3.08,0.35c-1.09-0.46-2.09-0.48-3.24,0c-1.44,0.62-2.2,0.44-3.06-0.35 C2.79,15.74,3.51,7.1,8.66,6.91c1.43-0.06,2.44,0.58,3.33,0.66c1.38,0.15,2.37-0.56,3.64-0.61c1.54-0.06,2.92,0.82,3.78,2.18 c-3.42,1.98-2.87,6.92,0.54,8.4C19.12,18.8,18.05,19.34,17.05,20.28L17.05,20.28L17.05,20.28z"/>
+                                            <path d="M12.03,6.25c-0.12-2.57,1.99-4.85,4.68-5c0.09,2.94-2.51,5.19-4.68,5"/>
+                                        </svg>
+                                        iOS
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Scan QR Code -->
+                <div class="relative pl-10">
+                    <div class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white font-bold text-lg shadow-sm">
+                        2
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="text-base font-semibold text-gray-900">Link your account</h4>
+                        <p class="text-sm text-gray-600 mb-4">
+                            Scan the QR code below or manually enter this key into your authenticator app:
+                        </p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-6 items-center">
+                            <!-- QR Code -->
+                            <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm max-w-xs">
+                                <div id="qrCode" class="flex items-center justify-center h-48 w-48 bg-white"></div>
+                                <div id="qrCodeData" data-url="@Model.AuthenticatorUri" class="hidden"></div>
+                            </div>
+                            
+                            <!-- Manual Key -->
+                            <div class="space-y-3 flex-1">
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs text-gray-500 uppercase tracking-wider font-semibold">Manual Entry Key</span>
+                                        <button id="copyKeyBtn" type="button" class="text-accent hover:text-accent-dark text-xs font-medium flex items-center">
+                                            <svg class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                                            </svg>
+                                            Copy
+                                        </button>
+                                    </div>
+                                    <div class="bg-white rounded border border-gray-300 px-3 py-2 font-mono text-sm break-all">
+                                        @Model.SharedKey
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">Spaces and casing do not matter.</p>
+                                </div>
+                                
+                                <div class="rounded-md bg-blue-50 p-4">
+                                    <div class="flex">
+                                        <div class="flex-shrink-0">
+                                            <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <div class="ml-3 flex-1 md:flex md:justify-between">
+                                            <p class="text-xs text-blue-700">
+                                                The authenticator app will generate a new code every 30 seconds.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Verify Code -->
+                <div class="relative pl-10">
+                    <div class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white font-bold text-lg shadow-sm">
+                        3
+                    </div>
+                    <div class="space-y-2">
+                        <h4 class="text-base font-semibold text-gray-900">Verify setup</h4>
+                        <p class="text-sm text-gray-600">
+                            Enter the 6-digit verification code from your authenticator app to complete the setup.
+                        </p>
+                        
+                        <form id="send-code" method="post" class="mt-4 max-w-md">
+                            <div asp-validation-summary="ModelOnly" class="p-4 mb-4 text-sm rounded-lg bg-red-50 text-red-800" role="alert"></div>
+                            
+                            <div class="space-y-1">
+                                <label asp-for="Input.Code" class="block text-sm font-medium text-gray-700">Verification Code</label>
+                                <div class="relative rounded-md shadow-sm group transition-all duration-300 hover:shadow-md">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <svg class="h-5 w-5 text-gray-400 group-hover:text-accent transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <input asp-for="Input.Code" 
+                                           autocomplete="off"
+                                           maxlength="6"
+                                           class="block w-full pl-10 py-3 border border-gray-300 rounded-lg focus:ring-accent focus:border-accent bg-white transition-all duration-300" 
+                                           placeholder="Enter 6-digit code" />
+                                </div>
+                                <span asp-validation-for="Input.Code" class="text-sm text-red-600 font-medium"></span>
+                            </div>
+                            
+                            <div class="mt-6">
+                                <button type="submit" 
+                                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-accent hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-all duration-300 transform hover:scale-[1.02]">
+                                    <svg class="-ml-1 mr-2 h-5 w-5 animate-pulse" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                    </svg>
+                                    Verify and Activate
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Benefits Card -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+            <div class="flex items-center">
+                <svg class="h-5 w-5 text-accent mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                <h3 class="text-sm font-semibold text-gray-900">Benefits of Two-Factor Authentication</h3>
+            </div>
+        </div>
+        <div class="px-6 py-4">
+            <ul class="space-y-3 text-sm text-gray-700">
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Adds an extra layer of security beyond just your password
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Protects your account even if your password is compromised
+                </li>
+                <li class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mr-2 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Uses time-based codes that expire after 30 seconds for enhanced security
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <!-- QR Code Generation Scripts -->
+    <script src="~/lib/qrcode.js"></script>
+    <script>
+        // Generate QR Code
+        new QRCode(document.getElementById("qrCode"), {
+            text: "@Html.Raw(Model.AuthenticatorUri)",
+            width: 200,
+            height: 200,
+            colorDark: "#333333",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        
+        // Copy key to clipboard
+        document.getElementById("copyKeyBtn").addEventListener("click", function() {
+            const key = "@Model.SharedKey";
+            navigator.clipboard.writeText(key).then(function() {
+                // Change button text temporarily
+                const btn = document.getElementById("copyKeyBtn");
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = `
+                    <svg class="h-4 w-4 mr-1 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                    Copied!
+                `;
+                
+                // Reset after 2 seconds
+                setTimeout(function() {
+                    btn.innerHTML = originalHtml;
+                }, 2000);
+            });
+        });
+        
+        // Animate code input
+        const codeInput = document.getElementById("Input_Code");
+        if (codeInput) {
+            codeInput.addEventListener("input", function() {
+                // Only allow numbers
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Limit to 6 digits
+                if (this.value.length > 6) {
+                    this.value = this.value.slice(0, 6);
+                }
+                
+                // Auto-submit when 6 digits are entered
+                if (this.value.length === 6) {
+                    // Add a slight delay before submitting
+                    setTimeout(() => {
+                        document.getElementById("send-code").submit();
+                    }, 500);
+                }
+            });
+        }
+    </script>
+}

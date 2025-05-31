@@ -1,0 +1,251 @@
+@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout != null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+
+<style>
+    /* Advanced CSS Animations */
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @@keyframes slideInRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @@keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    @@keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @@keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    @@keyframes shimmer {
+        0% { background-position: -200px 0; }
+        100% { background-position: calc(200px + 100%) 0; }
+    }
+    
+    .fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+    .slide-in-right { animation: slideInRight 0.8s ease-out forwards; }
+    .float { animation: float 3s ease-in-out infinite; }
+    .pulse-slow { animation: pulse 2s ease-in-out infinite; }
+    
+    .gradient-animated {
+        background: linear-gradient(-45deg, #4f46e5, #6366f1, #8b5cf6, #a855f7);
+        background-size: 400% 400%;
+        animation: gradientShift 4s ease infinite;
+    }
+    
+    .glassmorphism {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    
+    .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card-hover:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .shimmer {
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        background-size: 200px 100%;
+        animation: shimmer 2s infinite;
+    }
+    
+    .input-glow:focus {
+        box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        transform: scale(1.02);
+    }
+    
+    .neon-text {
+        text-shadow: 0 0 5px rgba(99, 102, 241, 0.3),
+                     0 0 10px rgba(99, 102, 241, 0.3),
+                     0 0 15px rgba(99, 102, 241, 0.3);
+    }
+    
+    .perspective-card {
+        perspective: 1000px;
+    }
+    
+    .perspective-card:hover .card-inner {
+        transform: rotateY(10deg) rotateX(5deg);
+    }
+    
+    .card-inner {
+        transition: transform 0.6s;
+        transform-style: preserve-3d;
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-gray-900 to-slate-800 relative overflow-hidden">
+    <!-- Animated Background Elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/10 to-purple-600/10 rounded-full blur-3xl float"></div>
+        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-purple-400/10 to-indigo-600/10 rounded-full blur-3xl float" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-400/8 to-purple-400/8 rounded-full blur-3xl float" style="animation-delay: 1s;"></div>
+        
+        <!-- Floating particles -->
+        @for (int i = 0; i < 12; i++)
+        {
+            <div class="absolute rounded-full bg-white/10 animate-pulse"
+                 style="width: @(Random.Shared.Next(4, 10))px; 
+                        height: @(Random.Shared.Next(4, 10))px; 
+                        left: @(Random.Shared.Next(0, 100))%; 
+                        top: @(Random.Shared.Next(0, 100))%;
+                        animation-delay: @(Random.Shared.Next(0, 5))s;
+                        animation-duration: @(Random.Shared.Next(3, 8))s;">
+            </div>
+        }
+    </div>
+
+    <div class="container mx-auto px-4 py-8 relative z-10 max-w-7xl">
+        <!-- Advanced Page Header -->
+        <div class="mb-12 fade-in-up">
+            <div class="text-center mb-8">
+                <div class="perspective-card inline-block mb-6">
+                    <div class="card-inner relative">
+                        <div class="w-20 h-20 mx-auto rounded-full gradient-animated flex items-center justify-center text-white shadow-2xl relative overflow-hidden">
+                            <div class="absolute inset-0 shimmer"></div>
+                            <i class="fas fa-user-cog text-2xl relative z-10"></i>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="text-4xl font-black text-white mb-4 neon-text">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-300 via-purple-300 to-indigo-400">
+                        Account Management
+                    </span>
+                </h1>
+                <p class="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                    Advanced account management with cutting-edge interface design
+                </p>
+            </div>
+        </div>
+
+        <!-- Advanced Container -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <!-- Enhanced Sidebar Navigation -->
+            <div class="lg:col-span-1">
+                <div class="perspective-card fade-in-up">
+                    <div class="card-inner glassmorphism rounded-3xl shadow-2xl overflow-hidden card-hover sticky top-8">
+                        <!-- Navigation Header -->
+                        <div class="relative p-6 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700">
+                            <div class="absolute inset-0 bg-black/20"></div>
+                            <div class="relative z-10">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                                        <i class="fas fa-user-circle text-xl text-white"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-white">@User.Identity.Name</div>
+                                        <div class="text-sm text-purple-100">Account Member</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Navigation Content -->
+                        <div class="p-6">
+                            <div class="mb-6 p-4 bg-gradient-to-r from-indigo-50/10 to-purple-50/10 rounded-xl border border-white/10">
+                                <div class="flex items-center text-sm text-gray-300">
+                                    <i class="fas fa-info-circle text-indigo-400 mr-2"></i>
+                                    Changes will be applied immediately
+                                </div>
+                            </div>
+                            
+                            <nav class="space-y-2">
+                                <partial name="_ManageNav" />
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Enhanced Main Content Area -->
+            <div class="lg:col-span-3">
+                <div class="perspective-card fade-in-up" style="animation-delay: 0.2s;">
+                    <div class="card-inner glassmorphism rounded-3xl shadow-2xl overflow-hidden card-hover">
+                        <div class="p-8">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+    
+    <script>
+        // Enhanced JavaScript for advanced interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add active state styling to current nav item
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('nav a');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('bg-gradient-to-r', 'from-indigo-500/20', 'to-purple-500/20', 'text-white', 'border-l-4', 'border-indigo-400');
+                    link.classList.remove('text-gray-300', 'hover:text-white');
+                }
+            });
+
+            // Enhanced form interactions
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('transform', 'scale-105');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('transform', 'scale-105');
+                });
+            });
+
+            // Floating particles animation enhancement
+            function createParticle() {
+                const particle = document.createElement('div');
+                particle.className = 'absolute rounded-full bg-white/5 animate-pulse pointer-events-none';
+                particle.style.width = Math.random() * 6 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDuration = Math.random() * 4 + 3 + 's';
+                particle.style.animationDelay = Math.random() * 2 + 's';
+                
+                document.querySelector('.absolute.inset-0.overflow-hidden').appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 8000);
+            }
+
+            // Create new particles periodically
+            setInterval(createParticle, 2000);
+        });
+    </script>
+}

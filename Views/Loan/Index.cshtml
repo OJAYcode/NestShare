@@ -1,0 +1,381 @@
+@model Thrift.ViewModels.LoanIndexViewModel
+@using Thrift.Models
+@{
+    ViewData["Title"] = "My Loans";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 text-gray-800">
+                <i class="fas fa-money-bill-wave text-primary me-2"></i>
+                My Loans
+            </h1>
+            <p class="text-muted">Manage your loans and track payments</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Calculator" class="btn btn-outline-info">
+                <i class="fas fa-calculator me-1"></i>
+                Loan Calculator
+            </a>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i>
+                Add New Loan
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Total Loans
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalLoans</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Total Principal
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalPrincipal.ToString("C")</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Current Balance
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalCurrentBalance.ToString("C")</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-balance-scale fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Monthly Payments
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalMonthlyPayments.ToString("C")</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <a asp-action="Analytics" class="btn btn-outline-success w-100">
+                                <i class="fas fa-chart-bar d-block mb-2 fa-2x"></i>
+                                Loan Analytics
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-action="Calculator" class="btn btn-outline-info w-100">
+                                <i class="fas fa-calculator d-block mb-2 fa-2x"></i>
+                                Calculate Loan
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a asp-action="Create" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-plus d-block mb-2 fa-2x"></i>
+                                Add New Loan
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#exportModal">
+                                <i class="fas fa-download d-block mb-2 fa-2x"></i>
+                                Export Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loans Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Your Loans</h6>
+            <div class="dropdown no-arrow">
+                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
+                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right shadow">
+                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#exportModal">
+                        <i class="fas fa-download fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Export
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (Model.Loans.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th>Loan Name</th>
+                                <th>Type</th>
+                                <th>Principal</th>
+                                <th>Current Balance</th>
+                                <th>Monthly Payment</th>
+                                <th>Interest Rate</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                                <th>Next Payment</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var loan in Model.Loans)
+                            {
+                                <tr>
+                                    <td>
+                                        <strong>@loan.LoanName</strong>
+                                        <br>
+                                        <small class="text-muted">@loan.LoanTermMonths months</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@loan.LoanType</span>
+                                    </td>
+                                    <td>@loan.PrincipalAmount.ToString("C")</td>
+                                    <td>
+                                        <strong>@loan.CurrentBalance.ToString("C")</strong>
+                                        <br>
+                                        <small class="text-muted">Paid: @loan.TotalPaid.ToString("C")</small>
+                                    </td>
+                                    <td>@loan.MonthlyPayment.ToString("C")</td>
+                                    <td>@loan.InterestRate.ToString("P2")</td>
+                                    <td>
+                                        @switch (loan.Status)
+                                        {
+                                            case LoanStatus.Active:
+                                                <span class="badge bg-success">Active</span>
+                                                break;
+                                            case LoanStatus.PaidOff:
+                                                <span class="badge bg-primary">Paid Off</span>
+                                                break;
+                                            case LoanStatus.Delinquent:
+                                                <span class="badge bg-danger">Delinquent</span>
+                                                break;
+                                            case LoanStatus.Closed:
+                                                <span class="badge bg-secondary">Closed</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-warning">@loan.Status</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="progress" style="height: 20px;">
+                                            <div class="progress-bar bg-success" role="progressbar" 
+                                                 style="width: @(loan.ProgressPercentage)%" 
+                                                 aria-valuenow="@loan.ProgressPercentage" 
+                                                 aria-valuemin="0" aria-valuemax="100">
+                                                @loan.ProgressPercentage.ToString("F1")%
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (loan.NextPaymentDate.HasValue)
+                                        {
+                                            <span class="@(loan.NextPaymentDate.Value < DateTime.Today.AddDays(7) ? "text-warning" : "")">
+                                                @loan.NextPaymentDate.Value.ToString("MMM dd, yyyy")
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Details" asp-route-id="@loan.Id" class="btn btn-sm btn-outline-primary" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            @if (loan.Status == LoanStatus.Active)
+                                            {
+                                                <a asp-action="MakePayment" asp-route-id="@loan.Id" class="btn btn-sm btn-outline-success" title="Make Payment">
+                                                    <i class="fas fa-credit-card"></i>
+                                                </a>
+                                            }
+                                            <a asp-action="Edit" asp-route-id="@loan.Id" class="btn btn-sm btn-outline-warning" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@loan.Id" class="btn btn-sm btn-outline-danger" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="fas fa-money-bill-wave fa-3x text-gray-300 mb-3"></i>
+                    <h4 class="text-gray-500">No Loans Found</h4>
+                    <p class="text-gray-400 mb-4">You haven't added any loans yet. Get started by adding your first loan!</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        Add Your First Loan
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Export Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Export Loan Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Choose the export format for your loan data:</p>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-success" onclick="exportData('csv')">
+                        <i class="fas fa-file-csv me-2"></i>
+                        Export as CSV
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="exportData('pdf')">
+                        <i class="fas fa-file-pdf me-2"></i>
+                        Export as PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Export functionality
+        function exportData(format) {
+            // This would typically make an AJAX call to an export endpoint
+            console.log(`Exporting data as ${format.toUpperCase()}`);
+            $('#exportModal').modal('hide');
+            
+            // Show a toast notification
+            showToast('Export started', `Your loan data is being exported as ${format.toUpperCase()}...`, 'info');
+        }
+
+        // Toast notification helper
+        function showToast(title, message, type = 'info') {
+            // Implementation would depend on your toast library
+            console.log(`${type.toUpperCase()}: ${title} - ${message}`);
+        }
+
+        // Initialize DataTable if jQuery DataTables is available
+        $(document).ready(function() {
+            if ($.fn.DataTable && $('#dataTable').length) {
+                $('#dataTable').DataTable({
+                    "pageLength": 10,
+                    "responsive": true,
+                    "order": [[0, "asc"]]
+                });
+            }
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .border-left-primary {
+            border-left: 0.25rem solid #4e73df !important;
+        }
+        .border-left-success {
+            border-left: 0.25rem solid #1cc88a !important;
+        }
+        .border-left-info {
+            border-left: 0.25rem solid #36b9cc !important;
+        }
+        .border-left-warning {
+            border-left: 0.25rem solid #f6c23e !important;
+        }
+        
+        .card {
+            transition: transform 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .progress {
+            border-radius: 10px;
+        }
+        
+        .btn-group .btn {
+            margin-right: 2px;
+        }
+        
+        .btn-group .btn:last-child {
+            margin-right: 0;
+        }
+    </style>
+}

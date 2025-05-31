@@ -1,0 +1,853 @@
+@model Thrift.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<style>    @* CSS Keyframes need double @ in Razor *@
+    @@keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @@keyframes fadeInUp {
+        from { 
+            opacity: 0; 
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0);
+        }
+    }
+    
+    @@keyframes fadeInLeft {
+        from { 
+            opacity: 0; 
+            transform: translateX(-20px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateX(0);
+        }
+    }
+    
+    @@keyframes fadeInRight {
+        from { 
+            opacity: 0; 
+            transform: translateX(20px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateX(0);
+        }
+    }
+      @@keyframes shimmer {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
+    }
+    
+    .animate-fadeIn {
+        animation: fadeIn 0.8s ease-out forwards;
+    }
+    
+    .animate-fadeInUp {
+        animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    .animate-fadeInLeft {
+        animation: fadeInLeft 0.8s ease-out forwards;
+    }
+    
+    .animate-fadeInRight {
+        animation: fadeInRight 0.8s ease-out forwards;
+    }
+    
+    .animate-shimmer {
+        animation: shimmer 2s infinite;
+    }
+    
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(139, 92, 246, 0.3) rgba(229, 231, 235, 0.3);
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(229, 231, 235, 0.3);
+        border-radius: 10px;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: rgba(139, 92, 246, 0.3);
+        border-radius: 10px;
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
+    <!-- Dashboard Header -->
+    <div class="py-8 px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-200 shadow-md relative overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden opacity-5">
+            <div class="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-purple-400"></div>
+            <div class="absolute -left-20 -bottom-20 w-64 h-64 rounded-full bg-indigo-400"></div>
+        </div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="animate-fadeIn">
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">Financial Dashboard</h1>
+                    <p class="mt-2 text-gray-600">Welcome back! Here's an overview of your financial journey.</p>
+                </div>
+                <div class="flex space-x-3 animate-fadeInRight">
+                    <a href="@Url.Action("Create", "Savings")" class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-all duration-200 transform hover:scale-105">
+                        <i class="fas fa-plus mr-2"></i>
+                        New Goal
+                    </a>
+                    <a href="@Url.Action("AddTransaction", "Savings")" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105">
+                        <i class="fas fa-exchange-alt mr-2"></i>
+                        Add Transaction
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>    <!-- Dashboard Content -->
+    <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fadeInUp">
+            <!-- Total Savings Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden relative">
+                <div class="absolute -right-6 -bottom-6 w-20 h-20 rounded-full bg-purple-100 opacity-50"></div>
+                <div class="flex items-center relative">
+                    <div class="p-3 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white mr-4 shadow-md">
+                        <i class="fas fa-piggy-bank text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Total Savings</p>
+                        <h3 class="text-2xl font-bold text-gray-800">@Model.TotalSavings.ToString("C")</h3>
+                    </div>
+                </div>
+                <div class="mt-4 relative">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                        <div class="bg-gradient-to-r from-purple-500 to-indigo-600 h-2.5 rounded-full relative" style="width: @Math.Min(Model.SavingsProgress, 100)%">
+                            <div class="absolute inset-0 bg-white/30 animate-shimmer"></div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 mt-2 flex justify-between">
+                        <span>@Model.SavingsProgress.ToString("F1")% of target</span>
+                        <span>Target: @(Model.SavingsTarget > 0 ? Model.SavingsTarget.ToString("C") : "$0.00")</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Monthly Income Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden relative">
+                <div class="absolute -right-6 -bottom-6 w-20 h-20 rounded-full bg-green-100 opacity-50"></div>
+                <div class="flex items-center relative">
+                    <div class="p-3 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white mr-4 shadow-md">
+                        <i class="fas fa-dollar-sign text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Monthly Income</p>
+                        <h3 class="text-2xl font-bold text-gray-800">@Model.ThisMonthIncome.ToString("C")</h3>
+                    </div>
+                </div>
+                <div class="mt-4 relative">
+                    <p class="text-xs font-medium text-gray-600 flex items-center">
+                        <i class="fas fa-chart-line mr-1 text-green-600"></i>
+                        <span>Current Budget Period</span>
+                    </p>
+                    <a href="@Url.Action("Index", "Budget")" class="text-xs text-green-600 hover:text-green-800 font-medium flex items-center mt-1.5 group">
+                        <span>View Budget Details</span>
+                        <i class="fas fa-chevron-right ml-1 text-xs group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Monthly Expenses Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden relative">
+                <div class="absolute -right-6 -bottom-6 w-20 h-20 rounded-full bg-red-100 opacity-50"></div>
+                <div class="flex items-center relative">
+                    <div class="p-3 rounded-full bg-gradient-to-br from-red-500 to-pink-600 text-white mr-4 shadow-md">
+                        <i class="fas fa-shopping-cart text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Monthly Expenses</p>
+                        <h3 class="text-2xl font-bold text-gray-800">@Model.ThisMonthExpenses.ToString("C")</h3>
+                    </div>
+                </div>
+                <div class="mt-4 relative">
+                    @{
+                        var incomePercentage = Model.ThisMonthIncome > 0 ? (Model.ThisMonthExpenses / Model.ThisMonthIncome) * 100 : 0;
+                        var progressColorClass = incomePercentage > 90 ? "bg-red-500" : 
+                                              incomePercentage > 75 ? "bg-yellow-500" : 
+                                              "bg-gradient-to-r from-orange-500 to-red-500";
+                    }
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                        <div class="@progressColorClass h-2.5 rounded-full relative" style="width: @Math.Min(incomePercentage, 100)%">
+                            <div class="absolute inset-0 bg-white/30 animate-shimmer"></div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-600 mt-2 flex justify-between">
+                        <span>@incomePercentage.ToString("F1")% of income</span>
+                        <span class="@(incomePercentage > 90 ? "text-red-600 font-medium" : "")">
+                            @(incomePercentage > 90 ? "High Spending!" : "")
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Savings Goals Card -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] overflow-hidden relative">
+                <div class="absolute -right-6 -bottom-6 w-20 h-20 rounded-full bg-blue-100 opacity-50"></div>
+                <div class="flex items-center relative">
+                    <div class="p-3 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white mr-4 shadow-md">
+                        <i class="fas fa-bullseye text-xl"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500 mb-1">Savings Goals</p>
+                        <h3 class="text-2xl font-bold text-gray-800">@Model.ActiveSavingsGoals</h3>
+                    </div>
+                </div>
+                <div class="mt-4 relative">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="flex items-center text-xs text-gray-600">
+                                <span class="inline-block w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
+                                <span>Active</span>
+                            </div>
+                            <div class="flex items-center text-xs text-gray-600 mt-1">
+                                <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                                <span>@Model.CompletedSavingsGoals Completed</span>
+                            </div>
+                        </div>
+                        <a href="@Url.Action("Create", "Savings")" class="text-xs px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors duration-200 inline-flex items-center group">
+                            <i class="fas fa-plus mr-1.5"></i>
+                            <span>New Goal</span>
+                        </a>
+                    </div>
+                </div>            </div>
+        </div>        <!-- Quick Navigation Section (Advanced Design) -->
+        <div class="bg-gradient-to-r from-indigo-50 via-purple-50 to-blue-50 rounded-xl shadow-lg p-5 border border-gray-200 mb-6 animate-fadeInUp overflow-hidden relative backdrop-blur-sm" style="animation-delay: 0.2s;">
+            <!-- Background decorations -->
+            <div class="absolute -right-12 -top-12 w-32 h-32 bg-purple-200/40 rounded-full blur-xl"></div>
+            <div class="absolute -left-12 -bottom-12 w-32 h-32 bg-blue-200/40 rounded-full blur-xl"></div>
+            <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-indigo-200/30 rounded-full blur-lg transform -translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute top-1/4 right-1/3 w-24 h-24 bg-pink-200/20 rounded-full blur-xl"></div>
+            
+            <div class="flex items-center mb-4 relative z-10">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center text-white mr-3 shadow-md transform hover:rotate-12 transition-transform duration-300">
+                    <i class="fas fa-compass text-sm"></i>
+                </div>
+                <h2 class="text-base font-bold text-gray-800 bg-gradient-to-r from-indigo-700 via-purple-700 to-fuchsia-700 bg-clip-text text-transparent">Quick Access</h2>
+            </div>
+              <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <!-- Savings Goals Button -->
+                <a href="@Url.Action("Index", "Savings")" class="group relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-purple-400 to-indigo-600 rounded-xl opacity-0 group-hover:opacity-100 blur-md transition-all duration-300 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-40 bg-[radial-gradient(circle_at_50%_120%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+                    <div class="bg-white relative rounded-xl shadow-md p-3 sm:p-4 border border-purple-100 flex flex-col items-center justify-center text-center transition-all duration-300 group-hover:border-purple-300 group-hover:shadow-xl group-hover:shadow-purple-200/50 group-hover:scale-[1.03] group-hover:-translate-y-1 z-10">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 mb-2 sm:mb-3 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-700 flex items-center justify-center text-white shadow-lg ring-4 ring-white group-hover:ring-purple-50 transition-all duration-300 group-hover:scale-110">
+                            <i class="fas fa-piggy-bank text-lg sm:text-xl"></i>
+                        </div>
+                        <span class="font-medium text-gray-800 group-hover:text-purple-700 transition-colors duration-200 group-hover:font-semibold text-sm sm:text-base">Savings</span>
+                        <span class="text-xs text-gray-500 mt-1 sm:mt-1.5 max-w-[95%] mx-auto hidden sm:block">Track & manage your goals</span>
+                    </div>
+                </a>
+
+                <!-- Budget Management Button -->
+                <a href="@Url.Action("Index", "Budget")" class="group relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 rounded-xl opacity-0 group-hover:opacity-100 blur-md transition-all duration-300 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-40 bg-[radial-gradient(circle_at_50%_120%,rgba(74,222,128,0.3),rgba(255,255,255,0))]"></div>
+                    <div class="bg-white relative rounded-xl shadow-md p-3 sm:p-4 border border-green-100 flex flex-col items-center justify-center text-center transition-all duration-300 group-hover:border-green-300 group-hover:shadow-xl group-hover:shadow-green-200/50 group-hover:scale-[1.03] group-hover:-translate-y-1 z-10">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 mb-2 sm:mb-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-700 flex items-center justify-center text-white shadow-lg ring-4 ring-white group-hover:ring-green-50 transition-all duration-300 group-hover:scale-110">
+                            <i class="fas fa-money-bill-wave text-lg sm:text-xl"></i>
+                        </div>
+                        <span class="font-medium text-gray-800 group-hover:text-green-700 transition-colors duration-200 group-hover:font-semibold text-sm sm:text-base">Budget</span>
+                        <span class="text-xs text-gray-500 mt-1 sm:mt-1.5 max-w-[95%] mx-auto hidden sm:block">Plan your monthly finances</span>
+                    </div>
+                </a>                <!-- Account Settings Button -->
+                <a href="@Url.Action("Index", "Account")" class="group relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-xl opacity-0 group-hover:opacity-100 blur-md transition-all duration-300 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-40 bg-[radial-gradient(circle_at_50%_120%,rgba(251,191,36,0.3),rgba(255,255,255,0))]"></div>
+                    <div class="bg-white relative rounded-xl shadow-md p-3 sm:p-4 border border-yellow-100 flex flex-col items-center justify-center text-center transition-all duration-300 group-hover:border-yellow-300 group-hover:shadow-xl group-hover:shadow-yellow-200/50 group-hover:scale-[1.03] group-hover:-translate-y-1 z-10">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 mb-2 sm:mb-3 rounded-xl bg-gradient-to-br from-yellow-500 to-amber-700 flex items-center justify-center text-white shadow-lg ring-4 ring-white group-hover:ring-yellow-50 transition-all duration-300 group-hover:scale-110">
+                            <i class="fas fa-user-cog text-lg sm:text-xl"></i>
+                        </div>
+                        <span class="font-medium text-gray-800 group-hover:text-yellow-700 transition-colors duration-200 group-hover:font-semibold text-sm sm:text-base">Account</span>
+                        <span class="text-xs text-gray-500 mt-1 sm:mt-1.5 max-w-[95%] mx-auto hidden sm:block">Update your profile</span>
+                    </div>
+                </a>
+                
+                <!-- Notifications Button -->
+                <a href="@Url.Action("Index", "Notifications")" class="group relative">
+                    <div class="absolute inset-0 bg-gradient-to-br from-violet-400 to-purple-600 rounded-xl opacity-0 group-hover:opacity-100 blur-md transition-all duration-300 group-hover:scale-110"></div>
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-40 bg-[radial-gradient(circle_at_50%_120%,rgba(167,139,250,0.3),rgba(255,255,255,0))]"></div>
+                    <div class="bg-white relative rounded-xl shadow-md p-3 sm:p-4 border border-violet-100 flex flex-col items-center justify-center text-center transition-all duration-300 group-hover:border-violet-300 group-hover:shadow-xl group-hover:shadow-violet-200/50 group-hover:scale-[1.03] group-hover:-translate-y-1 z-10">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 mb-2 sm:mb-3 rounded-xl bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center text-white shadow-lg ring-4 ring-white group-hover:ring-violet-50 transition-all duration-300 group-hover:scale-110">
+                            <i class="fas fa-bell text-lg sm:text-xl"></i>
+                        </div>
+                        <span class="font-medium text-gray-800 group-hover:text-violet-700 transition-colors duration-200 group-hover:font-semibold text-sm sm:text-base">Alerts</span>
+                        <span class="text-xs text-gray-500 mt-1 sm:mt-1.5 max-w-[95%] mx-auto hidden sm:block">Stay informed & updated</span>
+                    </div>
+                </a>
+            </div>
+        </div>        <!-- Quick Actions Row -->
+        <div class="flex items-center bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 border border-indigo-100 mb-6 animate-fadeInUp overflow-x-auto custom-scrollbar relative" style="animation-delay: 0.3s;">
+            <!-- Background decorations -->
+            <div class="absolute right-1/4 -bottom-8 w-24 h-24 bg-indigo-200/20 rounded-full blur-xl"></div>
+            <div class="absolute left-1/3 -top-8 w-20 h-20 bg-purple-200/20 rounded-full blur-xl"></div>
+            
+            <div class="flex-shrink-0 mr-4 relative z-10">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 flex items-center justify-center text-white shadow-md">
+                    <i class="fas fa-bolt text-sm"></i>
+                </div>
+            </div>
+            <div class="flex space-x-3 relative z-10">
+                <a href="@Url.Action("Create", "Savings")" class="flex-shrink-0 bg-white rounded-xl px-4 py-2.5 flex items-center border border-gray-200 hover:border-indigo-300 hover:shadow-md transition-all duration-200 group transform hover:translate-y-[-2px] hover:scale-105">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600 mr-3 group-hover:bg-indigo-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fas fa-plus text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-700">New Goal</span>
+                        <p class="text-xs text-gray-500 mt-0.5">Create savings target</p>
+                    </div>
+                </a>
+                
+                <a href="@Url.Action("AddTransaction", "Savings")" class="flex-shrink-0 bg-white rounded-xl px-4 py-2.5 flex items-center border border-gray-200 hover:border-green-300 hover:shadow-md transition-all duration-200 group transform hover:translate-y-[-2px] hover:scale-105">
+                    <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center text-green-600 mr-3 group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fas fa-dollar-sign text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-green-700">Add Funds</span>
+                        <p class="text-xs text-gray-500 mt-0.5">Deposit to savings</p>
+                    </div>
+                </a>
+                
+                <a href="@Url.Action("Create", "Budget")" class="flex-shrink-0 bg-white rounded-xl px-4 py-2.5 flex items-center border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 group transform hover:translate-y-[-2px] hover:scale-105">
+                    <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 mr-3 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fas fa-edit text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-blue-700">New Budget</span>
+                        <p class="text-xs text-gray-500 mt-0.5">Plan your expenses</p>
+                    </div>
+                </a>
+                
+                <a href="@Url.Action("Create", "Expense")" class="flex-shrink-0 bg-white rounded-xl px-4 py-2.5 flex items-center border border-gray-200 hover:border-red-300 hover:shadow-md transition-all duration-200 group transform hover:translate-y-[-2px] hover:scale-105">
+                    <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-600 mr-3 group-hover:bg-red-600 group-hover:text-white transition-colors duration-300">
+                        <i class="fas fa-receipt text-sm"></i>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-700 group-hover:text-red-700">Log Expense</span>
+                        <p class="text-xs text-gray-500 mt-0.5">Record spending</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Recent Transactions -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 lg:col-span-1 animate-fadeInLeft transform hover:scale-[1.01] transition-all duration-300">
+                <div class="flex justify-between items-center mb-5">
+                    <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-exchange-alt text-purple-500 mr-2"></i>
+                        Recent Transactions
+                    </h2>
+                    <a asp-controller="Savings" asp-action="AddTransaction" class="text-sm text-purple-600 hover:text-purple-800 flex items-center group">
+                        <span>Add New</span>
+                        <i class="fas fa-plus ml-1 text-xs group-hover:rotate-90 transition-transform duration-300"></i>
+                    </a>
+                </div>
+                
+                <div class="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+                    @if (Model.RecentTransactions != null && Model.RecentTransactions.Any())
+                    {
+                        @foreach (var transaction in Model.RecentTransactions)
+                        {
+                            <div class="flex items-center justify-between p-3.5 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-100 transition-colors duration-200">
+                                <div class="flex items-center">
+                                    <div class="@(transaction.Type == "Deposit" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600") p-2.5 rounded-lg mr-3 shadow-sm">
+                                        <i class="fas @(transaction.Type == "Deposit" ? "fa-arrow-up" : "fa-arrow-down")"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-800">@(string.IsNullOrEmpty(transaction.Note) ? "Transaction" : transaction.Note)</p>
+                                        <p class="text-xs text-gray-500">@transaction.TransactionDate.ToString("MMM dd, yyyy")</p>
+                                    </div>
+                                </div>
+                                <div class="@(transaction.Type == "Deposit" ? "text-green-600" : "text-red-600") font-medium">
+                                    @(transaction.Type == "Deposit" ? "+" : "-")@transaction.Amount.ToString("C")
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-8 bg-gray-50 rounded-xl border border-gray-200">
+                            <div class="mb-3 text-gray-400">
+                                <i class="fas fa-exchange-alt text-4xl"></i>
+                            </div>
+                            <p class="text-gray-500 mb-4">No recent transactions</p>
+                            <a asp-controller="Savings" asp-action="AddTransaction" class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200">
+                                <i class="fas fa-plus mr-2"></i>
+                                Add First Transaction
+                            </a>
+                        </div>
+                    }
+                </div>
+                
+                <div class="mt-4 text-center pt-3 border-t border-gray-100">
+                    <a asp-controller="Savings" asp-action="Index" class="inline-flex items-center text-sm text-purple-600 hover:text-purple-800 font-medium group">
+                        <span>View All Transactions</span>
+                        <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Active Savings Goals -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 lg:col-span-2 animate-fadeInRight transform hover:scale-[1.01] transition-all duration-300">
+                <div class="flex justify-between items-center mb-5">
+                    <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-bullseye text-indigo-500 mr-2"></i>
+                        Active Savings Goals
+                    </h2>
+                    <a asp-controller="Savings" asp-action="Index" class="text-sm text-purple-600 hover:text-purple-800 flex items-center group">
+                        <span>View All</span>
+                        <i class="fas fa-chevron-right ml-1 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                
+                <div class="space-y-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+                    @if (Model.SavingsGoals != null && Model.SavingsGoals.Any())
+                    {
+                        @foreach (var goal in Model.SavingsGoals)
+                        {
+                            var progressPercentage = goal.TargetAmount > 0 ? (goal.CurrentAmount / goal.TargetAmount * 100) : 0;
+                            var colorTheme = string.IsNullOrEmpty(goal.ColorTheme) ? "purple" : goal.ColorTheme;
+                            var themeColorClass = colorTheme switch {
+                                "blue" => "from-blue-500 to-blue-600",
+                                "green" => "from-green-500 to-green-600",
+                                "orange" => "from-orange-500 to-orange-600",
+                                "red" => "from-red-500 to-red-600",
+                                "pink" => "from-pink-500 to-pink-600",
+                                "teal" => "from-teal-500 to-teal-600",
+                                "indigo" => "from-indigo-500 to-indigo-600",
+                                _ => "from-purple-500 to-purple-600"
+                            };
+                            
+                            <div class="p-5 border border-gray-200 rounded-xl hover:shadow-md transition-all duration-200 bg-white relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 @("bg-" + colorTheme + "-100") rounded-full opacity-20"></div>
+                                <div class="flex justify-between mb-3 relative">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-xl @("bg-" + colorTheme + "-100") flex items-center justify-center @("text-" + colorTheme + "-600") mr-3 shadow-sm">
+                                            <i class="fas fa-@(goal.Icon ?? "piggy-bank") text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-medium text-gray-800">@goal.Name</h3>
+                                            <p class="text-xs text-gray-500">@goal.Category</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-sm">
+                                        <span class="@(goal.Priority == "High" ? "bg-red-100 text-red-800" : goal.Priority == "Medium" ? "bg-yellow-100 text-yellow-800" : "bg-green-100 text-green-800") px-2.5 py-1 rounded-full text-xs font-medium">
+                                            @goal.Priority
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3 relative">
+                                    <div class="flex justify-between text-sm mb-1.5">
+                                        <span class="font-medium text-gray-700">@goal.CurrentAmount.ToString("C")</span>
+                                        <span class="text-gray-600">@goal.TargetAmount.ToString("C")</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                                        <div class="bg-gradient-to-r @themeColorClass h-2.5 rounded-full relative" style="width: @Math.Min(progressPercentage, 100)%">
+                                            <div class="absolute inset-0 bg-white/30 animate-shimmer"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between mt-1.5">
+                                        <span class="text-xs @("text-" + colorTheme + "-600") font-medium">@progressPercentage.ToString("F1")% Complete</span>
+                                        @if (goal.TargetDate.HasValue)
+                                        {
+                                            var daysLeft = (goal.TargetDate.Value - DateTime.Now).Days;
+                                            <span class="text-xs text-gray-500">
+                                                @(daysLeft > 0 
+                                                    ? $"{daysLeft} days left" 
+                                                    : daysLeft == 0 
+                                                        ? "Due today!" 
+                                                        : "Overdue")
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-end space-x-2 mt-3 relative">
+                                    <a asp-controller="Savings" asp-action="AddFunds" asp-route-id="@goal.Id" 
+                                       class="text-sm px-3.5 py-1.5 @("bg-" + colorTheme + "-100") @("text-" + colorTheme + "-700") rounded-lg hover:@("bg-" + colorTheme + "-200") transition-colors duration-200 flex items-center">
+                                        <i class="fas fa-plus mr-1.5"></i>
+                                        Add Funds
+                                    </a>
+                                    <a asp-controller="Savings" asp-action="Details" asp-route-id="@goal.Id" 
+                                       class="text-sm px-3.5 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 flex items-center">
+                                        <i class="fas fa-eye mr-1.5"></i>
+                                        Details
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-12 bg-gray-50 rounded-xl border border-gray-200">
+                            <div class="mb-4 text-gray-400">
+                                <i class="fas fa-bullseye text-5xl"></i>
+                            </div>
+                            <p class="text-gray-700 font-medium mb-2">You don't have any active savings goals yet.</p>
+                            <p class="text-gray-500 mb-6 max-w-md mx-auto">Create your first savings goal to start tracking your progress towards your financial objectives.</p>
+                            <a asp-controller="Savings" asp-action="Create" class="inline-flex items-center px-5 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-colors duration-200 shadow-md">
+                                <i class="fas fa-plus mr-2"></i>
+                                Create Your First Goal
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Monthly Savings Chart -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 transform hover:scale-[1.01] transition-all duration-300 animate-fadeInUp" style="animation-delay: 0.3s;">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-chart-line text-purple-500 mr-2"></i>
+                        Monthly Savings
+                    </h2>
+                    <div class="bg-purple-100 text-purple-700 text-xs rounded-lg py-1 px-2">Last 6 months</div>
+                </div>
+                <div class="h-72 relative">
+                    <div id="monthlySavingsChart" class="w-full h-full"></div>
+                    <div id="monthlySavingsLoading" class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin mb-3"></div>
+                            <p class="text-gray-500">Loading chart data...</p>
+                        </div>
+                    </div>
+                    <div id="monthlySavingsNoData" class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg hidden">
+                        <div class="flex flex-col items-center text-center">
+                            <i class="fas fa-chart-bar text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-gray-500 mb-2">No savings data available</p>
+                            <p class="text-gray-400 text-sm max-w-xs">Add transactions to see your monthly savings trends over time</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Expense Categories Chart -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 transform hover:scale-[1.01] transition-all duration-300 animate-fadeInUp" style="animation-delay: 0.4s;">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
+                        Expense Breakdown
+                    </h2>
+                    <a href="@Url.Action("Index", "Budget")" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center group">
+                        <span>Manage Budget</span>
+                        <i class="fas fa-chevron-right ml-1 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+                <div class="h-72 relative">
+                    <div id="expenseCategoriesChart" class="w-full h-full"></div>
+                    <div id="expenseCategoriesLoading" class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-3"></div>
+                            <p class="text-gray-500">Loading chart data...</p>
+                        </div>
+                    </div>
+                    <div id="expenseCategoriesNoData" class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg hidden">
+                        <div class="flex flex-col items-center text-center">
+                            <i class="fas fa-chart-pie text-4xl text-gray-300 mb-3"></i>
+                            <p class="text-gray-500 mb-2">No expense data available</p>
+                            <p class="text-gray-400 text-sm max-w-xs">Create a budget to see your expense distribution</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Insights -->
+        <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200 mt-6 animate-fadeInUp" style="animation-delay: 0.5s;">
+            <div class="flex items-center mb-4">
+                <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 mr-3">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h2 class="text-lg font-semibold text-gray-800">Financial Insights</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @{                    // Calculate some basic insights
+                    var savingsRate = Model.ThisMonthIncome > 0 ? 
+                        ((Model.ThisMonthIncome - Model.ThisMonthExpenses) / Model.ThisMonthIncome * 100) : 0;
+                    
+                    var firstGoal = Model.SavingsGoals?.FirstOrDefault();
+                    var goalTimeRemaining = firstGoal?.TargetDate - DateTime.Now;
+                    var goalAmountRemaining = firstGoal != null ? 
+                                             (firstGoal.TargetAmount - firstGoal.CurrentAmount) : 0;
+                }
+                
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
+                    <h3 class="text-blue-800 font-medium mb-2 flex items-center">
+                        <i class="fas fa-piggy-bank mr-2 text-blue-500"></i>
+                        Savings Rate
+                    </h3>
+                    <p class="text-gray-600 text-sm">
+                        Your current savings rate is <span class="font-semibold @(savingsRate < 10 ? "text-red-600" : savingsRate < 20 ? "text-yellow-600" : "text-green-600")">@savingsRate.ToString("F1")%</span> of your income.
+                        @if (savingsRate < 10)
+                        {
+                            <span>Consider reviewing your budget to increase savings.</span>
+                        }
+                        else if (savingsRate < 20)
+                        {
+                            <span>You're on the right track! Aim for 20% if possible.</span>
+                        }
+                        else
+                        {
+                            <span>Excellent job maintaining a healthy savings rate!</span>
+                        }
+                    </p>
+                </div>                  @if (Model.SavingsGoals?.FirstOrDefault() != null && Model.SavingsGoals.FirstOrDefault()?.TargetDate.HasValue == true)
+                {
+                    var goalDetails = Model.SavingsGoals.FirstOrDefault();
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
+                        <h3 class="text-purple-800 font-medium mb-2 flex items-center">
+                            <i class="fas fa-calendar-alt mr-2 text-purple-500"></i>
+                            Goal Timeline
+                        </h3>
+                        <p class="text-gray-600 text-sm">
+                            @if (goalTimeRemaining.HasValue && goalTimeRemaining.Value.TotalDays > 0)
+                            {
+                                <span>You have <span class="font-semibold text-purple-700">@Math.Ceiling(goalTimeRemaining.Value.TotalDays) days</span> 
+                                to save <span class="font-semibold text-purple-700">@goalAmountRemaining.ToString("C")</span> 
+                                for your "@(goalDetails?.Name)" goal.</span>
+                            }
+                            else
+                            {
+                                <span>Your "@(goalDetails?.Name)" goal deadline has passed. 
+                                Consider updating your target date or increasing your contributions.</span>
+                            }
+                        </p>
+                    </div>
+                }
+                
+                <div class="bg-gradient-to-br from-green-50 to-teal-50 rounded-lg p-4 border border-green-100">
+                    <h3 class="text-green-800 font-medium mb-2 flex items-center">
+                        <i class="fas fa-leaf mr-2 text-green-500"></i>
+                        Financial Tip
+                    </h3>
+                    <p class="text-gray-600 text-sm">
+                        @{
+                            var tips = new[] {
+                                "Try the 50/30/20 rule: 50% needs, 30% wants, 20% savings.",
+                                "Review subscriptions monthly to eliminate unused services.",
+                                "Consider automatic transfers to your savings account on payday.",
+                                "Set specific and measurable financial goals to stay motivated.",
+                                "Track your expenses regularly to identify spending patterns."
+                            };
+                            var random = new Random();
+                            var tip = tips[random.Next(tips.Length)];
+                        }
+                        @tip
+                    </p>
+                </div>
+            </div>        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Monthly Savings Chart
+            var monthlySavingsCtx = document.getElementById('monthlySavingsChart').getContext('2d');
+            var monthlySavingsData = @Json.Serialize(Model.MonthlySavingsData ?? new List<dynamic>());
+            
+            // Immediately hide loading indicator
+            document.getElementById('monthlySavingsLoading').style.display = 'none';
+            
+            if (!monthlySavingsData || !monthlySavingsData.length) {
+                document.getElementById('monthlySavingsNoData').style.display = 'flex';
+            } else {
+                var months = monthlySavingsData.map(item => item.Month);
+                var amounts = monthlySavingsData.map(item => item.Amount);
+                
+                var gradient = monthlySavingsCtx.createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, 'rgba(139, 92, 246, 0.8)');
+                gradient.addColorStop(1, 'rgba(139, 92, 246, 0.2)');
+                
+                new Chart(monthlySavingsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Monthly Savings',
+                            data: amounts,
+                            backgroundColor: gradient,
+                            borderColor: 'rgba(139, 92, 246, 1)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            hoverBackgroundColor: 'rgba(139, 92, 246, 0.9)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animations: {
+                            tension: {
+                                duration: 1000,
+                                easing: 'linear',
+                                from: 0.8,
+                                to: 0.2,
+                                loop: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    drawBorder: false,
+                                    color: 'rgba(200, 200, 200, 0.2)',
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value;
+                                    },
+                                    padding: 10,
+                                    color: '#6B7280'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    padding: 10,
+                                    color: '#6B7280'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                titleColor: '#1F2937',
+                                bodyColor: '#4B5563',
+                                borderColor: 'rgba(139, 92, 246, 0.5)',
+                                borderWidth: 1,
+                                padding: 12,
+                                cornerRadius: 8,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Amount: $' + context.raw;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Expense Categories Chart
+            var expenseCategoriesCtx = document.getElementById('expenseCategoriesChart').getContext('2d');
+            var expenseCategoriesData = @Json.Serialize(Model.ExpenseCategoriesData ?? new Dictionary<string, decimal>());
+            
+            // Immediately hide loading indicator
+            document.getElementById('expenseCategoriesLoading').style.display = 'none';
+            
+            if (!expenseCategoriesData || Object.keys(expenseCategoriesData).length === 0) {
+                document.getElementById('expenseCategoriesNoData').style.display = 'flex';
+            } else {
+                var categories = Object.keys(expenseCategoriesData);
+                var values = Object.values(expenseCategoriesData);
+                
+                // Generate vibrant colors for each category
+                var backgroundColors = [
+                    'rgba(139, 92, 246, 0.8)',  // Purple
+                    'rgba(59, 130, 246, 0.8)',  // Blue
+                    'rgba(16, 185, 129, 0.8)',  // Green
+                    'rgba(245, 158, 11, 0.8)',  // Amber
+                    'rgba(239, 68, 68, 0.8)',   // Red
+                    'rgba(236, 72, 153, 0.8)',  // Pink
+                    'rgba(99, 102, 241, 0.8)',  // Indigo
+                    'rgba(20, 184, 166, 0.8)',  // Teal
+                    'rgba(124, 58, 237, 0.8)',  // Violet
+                    'rgba(234, 88, 12, 0.8)'    // Orange
+                ];
+                
+                new Chart(expenseCategoriesCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: categories,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: backgroundColors.slice(0, categories.length),
+                            borderWidth: 2,
+                            borderColor: '#fff',
+                            hoverBorderWidth: 3,
+                            hoverOffset: 10,
+                            cutout: '70%'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: 10
+                        },
+                        animations: {
+                            animateRotate: true,
+                            animateScale: true
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    font: {
+                                        size: 11
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                titleColor: '#1F2937',
+                                bodyColor: '#4B5563',
+                                borderColor: 'rgba(99, 102, 241, 0.5)',
+                                borderWidth: 1,
+                                padding: 12,
+                                cornerRadius: 8,
+                                displayColors: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        var label = context.label || '';
+                                        var value = context.raw || 0;
+                                        var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        var percentage = Math.round((value / total) * 100);
+                                        return label + ': $' + value + ' (' + percentage + '%)';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

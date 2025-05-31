@@ -1,0 +1,567 @@
+@model Thrift.Models.SavingsGoal
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Edit Savings Goal";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 py-6 relative overflow-hidden">
+    <!-- Floating background elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 opacity-30">
+        <div class="absolute top-20 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
+        <div class="absolute bottom-32 left-16 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: -3s;"></div>
+        <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: -6s;"></div>
+        
+        <!-- Floating icons -->
+        <div class="absolute top-1/4 left-1/4 text-purple-200 animate-float" style="animation-delay: -1s;">
+            <i class="fas fa-piggy-bank text-4xl"></i>
+        </div>
+        <div class="absolute bottom-1/3 right-1/4 text-indigo-200 animate-float" style="animation-delay: -4s;">
+            <i class="fas fa-chart-line text-3xl"></i>
+        </div>
+        <div class="absolute top-3/4 left-1/3 text-pink-200 animate-float" style="animation-delay: -2s;">
+            <i class="fas fa-coins text-3xl"></i>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+        <!-- Header Section -->
+        <div class="text-center mb-8 animate-fadeInUp">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white mb-4 shadow-lg">
+                <i class="fas fa-edit text-2xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Edit Savings Goal
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Modify your savings goal to better align with your financial objectives
+            </p>
+        </div>
+
+        <!-- Progress Overview Card -->
+        <div class="max-w-4xl mx-auto mb-8 animate-fadeInUp" style="animation-delay: 0.1s;">
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800">Current Progress</h3>
+                    <div class="text-sm text-gray-500">@Model.Name</div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Current Amount -->
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-600">@Model.CurrentAmount.ToString("C")</div>
+                        <div class="text-sm text-gray-500">Current Amount</div>
+                    </div>
+                    
+                    <!-- Target Amount -->
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-indigo-600">@Model.TargetAmount.ToString("C")</div>
+                        <div class="text-sm text-gray-500">Target Amount</div>
+                    </div>
+                    
+                    <!-- Progress Percentage -->
+                    <div class="text-center">
+                        @{
+                            var progressPercentage = Model.TargetAmount > 0 ? (Model.CurrentAmount / Model.TargetAmount * 100) : 0;
+                        }
+                        <div class="text-2xl font-bold text-green-600">@progressPercentage.ToString("F1")%</div>
+                        <div class="text-sm text-gray-500">Progress</div>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="mt-4">
+                    <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-500 relative"
+                             style="width: @Math.Min(progressPercentage, 100)%">
+                            <div class="absolute inset-0 bg-white/30 animate-shimmer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Edit Form -->
+        <div class="max-w-4xl mx-auto animate-fadeInUp" style="animation-delay: 0.2s;">
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl overflow-hidden">
+                <!-- Form Header -->
+                <div class="bg-gradient-to-r from-purple-500 to-indigo-600 p-6 text-white">
+                    <h2 class="text-2xl font-semibold flex items-center">
+                        <i class="fas fa-@(Model.Icon ?? "piggy-bank") mr-3"></i>
+                        Update Goal Details
+                    </h2>
+                    <p class="text-purple-100 mt-1">Adjust your savings parameters and preferences</p>
+                </div>
+
+                <!-- Form Content -->
+                <div class="p-8">
+                    <form asp-action="Edit" method="post" class="space-y-8" id="editGoalForm">
+                        <div asp-validation-summary="ModelOnly" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md text-red-700 mb-6"></div>
+                        
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="UserId" />
+                        <input type="hidden" asp-for="CurrentAmount" />
+                        <input type="hidden" asp-for="StartDate" />
+                        
+                        <!-- Basic Information Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                                    <i class="fas fa-info-circle text-purple-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Basic Information</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Goal Name -->
+                                <div class="space-y-2">
+                                    <label asp-for="Name" class="block text-sm font-semibold text-gray-700">Goal Name</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 w-10 flex items-center justify-center pointer-events-none">
+                                            <i class="fas fa-tag text-gray-400"></i>
+                                        </div>
+                                        <input asp-for="Name" 
+                                               class="w-full h-12 pl-10 pr-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                                               placeholder="Enter your goal name..." />
+                                    </div>
+                                    <span asp-validation-for="Name" class="text-red-500 text-sm"></span>
+                                </div>
+                                
+                                <!-- Category -->
+                                <div class="space-y-2">
+                                    <label asp-for="Category" class="block text-sm font-semibold text-gray-700">Category</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 w-10 flex items-center justify-center pointer-events-none">
+                                            <i class="fas fa-folder text-gray-400"></i>
+                                        </div>
+                                        <div class="absolute inset-y-0 right-0 w-10 flex items-center justify-center pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                        <select asp-for="Category" asp-items="ViewBag.Categories" 
+                                                class="w-full h-12 pl-10 pr-10 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm appearance-none">
+                                            <option value="">Select a category</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="Category" class="text-red-500 text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Financial Details Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                    <i class="fas fa-dollar-sign text-green-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Financial Details</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Target Amount -->
+                                <div class="space-y-2">
+                                    <label asp-for="TargetAmount" class="block text-sm font-semibold text-gray-700">Target Amount</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 w-10 flex items-center justify-center pointer-events-none">
+                                            <span class="text-gray-500 font-medium">$</span>
+                                        </div>
+                                        <input asp-for="TargetAmount" type="number" step="0.01" min="0"
+                                               class="w-full h-12 pl-10 pr-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm"
+                                               placeholder="0.00" />
+                                    </div>
+                                    <span asp-validation-for="TargetAmount" class="text-red-500 text-sm"></span>
+                                </div>
+                                
+                                <!-- Target Date -->
+                                <div class="space-y-2">
+                                    <label asp-for="TargetDate" class="block text-sm font-semibold text-gray-700">Target Date</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 w-10 flex items-center justify-center pointer-events-none">
+                                            <i class="fas fa-calendar text-gray-400"></i>
+                                        </div>
+                                        <input asp-for="TargetDate" type="date"
+                                               class="w-full h-12 pl-10 pr-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm" />
+                                    </div>
+                                    <span asp-validation-for="TargetDate" class="text-red-500 text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Goal Settings Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-cog text-blue-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Goal Settings</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <!-- Priority -->
+                                <div class="space-y-2">
+                                    <label asp-for="Priority" class="block text-sm font-semibold text-gray-700">Priority</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 w-10 flex items-center justify-center pointer-events-none">
+                                            <i class="fas fa-flag text-gray-400"></i>
+                                        </div>
+                                        <div class="absolute inset-y-0 right-0 w-10 flex items-center justify-center pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                        <select asp-for="Priority" asp-items="ViewBag.Priorities"
+                                                class="w-full h-12 pl-10 pr-10 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm appearance-none">
+                                            <option value="">Select priority</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="Priority" class="text-red-500 text-sm"></span>
+                                </div>
+                                
+                                <!-- Status -->
+                                <div class="space-y-2">
+                                    <label asp-for="Status" class="block text-sm font-semibold text-gray-700">Status</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 w-10 flex items-center justify-center pointer-events-none">
+                                            <i class="fas fa-tasks text-gray-400"></i>
+                                        </div>
+                                        <div class="absolute inset-y-0 right-0 w-10 flex items-center justify-center pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                        <select asp-for="Status" asp-items="ViewBag.Statuses"
+                                                class="w-full h-12 pl-10 pr-10 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm appearance-none">
+                                            <option value="">Select status</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="Status" class="text-red-500 text-sm"></span>
+                                </div>
+
+                                <!-- Auto Save -->
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">Auto Save</label>
+                                    <div class="flex items-center p-3 border border-gray-200 rounded-xl bg-white/70 backdrop-blur-sm">
+                                        <input asp-for="AutoSave" type="checkbox" 
+                                               class="w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500" />
+                                        <span class="ml-3 text-sm text-gray-700">Enable automatic savings</span>
+                                    </div>
+                                    <span asp-validation-for="AutoSave" class="text-red-500 text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customization Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center">
+                                    <i class="fas fa-palette text-pink-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Visual Customization</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <!-- Icon Selection -->
+                                <div class="space-y-4">
+                                    <label class="block text-sm font-semibold text-gray-700">Choose Icon</label>
+                                    <div class="grid grid-cols-5 gap-3">
+                                        @{
+                                            var icons = ViewData["Icons"] as List<string> ?? new List<string> { "piggy-bank", "home", "car", "plane", "graduation-cap", "ring", "laptop", "umbrella", "gift", "book" };
+                                        }
+                                        @foreach (var icon in icons)
+                                        {
+                                            <label class="cursor-pointer">
+                                                <input type="radio" asp-for="Icon" value="@icon" class="sr-only icon-radio" />
+                                                <div class="icon-option w-12 h-12 rounded-xl border-2 border-gray-200 flex items-center justify-center text-gray-600 hover:border-purple-500 hover:text-purple-600 transition-all duration-200 hover:scale-110">
+                                                    <i class="fas fa-@icon text-lg"></i>
+                                                </div>
+                                            </label>
+                                        }
+                                    </div>
+                                    <span asp-validation-for="Icon" class="text-red-500 text-sm"></span>
+                                </div>
+                                
+                                <!-- Color Selection -->
+                                <div class="space-y-4">
+                                    <label class="block text-sm font-semibold text-gray-700">Choose Color</label>
+                                    <div class="grid grid-cols-4 gap-3">
+                                        @{
+                                            var colors = ViewData["Colors"] as List<string> ?? new List<string> { "purple", "blue", "green", "orange", "red", "pink", "teal", "indigo" };
+                                            var colorClasses = new Dictionary<string, string>
+                                            {
+                                                {"purple", "#8b5cf6"}, {"blue", "#3b82f6"}, {"green", "#10b981"}, {"orange", "#f97316"},
+                                                {"red", "#ef4444"}, {"pink", "#ec4899"}, {"teal", "#14b8a6"}, {"indigo", "#6366f1"}
+                                            };
+                                        }
+                                        
+                                        @foreach (var color in colors)
+                                        {
+                                            <label class="cursor-pointer">
+                                                <input type="radio" asp-for="ColorTheme" value="@color" class="sr-only color-radio" />
+                                                <div class="color-option w-12 h-12 rounded-full border-2 border-gray-200 hover:border-white hover:scale-110 transition-all duration-200 shadow-lg" 
+                                                     style="background-color: @(colorClasses.GetValueOrDefault(color, "#8b5cf6"))"></div>
+                                            </label>
+                                        }
+                                    </div>
+                                    <span asp-validation-for="Color" class="text-red-500 text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Description Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                    <i class="fas fa-align-left text-indigo-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Description</h3>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <label asp-for="Description" class="block text-sm font-semibold text-gray-700">Goal Description</label>
+                                <textarea asp-for="Description" rows="4"
+                                          class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm resize-none"
+                                          placeholder="Describe your savings goal and motivation..."></textarea>
+                                <span asp-validation-for="Description" class="text-red-500 text-sm"></span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                            <button type="submit" 
+                                    class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
+                                <i class="fas fa-save"></i>
+                                <span>Update Goal</span>
+                            </button>
+                            
+                            <a asp-action="Details" asp-route-id="@Model.Id"
+                               class="flex-1 bg-gray-100 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-200 transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-eye"></i>
+                                <span>View Details</span>
+                            </a>
+                            
+                            <a asp-action="Index"
+                               class="flex-1 bg-white border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:border-gray-400 transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Back to Goals</span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tips Sidebar -->
+        <div class="max-w-4xl mx-auto mt-8 animate-fadeInUp" style="animation-delay: 0.3s;">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-lightbulb text-blue-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-blue-900">Editing Tips</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
+                        <span>Changes to target amount won't affect your current progress</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
+                        <span>You can pause goals if needed by changing the status</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
+                        <span>Auto-save helps maintain consistent progress</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-check-circle text-blue-500 mt-0.5"></i>
+                        <span>Visual customization helps you stay motivated</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <style>
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+            50% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            75% {
+                transform: translateY(-5px) rotate(-1deg);
+            }
+        }
+
+        @@keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-shimmer {
+            animation: shimmer 2s infinite;
+        }
+
+        /* Icon selection styles */
+        .icon-radio:checked + .icon-option {
+            border-color: #8b5cf6;
+            background-color: #8b5cf6;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* Color selection styles */
+        .color-radio:checked + .color-option {
+            border-color: #8b5cf6;
+            border-width: 3px;
+            transform: scale(1.15);
+            box-shadow: 0 0 0 2px white, 0 0 0 4px #8b5cf6;
+        }
+
+        /* Form focus states */
+        .form-input:focus {
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Custom color classes */
+        .bg-purple-500 { background-color: #8b5cf6; }
+        .bg-blue-500 { background-color: #3b82f6; }
+        .bg-green-500 { background-color: #10b981; }
+        .bg-orange-500 { background-color: #f97316; }
+        .bg-red-500 { background-color: #ef4444; }
+        .bg-pink-500 { background-color: #ec4899; }
+        .bg-teal-500 { background-color: #14b8a6; }
+        .bg-indigo-500 { background-color: #6366f1; }
+    </style>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing form...');
+            
+            // Initialize form animations
+            const form = document.getElementById('editGoalForm');
+            const inputs = form.querySelectorAll('input, select, textarea');
+            
+            console.log('Found form:', form);
+            console.log('Found inputs:', inputs.length);
+            
+            // Add focus animations to form elements
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.closest('.space-y-2')?.classList.add('transform', 'scale-[1.02]');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.closest('.space-y-2')?.classList.remove('transform', 'scale-[1.02]');
+                });
+            });
+
+            // Initialize icon and color selection
+            console.log('Initializing icon and color selection...');
+            initializeIconSelection();
+            initializeColorSelection();
+            
+            // Form validation feedback
+            form.addEventListener('submit', function(e) {
+                console.log('Form submitted');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Updating...';
+                submitBtn.disabled = true;
+            });
+        });
+
+        function initializeIconSelection() {
+            const iconRadios = document.querySelectorAll('.icon-radio');
+            const currentIcon = '@Html.Raw(Model.Icon ?? "piggy-bank")';
+            
+            console.log('Initializing icon selection, current icon:', currentIcon);
+            
+            iconRadios.forEach(radio => {
+                if (radio.value === currentIcon) {
+                    radio.checked = true;
+                    radio.nextElementSibling.classList.add('border-purple-500', 'bg-purple-500', 'text-white');
+                    console.log('Selected icon:', radio.value);
+                }
+                
+                radio.addEventListener('change', function() {
+                    // Reset all icons
+                    document.querySelectorAll('.icon-option').forEach(option => {
+                        option.classList.remove('border-purple-500', 'bg-purple-500', 'text-white');
+                        option.classList.add('border-gray-200', 'text-gray-600');
+                    });
+                    
+                    // Highlight selected icon
+                    if (this.checked) {
+                        this.nextElementSibling.classList.remove('border-gray-200', 'text-gray-600');
+                        this.nextElementSibling.classList.add('border-purple-500', 'bg-purple-500', 'text-white');
+                        console.log('Icon changed to:', this.value);
+                    }
+                });
+            });
+        }
+        
+        function initializeColorSelection() {
+            const colorRadios = document.querySelectorAll('.color-radio');
+            const currentColor = '@Html.Raw(Model.ColorTheme ?? "purple")';
+            
+            console.log('Initializing color selection, current color:', currentColor);
+            
+            colorRadios.forEach(radio => {
+                if (radio.value === currentColor) {
+                    radio.checked = true;
+                    radio.nextElementSibling.style.borderColor = '#8b5cf6';
+                    radio.nextElementSibling.style.borderWidth = '3px';
+                    radio.nextElementSibling.style.transform = 'scale(1.15)';
+                    radio.nextElementSibling.style.boxShadow = '0 0 0 2px white, 0 0 0 4px #8b5cf6';
+                    console.log('Selected color:', radio.value);
+                }
+                
+                radio.addEventListener('change', function() {
+                    // Reset all colors
+                    document.querySelectorAll('.color-option').forEach(option => {
+                        option.style.borderColor = '#d1d5db';
+                        option.style.borderWidth = '2px';
+                        option.style.transform = 'scale(1)';
+                        option.style.boxShadow = '';
+                    });
+                    
+                    // Highlight selected color
+                    if (this.checked) {
+                        this.nextElementSibling.style.borderColor = '#8b5cf6';
+                        this.nextElementSibling.style.borderWidth = '3px';
+                        this.nextElementSibling.style.transform = 'scale(1.15)';
+                        this.nextElementSibling.style.boxShadow = '0 0 0 2px white, 0 0 0 4px #8b5cf6';
+                        console.log('Color changed to:', this.value);
+                    }
+                });
+            });
+        }
+    </script>
+}

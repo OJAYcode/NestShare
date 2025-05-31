@@ -1,0 +1,826 @@
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Thrift.Models;
+using Thrift.Repositories;
+using Thrift.Services;
+using Thrift.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
+namespace Thrift.Controllers
+{
+    [Authorize]
+    public class LoanController : Controller
+    {
+        private readonly LoanRepository _loanRepository;
+        private readonly LoanPaymentRepository _loanPaymentRepository;
+        private readonly LoanCalculationService _calculationService;
+
+        public LoanController(
+            LoanRepository loanRepository,
+            LoanPaymentRepository loanPaymentRepository,
+            LoanCalculationService calculationService)
+        {
+            _loanRepository = loanRepository;
+            _loanPaymentRepository = loanPaymentRepository;
+            _calculationService = calculationService;
+        }
+
+        // GET: Loan/Index
+        public async Task<IActionResult> Index()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+            
+            var loans = await _loanRepository.GetAllAsync(userId);
+            var activeLoans = loans.Where(l => l.Status == LoanStatus.Active).ToList();
+            var paidOffLoans = loans.Where(l => l.Status == LoanStatus.PaidOff || l.Status == LoanStatus.Completed).ToList();
+            var recentPayments = await _loanPaymentRepository.GetRecentPaymentsAsync(userId, 5);
+            var upcomingPayments = await _loanPaymentRepository.GetUpcomingPaymentsAsync(userId, 30);
+
+            var model = new LoanIndexViewModel
+            {
+                Loans = loans,
+                ActiveLoans = activeLoans,
+                PaidOffLoans = paidOffLoans,
+                RecentPayments = recentPayments,
+                UpcomingPayments = upcomingPayments,
+                TotalLoans = loans.Count,
+                TotalPrincipal = loans.Sum(l => l.PrincipalAmount),
+                TotalCurrentBalance = loans.Sum(l => l.RemainingBalance),
+                TotalMonthlyPayments = activeLoans.Sum(l => l.MonthlyPayment),
+                AverageInterestRate = loans.Any() ? loans.Average(l => l.InterestRate) : 0
+            };
+
+            // Build summary data
+            model.Summary = new LoanSummaryViewModel
+            {
+                TotalOutstandingBalance = activeLoans.Sum(l => l.RemainingBalance),
+                TotalMonthlyPayments = activeLoans.Sum(l => l.MonthlyPayment),
+                TotalInterestPaid = loans.Sum(l => l.InterestPaidToDate),
+                TotalPrincipalPaid = loans.Sum(l => l.PrincipalPaidToDate),
+                TotalActiveLoans = activeLoans.Count,
+                TotalPaidOffLoans = paidOffLoans.Count,
+                AverageInterestRate = activeLoans.Any() ? activeLoans.Average(l => l.InterestRate) : 0,
+                DelinquentLoans = loans.Count(l => l.DaysDelinquent.HasValue && l.DaysDelinquent.Value > 0),
+                DelinquentAmount = loans.Where(l => l.DaysDelinquent.HasValue && l.DaysDelinquent.Value > 0)
+                                       .Sum(l => l.RemainingBalance)
+            };
+
+            // Set next payment info if available
+            var nextPaymentDue = upcomingPayments.OrderBy(p => p.DueDate).FirstOrDefault();
+            if (nextPaymentDue != null)
+            {
+                model.Summary.NextPaymentDue = nextPaymentDue.DueDate;
+                model.Summary.NextPaymentAmount = nextPaymentDue.PaymentAmount;
+            }
+
+            return View(model);
+        }
+
+        // GET: Loan/Create
+        public IActionResult Create()
+        {
+            var model = new CreateLoanViewModel
+            {
+                StartDate = DateTime.Today,
+                InterestType = InterestType.Fixed,
+                PaymentFrequency = PaymentFrequency.Monthly,
+                CalculationType = LoanCalculationType.StandardAmortization
+            };
+            return View(model);
+        }
+
+        // POST: Loan/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateLoanViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+
+            // Create loan entity from view model
+            var loan = new Loan
+            {
+                UserId = userId,
+                LoanName = model.LoanName,
+                Description = model.Description ?? "",
+                LoanType = model.LoanType,
+                PrincipalAmount = model.PrincipalAmount,
+                InterestRate = model.InterestRate,
+                InterestType = model.InterestType,
+                // Convert term in months to years and months
+                LoanTermYears = model.TermInMonths / 12,
+                LoanTermMonths = model.TermInMonths % 12,
+                PaymentFrequency = model.PaymentFrequency,
+                CalculationType = model.CalculationType,
+                StartDate = model.StartDate,
+                FirstPaymentDate = model.FirstPaymentDate,
+                Lender = model.Lender,
+                LoanNumber = model.LoanNumber,
+                OriginationFee = model.OriginationFee,
+                PrepaymentPenalty = model.PrepaymentPenalty,
+                AllowExtraPayments = model.AllowExtraPayments,
+                Status = LoanStatus.Active,
+                CreditScore = model.CreditScore,
+                DebtToIncomeRatio = model.DebtToIncomeRatio
+            };
+
+            // Calculate maturity date based on term and start date
+            loan.MaturityDate = model.StartDate.AddMonths(model.TermInMonths);
+
+            // Calculate monthly payment
+            loan.MonthlyPayment = _calculationService.CalculateMonthlyPayment(
+                loan.PrincipalAmount, loan.InterestRate, model.TermInMonths);
+
+            // Calculate total interest
+            loan.TotalInterest = _calculationService.CalculateTotalInterest(
+                loan.PrincipalAmount, loan.MonthlyPayment, model.TermInMonths);
+
+            // Set initial values
+            loan.CurrentBalance = loan.PrincipalAmount;
+            loan.RemainingBalance = loan.PrincipalAmount;
+            loan.TotalPayments = loan.MonthlyPayment * model.TermInMonths;
+            loan.NextPaymentDue = model.FirstPaymentDate ?? model.StartDate.AddMonths(1);
+            loan.CreatedAt = DateTime.UtcNow;
+            loan.UpdatedAt = DateTime.UtcNow;
+
+            await _loanRepository.CreateAsync(loan);
+
+            // Generate payment schedule
+            var schedule = _calculationService.GenerateAmortizationSchedule(loan);
+            await _loanPaymentRepository.CreatePaymentScheduleAsync(schedule);
+
+            TempData["SuccessMessage"] = "Loan created successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Loan/Edit/5
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+            var loan = await _loanRepository.GetByIdAsync(id, userId);
+
+            if (loan == null)
+            {
+                return NotFound();
+            }
+
+            var model = new EditLoanViewModel
+            {
+                Id = loan.Id,
+                LoanName = loan.LoanName,
+                Description = loan.Description,
+                LoanType = loan.LoanType,
+                PrincipalAmount = loan.PrincipalAmount,
+                InterestRate = loan.InterestRate,
+                InterestType = loan.InterestType,
+                TermInMonths = (loan.LoanTermYears * 12) + loan.LoanTermMonths,
+                PaymentFrequency = loan.PaymentFrequency,
+                CalculationType = loan.CalculationType,
+                StartDate = loan.StartDate,
+                FirstPaymentDate = loan.FirstPaymentDate,
+                Lender = loan.Lender,
+                LoanNumber = loan.LoanNumber,
+                OriginationFee = loan.OriginationFee,
+                PrepaymentPenalty = loan.PrepaymentPenalty,
+                AllowExtraPayments = loan.AllowExtraPayments,
+                Status = loan.Status,
+                CreditScore = loan.CreditScore,
+                DebtToIncomeRatio = loan.DebtToIncomeRatio,
+                PaidToDate = loan.PaidToDate,
+                RemainingBalance = loan.RemainingBalance,
+                LastPaymentDate = loan.LastPaymentDate,
+                DaysDelinquent = loan.DaysDelinquent
+            };
+
+            return View(model);
+        }
+
+        // POST: Loan/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, EditLoanViewModel model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+            var loan = await _loanRepository.GetByIdAsync(id, userId);
+
+            if (loan == null)
+            {
+                return NotFound();
+            }
+
+            // Update loan properties
+            loan.LoanName = model.LoanName;
+            loan.Description = model.Description ?? "";
+            loan.LoanType = model.LoanType;
+            loan.PrincipalAmount = model.PrincipalAmount;
+            loan.InterestRate = model.InterestRate;
+            loan.InterestType = model.InterestType;
+            loan.LoanTermYears = model.TermInMonths / 12;
+            loan.LoanTermMonths = model.TermInMonths % 12;
+            loan.PaymentFrequency = model.PaymentFrequency;
+            loan.CalculationType = model.CalculationType;
+            loan.StartDate = model.StartDate;
+            loan.FirstPaymentDate = model.FirstPaymentDate;
+            loan.Lender = model.Lender;
+            loan.LoanNumber = model.LoanNumber;
+            loan.OriginationFee = model.OriginationFee;
+            loan.PrepaymentPenalty = model.PrepaymentPenalty;
+            loan.AllowExtraPayments = model.AllowExtraPayments;
+            loan.Status = model.Status;
+            loan.CreditScore = model.CreditScore;
+            loan.DebtToIncomeRatio = model.DebtToIncomeRatio;
+            loan.MaturityDate = model.StartDate.AddMonths(model.TermInMonths);
+            loan.UpdatedAt = DateTime.UtcNow;
+
+            // Recalculate values only if loan terms have changed
+            if (loan.MonthlyPayment == 0 || 
+                loan.TotalInterest == 0 ||
+                model.Status == LoanStatus.Active)
+            {
+                loan.MonthlyPayment = _calculationService.CalculateMonthlyPayment(
+                    loan.PrincipalAmount, loan.InterestRate, model.TermInMonths);
+                
+                loan.TotalInterest = _calculationService.CalculateTotalInterest(
+                    loan.PrincipalAmount, loan.MonthlyPayment, model.TermInMonths);
+                
+                loan.TotalPayments = loan.MonthlyPayment * model.TermInMonths;
+            }
+
+            await _loanRepository.UpdateAsync(id, loan);
+
+            // Update payment schedule if loan terms changed
+            if (model.Status == LoanStatus.Active)
+            {
+                // Delete old schedule
+                await _loanPaymentRepository.DeletePaymentScheduleByLoanIdAsync(loan.Id);
+                
+                // Generate new schedule
+                var schedule = _calculationService.GenerateAmortizationSchedule(loan);
+                await _loanPaymentRepository.CreatePaymentScheduleAsync(schedule);
+            }
+
+            TempData["SuccessMessage"] = "Loan updated successfully!";
+            return RedirectToAction(nameof(Details), new { id = loan.Id });
+        }
+
+        // GET: Loan/Details/5
+        public async Task<IActionResult> Details(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+            var loan = await _loanRepository.GetByIdAsync(id, userId);
+
+            if (loan == null)
+            {
+                return NotFound();
+            }
+
+            var paymentHistory = await _loanPaymentRepository.GetPaymentsByLoanAsync(id, userId);
+            var paymentSchedule = await _loanPaymentRepository.GetPaymentScheduleAsync(id, userId);
+
+            var model = new LoanDetailsViewModel
+            {
+                Id = loan.Id,
+                LoanName = loan.LoanName,
+                LoanType = loan.LoanType,
+                Status = loan.Status,
+                Description = loan.Description,
+                PrincipalAmount = loan.PrincipalAmount,
+                CurrentBalance = loan.CurrentBalance,
+                InterestRate = loan.InterestRate,
+                TermInMonths = (loan.LoanTermYears * 12) + loan.LoanTermMonths,
+                LoanTermMonths = (loan.LoanTermYears * 12) + loan.LoanTermMonths,
+                MonthlyPayment = loan.MonthlyPayment,
+                StartDate = loan.StartDate,
+                MaturityDate = loan.MaturityDate,
+                NextPaymentDate = loan.NextPaymentDue,
+                TotalPaid = loan.TotalPaid,
+                TotalPayment = loan.TotalPayment,
+                RemainingBalance = loan.RemainingBalance,
+                TotalInterest = loan.TotalInterest,
+                RiskLevel = loan.RiskLevel,
+                ProgressPercentage = loan.ProgressPercentage,
+                PaymentHistory = paymentHistory,
+                PaymentSchedule = paymentSchedule,
+                CanMakePayment = loan.Status == LoanStatus.Active
+            };
+
+            // Set payment counts
+            model.PaymentsMade = paymentHistory.Count(p => p.Status == PaymentStatus.Completed);
+            model.RemainingPayments = model.PaymentsMade > 0 ? 
+                loan.TotalPaymentCount - model.PaymentsMade : loan.TotalPaymentCount;
+            model.PaymentsRemaining = model.RemainingPayments;
+
+            // Get next payment amount if available
+            var nextPayment = await _loanPaymentRepository.GetNextPaymentForLoanAsync(id, userId);
+            if (nextPayment != null)
+            {
+                model.NextPaymentAmount = nextPayment.PaymentAmount;
+            }
+
+            return View(model);
+        }
+
+        // GET: Loan/Delete/5
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+            var loan = await _loanRepository.GetByIdAsync(id, userId);
+
+            if (loan == null)
+            {
+                return NotFound();
+            }
+
+            return View(loan);
+        }
+
+        // POST: Loan/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+            
+            // Delete loan
+            await _loanRepository.DeleteAsync(id, userId);
+            
+            // Delete payment schedule
+            await _loanPaymentRepository.DeletePaymentScheduleByLoanIdAsync(id);
+            
+            // Delete all payments for the loan
+            var payments = await _loanPaymentRepository.GetPaymentsByLoanAsync(id, userId);
+            foreach (var payment in payments)
+            {
+                await _loanPaymentRepository.DeleteAsync(payment.Id, userId);
+            }
+
+            TempData["SuccessMessage"] = "Loan deleted successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Loan/MakePayment/5
+        public async Task<IActionResult> MakePayment(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+            var loan = await _loanRepository.GetByIdAsync(id, userId);
+
+            if (loan == null || loan.Status != LoanStatus.Active)
+            {
+                return NotFound();
+            }
+
+            // Get next scheduled payment
+            var nextPayment = await _loanPaymentRepository.GetNextPaymentForLoanAsync(id, userId);
+            
+            var model = new MakePaymentViewModel
+            {
+                LoanId = loan.Id,
+                LoanName = loan.LoanName,
+                PaymentAmount = nextPayment?.PaymentAmount ?? loan.MonthlyPayment,
+                ExtraPayment = 0,
+                PaymentDate = DateTime.Now,
+                CurrentBalance = loan.CurrentBalance,
+                ScheduledPaymentAmount = nextPayment?.PaymentAmount ?? loan.MonthlyPayment,
+                MonthlyPayment = loan.MonthlyPayment,
+                InterestRate = loan.InterestRate,
+                NextDueDate = nextPayment?.DueDate ?? loan.NextPaymentDue,
+                DueDate = nextPayment?.DueDate ?? DateTime.Now
+            };
+
+            if (model.NextDueDate.HasValue)
+            {
+                model.DaysUntilDue = Math.Max(0, (int)(model.NextDueDate.Value - DateTime.Now).TotalDays);
+            }
+
+            // Calculate portions for regular payment
+            if (nextPayment != null)
+            {
+                model.PrincipalPortion = nextPayment.PrincipalAmount;
+                model.InterestPortion = nextPayment.InterestAmount;
+                model.RemainingBalance = loan.RemainingBalance - nextPayment.PrincipalAmount;
+            }
+            else
+            {
+                // Fallback calculation if no scheduled payment exists
+                decimal monthlyInterestRate = loan.InterestRate / 12 / 100;
+                model.InterestPortion = loan.CurrentBalance * monthlyInterestRate;
+                model.PrincipalPortion = model.PaymentAmount - model.InterestPortion;
+                model.RemainingBalance = loan.CurrentBalance - model.PrincipalPortion;
+            }
+
+            return View(model);
+        }
+
+        // POST: Loan/MakePayment/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MakePayment(string id, MakePaymentViewModel model)
+        {
+            if (id != model.LoanId)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+            var loan = await _loanRepository.GetByIdAsync(id, userId);
+
+            if (loan == null || loan.Status != LoanStatus.Active)
+            {
+                return NotFound();
+            }
+
+            // Get next scheduled payment to update status
+            var nextPayment = await _loanPaymentRepository.GetNextPaymentForLoanAsync(id, userId);
+            
+            // Calculate amounts
+            decimal totalPayment = model.PaymentAmount + model.ExtraPayment;
+            decimal principalAmount, interestAmount;
+            
+            if (nextPayment != null)
+            {
+                principalAmount = nextPayment.PrincipalAmount;
+                interestAmount = nextPayment.InterestAmount;
+                
+                // If extra payment, all of it goes to principal
+                if (model.ExtraPayment > 0)
+                {
+                    principalAmount += model.ExtraPayment;
+                }
+            }
+            else
+            {
+                // Fallback calculation if no scheduled payment
+                decimal monthlyInterestRate = loan.InterestRate / 12 / 100;
+                interestAmount = loan.CurrentBalance * monthlyInterestRate;
+                principalAmount = model.PaymentAmount - interestAmount + model.ExtraPayment;
+            }
+
+            // Ensure principal doesn't exceed balance
+            if (principalAmount > loan.RemainingBalance)
+            {
+                principalAmount = loan.RemainingBalance;
+                totalPayment = principalAmount + interestAmount;
+            }
+
+            // Calculate new balance
+            decimal newBalance = loan.RemainingBalance - principalAmount;
+
+            // Create payment record
+            var payment = new LoanPayment
+            {
+                LoanId = id,
+                UserId = userId,
+                PaymentAmount = model.PaymentAmount,
+                ExtraPayment = model.ExtraPayment,
+                PrincipalPortion = principalAmount,
+                PrincipalAmount = principalAmount,
+                InterestPortion = interestAmount,
+                InterestAmount = interestAmount,
+                PaymentDate = model.PaymentDate,
+                DueDate = model.DueDate,
+                PaymentMethod = model.PaymentMethod,
+                TransactionId = model.TransactionId,
+                Notes = model.Notes,
+                IsAutomaticPayment = model.SetupAutomaticPayment,
+                Status = PaymentStatus.Completed,
+                ProcessedAt = DateTime.UtcNow,
+                RemainingBalanceAfterPayment = newBalance
+            };
+
+            await _loanPaymentRepository.CreateAsync(payment);
+
+            // Update loan
+            loan.RemainingBalance = newBalance;
+            loan.CurrentBalance = newBalance;
+            loan.PrincipalPaidToDate += principalAmount;
+            loan.InterestPaidToDate += interestAmount;
+            loan.PaidToDate += totalPayment;
+            loan.TotalPaid += totalPayment;
+            loan.LastPaymentDate = model.PaymentDate;
+            loan.UpdatedAt = DateTime.UtcNow;
+
+            // Set next payment date
+            if (nextPayment != null)
+            {
+                // Mark current payment as completed
+                nextPayment.Status = PaymentStatus.Completed;
+                await _loanPaymentRepository.UpdateAsync(nextPayment.Id, nextPayment);
+                
+                // Find next unpaid payment
+                var paymentSchedule = await _loanPaymentRepository.GetPaymentScheduleAsync(id, userId);
+                if (paymentSchedule != null)
+                {
+                    var nextUnpaidPayment = paymentSchedule.ScheduledPayments
+                                                          .Where(p => p.Status != PaymentStatus.Completed)
+                                                          .OrderBy(p => p.DueDate)
+                                                          .FirstOrDefault();
+                    if (nextUnpaidPayment != null)
+                    {
+                        loan.NextPaymentDue = nextUnpaidPayment.DueDate;
+                    }
+                }
+            }
+
+            // Check if loan is paid off
+            if (newBalance <= 0)
+            {
+                loan.Status = LoanStatus.PaidOff;
+                loan.RemainingBalance = 0;
+                loan.CurrentBalance = 0;
+            }
+
+            await _loanRepository.UpdateAsync(id, loan);
+
+            TempData["SuccessMessage"] = "Payment recorded successfully!";
+            return RedirectToAction(nameof(Details), new { id = loan.Id });
+        }
+
+        // GET: Loan/Analytics
+        public async Task<IActionResult> Analytics()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.Identity?.Name ?? "";
+            var loans = await _loanRepository.GetAllAsync(userId);
+            var payments = await _loanPaymentRepository.GetAllAsync(userId);
+
+            var model = new LoanAnalyticsViewModel
+            {
+                TotalLoans = loans.Count,
+                ActiveLoans = loans.Count(l => l.Status == LoanStatus.Active),
+                TotalPrincipal = loans.Sum(l => l.PrincipalAmount),
+                TotalRemainingBalance = loans.Sum(l => l.RemainingBalance),
+                TotalCurrentBalance = loans.Sum(l => l.CurrentBalance),
+                TotalPaid = loans.Sum(l => l.TotalPaid),
+                TotalMonthlyPayments = loans.Where(l => l.Status == LoanStatus.Active)
+                                           .Sum(l => l.MonthlyPayment),
+                TotalPaidToDate = loans.Sum(l => l.PaidToDate),
+                TotalInterestPaid = loans.Sum(l => l.InterestPaidToDate),
+                AverageInterestRate = loans.Any() ? loans.Average(l => l.InterestRate) : 0,
+                HighestInterestRate = loans.Any() ? loans.Max(l => l.InterestRate) : 0,
+                LowestInterestRate = loans.Any() ? loans.Min(l => l.InterestRate) : 0,
+                AveragePaymentSize = payments.Any() ? 
+                    payments.Average(p => p.PaymentAmount + p.ExtraPayment) : 0,
+                OnTimePaymentPercentage = payments.Any() ? 
+                    (decimal)payments.Count(p => p.PaymentDate <= p.DueDate) / payments.Count * 100 : 0,
+                Loans = loans,
+                PaymentHistory = payments
+            };
+
+            // Prepare distributions
+            model.StatusDistribution = loans.GroupBy(l => l.Status)
+                                          .ToDictionary(g => g.Key.ToString(), g => g.Count());
+            
+            model.TypeDistribution = loans.GroupBy(l => l.LoanType)
+                                        .ToDictionary(g => g.Key.ToString(), g => g.Count());
+
+            // Prepare loan summaries
+            model.LoanSummaries = loans.Select(l => new LoanSummary
+            {
+                Id = l.Id,
+                LoanName = l.LoanName,
+                LoanType = l.LoanType,
+                Status = l.Status,
+                InterestRate = l.InterestRate,
+                RemainingBalance = l.RemainingBalance,
+                ProgressPercentage = l.ProgressPercentage,
+                NextDueDate = l.NextPaymentDue
+            }).ToList();
+
+            // Prepare payment trends (by month)
+            var paymentsByMonth = payments
+                .GroupBy(p => new { p.PaymentDate.Year, p.PaymentDate.Month })
+                .Select(g => new PaymentTrendData
+                {
+                    Month = $"{g.Key.Year}-{g.Key.Month:D2}",
+                    TotalAmount = g.Sum(p => p.PaymentAmount + p.ExtraPayment),
+                    PaymentCount = g.Count()
+                })
+                .OrderBy(p => p.Month)
+                .ToList();
+
+            model.PaymentTrends = paymentsByMonth;
+
+            return View(model);
+        }
+
+        // GET: Loan/Calculator
+        public IActionResult Calculator()
+        {
+            return View(new LoanCalculatorViewModel
+            {
+                PrincipalAmount = 250000m,
+                InterestRate = 4.5m,
+                LoanTermYears = 30,
+                PaymentFrequency = PaymentFrequency.Monthly,
+                InterestType = InterestType.Fixed
+            });
+        }
+
+        // POST: Loan/Calculator
+        [HttpPost]
+        public IActionResult Calculator(LoanCalculatorViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Create temporary loan object for calculations
+            var loan = new Loan
+            {
+                PrincipalAmount = model.PrincipalAmount,
+                InterestRate = model.InterestRate,
+                LoanTermYears = model.LoanTermYears,
+                LoanTermMonths = model.LoanTermMonths,
+                PaymentFrequency = model.PaymentFrequency,
+                ExtraPaymentAmount = model.ExtraPayment
+            };
+
+            // Calculate basic metrics
+            int totalMonths = (model.LoanTermYears * 12) + model.LoanTermMonths;
+            model.MonthlyPayment = _calculationService.CalculateMonthlyPayment(
+                model.PrincipalAmount, model.InterestRate, totalMonths);
+            
+            model.TotalInterest = _calculationService.CalculateTotalInterest(
+                model.PrincipalAmount, model.MonthlyPayment, totalMonths);
+            
+            model.TotalPayment = model.PrincipalAmount + model.TotalInterest;
+            model.TotalPayments = model.MonthlyPayment * totalMonths;
+            model.TotalPaymentCount = totalMonths;
+            model.PayoffDate = DateTime.Today.AddMonths(totalMonths);
+
+            // Calculate amortization schedule
+            var paymentSchedule = _calculationService.GenerateAmortizationSchedule(loan);
+            model.AmortizationSchedule = paymentSchedule.ScheduledPayments;
+
+            // Calculate extra payment impact if specified
+            if (model.ExtraPayment > 0)
+            {
+                // Create a copy of loan for comparison
+                var loanWithExtra = new Loan
+                {
+                    PrincipalAmount = model.PrincipalAmount,
+                    InterestRate = model.InterestRate,
+                    LoanTermYears = model.LoanTermYears,
+                    LoanTermMonths = model.LoanTermMonths,
+                    PaymentFrequency = model.PaymentFrequency,
+                    ExtraPaymentAmount = model.ExtraPayment
+                };
+
+                // Manual calculation with extra payments
+                decimal balance = model.PrincipalAmount;
+                decimal monthlyInterestRate = model.InterestRate / 12 / 100;
+                decimal regularPayment = model.MonthlyPayment;
+                decimal totalExtraInterest = 0;
+                int monthsWithExtra = 0;
+
+                while (balance > 0 && monthsWithExtra < totalMonths)
+                {
+                    decimal interestPayment = balance * monthlyInterestRate;
+                    decimal principalPayment = regularPayment - interestPayment;
+                    
+                    // Add extra payment to principal
+                    principalPayment += model.ExtraPayment;
+                    
+                    // Make sure we don't overpay
+                    if (principalPayment > balance)
+                    {
+                        principalPayment = balance;
+                    }
+                    
+                    balance -= principalPayment;
+                    totalExtraInterest += interestPayment;
+                    monthsWithExtra++;
+                    
+                    if (balance <= 0)
+                        break;
+                }
+
+                // Calculate savings
+                model.InterestSavings = model.TotalInterest - totalExtraInterest;
+                model.TimeSavingsMonths = totalMonths - monthsWithExtra;
+            }
+
+            return View(model);
+        }
+
+        // GET: Loan/Comparison
+        public IActionResult Comparison()
+        {
+            var model = new LoanComparisonViewModel
+            {
+                Scenarios = new List<LoanCalculatorViewModel>
+                {
+                    new LoanCalculatorViewModel
+                    {
+                        PrincipalAmount = 250000m,
+                        InterestRate = 4.5m,
+                        LoanTermYears = 30,
+                        PaymentFrequency = PaymentFrequency.Monthly,
+                        InterestType = InterestType.Fixed
+                    },
+                    new LoanCalculatorViewModel
+                    {
+                        PrincipalAmount = 250000m,
+                        InterestRate = 4.0m,
+                        LoanTermYears = 15,
+                        PaymentFrequency = PaymentFrequency.Monthly,
+                        InterestType = InterestType.Fixed
+                    }
+                }
+            };
+
+            return View(model);
+        }
+
+        // POST: Loan/Comparison
+        [HttpPost]
+        public IActionResult Comparison(LoanComparisonViewModel model)
+        {
+            if (!ModelState.IsValid || model.Scenarios == null || !model.Scenarios.Any())
+            {
+                return View(model);
+            }
+
+            // Calculate results for each scenario
+            foreach (var scenario in model.Scenarios)
+            {
+                int totalMonths = (scenario.LoanTermYears * 12) + scenario.LoanTermMonths;
+                
+                scenario.MonthlyPayment = _calculationService.CalculateMonthlyPayment(
+                    scenario.PrincipalAmount, scenario.InterestRate, totalMonths);
+                
+                scenario.TotalInterest = _calculationService.CalculateTotalInterest(
+                    scenario.PrincipalAmount, scenario.MonthlyPayment, totalMonths);
+                
+                scenario.TotalPayment = scenario.PrincipalAmount + scenario.TotalInterest;
+                scenario.TotalPayments = scenario.MonthlyPayment * totalMonths;
+                scenario.TotalPaymentCount = totalMonths;
+                scenario.PayoffDate = DateTime.Today.AddMonths(totalMonths);
+            }
+
+            // Find the best scenario (lowest total interest)
+            if (model.Scenarios.Count > 1)
+            {
+                var bestScenario = model.Scenarios
+                    .OrderBy(s => s.TotalInterest)
+                    .First();
+                
+                int bestIndex = model.Scenarios.IndexOf(bestScenario);
+                
+                model.BestScenario = new ComparisonResult
+                {
+                    ScenarioIndex = bestIndex,
+                    ScenarioName = $"Scenario {bestIndex + 1}",
+                    TotalInterestSavings = model.Scenarios.Max(s => s.TotalInterest) - bestScenario.TotalInterest,
+                    MonthsSaved = model.Scenarios.Max(s => s.TotalPaymentCount) - bestScenario.TotalPaymentCount,
+                    Recommendation = "This scenario offers the lowest total interest cost."
+                };
+            }
+
+            return View(model);
+        }
+    }
+}

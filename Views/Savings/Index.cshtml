@@ -1,0 +1,714 @@
+@model IEnumerable<Thrift.Models.SavingsGoal>
+@{
+    ViewData["Title"] = "Savings Goals";
+    var totalSavings = Model?.Sum(g => g.CurrentAmount) ?? 0;
+    var totalTargets = Model?.Sum(g => g.TargetAmount) ?? 0;
+    var completionPercentage = totalTargets > 0 ? (totalSavings / totalTargets) * 100 : 0;
+    var activeGoals = Model?.Count(g => g.Status == "Active") ?? 0;
+    var completedGoals = Model?.Count(g => g.Status == "Completed") ?? 0;
+}
+
+<style>
+    /* Advanced animations */
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @@keyframes slideInRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @@keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @@keyframes shimmer {
+        0% { background-position: -200px 0; }
+        100% { background-position: calc(200px + 100%) 0; }
+    }
+    
+    @@keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    @@keyframes glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+        50% { box-shadow: 0 0 30px rgba(139, 92, 246, 0.6); }
+    }
+    
+    .animate-fadeInUp { animation: fadeInUp 0.8s ease-out forwards; }
+    .animate-slideInRight { animation: slideInRight 0.8s ease-out forwards; }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    .animate-pulse-custom { animation: pulse 2s ease-in-out infinite; }
+    .animate-glow { animation: glow 3s ease-in-out infinite; }
+    
+    /* Staggered animations */
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+    .stagger-4 { animation-delay: 0.4s; }
+    
+    /* Glass morphism effects */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+    
+    .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .gradient-purple {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    }
+    
+    .gradient-text {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    /* 3D Card effects */
+    .card-3d {
+        transform-style: preserve-3d;
+        transition: all 0.3s ease;
+    }
+    
+    .card-3d:hover {
+        transform: rotateY(5deg) rotateX(5deg) translateZ(10px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Progress bar animations */
+    .progress-animated {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .progress-animated::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: shimmer 2s infinite;
+    }
+    
+    /* Floating elements */
+    .floating-icon {
+        position: absolute;
+        animation: float 8s ease-in-out infinite;
+    }
+    
+    .floating-icon:nth-child(1) { top: 10%; left: 85%; animation-delay: 0s; }
+    .floating-icon:nth-child(2) { top: 20%; left: 10%; animation-delay: 2s; }
+    .floating-icon:nth-child(3) { top: 60%; left: 90%; animation-delay: 4s; }
+    .floating-icon:nth-child(4) { top: 80%; left: 15%; animation-delay: 6s; }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #8b5cf6, #7c3aed);
+        border-radius: 10px;
+    }
+    
+    /* Interactive elements */
+    .interactive-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+    
+    .interactive-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    }
+      /* Ripple effect */
+    .ripple {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Button visibility fixes */
+    .btn-gradient, a[class*="bg-gradient-to-r"] {
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: inline-flex !important;
+        background-clip: padding-box !important;
+    }
+    
+    .btn-gradient:hover, a[class*="bg-gradient-to-r"]:hover {
+        opacity: 1 !important;
+        transform: scale(1.05) !important;
+    }
+    
+    /* Ensure button text is always visible */
+    .btn-gradient, a[class*="bg-gradient-to-r"] {
+        color: white !important;
+        text-decoration: none !important;
+        font-weight: 600 !important;
+    }
+    
+    .ripple::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+    
+    .ripple:active::before {
+        width: 300px;
+        height: 300px;
+    }
+</style>
+
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 relative overflow-hidden">
+    <!-- Floating background elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="floating-icon text-purple-200">
+            <i class="fas fa-piggy-bank text-4xl"></i>
+        </div>
+        <div class="floating-icon text-indigo-200">
+            <i class="fas fa-coins text-3xl"></i>
+        </div>
+        <div class="floating-icon text-pink-200">
+            <i class="fas fa-chart-line text-3xl"></i>
+        </div>
+        <div class="floating-icon text-purple-200">
+            <i class="fas fa-bullseye text-2xl"></i>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <!-- Success Message Display -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 animate-fadeInUp" role="alert">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span>@TempData["SuccessMessage"]</span>
+                </div>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 animate-fadeInUp" role="alert">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span>@TempData["ErrorMessage"]</span>
+                </div>
+            </div>
+        }
+
+        <!-- Header section with enhanced design -->
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 animate-fadeInUp">
+            <div class="mb-6 lg:mb-0">
+                <h1 class="text-4xl font-bold gradient-text mb-3">
+                    <i class="fas fa-piggy-bank mr-3"></i>Savings Goals
+                </h1>
+                <p class="text-gray-600 text-lg">Track, manage, and achieve your financial dreams</p>
+                <div class="flex items-center mt-2 text-sm text-gray-500">
+                    <i class="fas fa-clock mr-2"></i>
+                    Last updated: @DateTime.Now.ToString("MMM dd, yyyy 'at' h:mm tt")
+                </div>
+            </div>            <div class="flex flex-col sm:flex-row gap-3">
+                <a asp-action="Create" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ripple">
+                    <i class="fas fa-plus mr-2"></i>Create New Goal
+                </a>
+                <button id="analyticsBtn" class="px-6 py-3 bg-white border-2 border-purple-500 text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-all duration-300">
+                    <i class="fas fa-chart-bar mr-2"></i>Analytics
+                </button>
+                <a asp-action="Challenges" class="px-6 py-3 bg-white border-2 border-orange-500 text-orange-600 font-semibold rounded-lg hover:bg-orange-50 transition-all duration-300">
+                    <i class="fas fa-gamepad mr-2"></i>Challenges
+                </a>
+            </div>
+        </div>        <!-- Enhanced Stats cards with animations and advanced design -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Total Savings Card -->
+            <div class="glass-card rounded-xl p-6 animate-fadeInUp stagger-1 interactive-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-gradient-to-br from-green-400 to-green-600 rounded-lg text-white animate-pulse-custom">
+                        <i class="fas fa-wallet text-2xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Total Savings</div>
+                        <div class="text-2xl font-bold text-gray-800">$@totalSavings.ToString("N2")</div>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                    <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+                    Across @(Model?.Count() ?? 0) goals
+                </div>
+            </div>
+
+            <!-- Target Amount Card -->
+            <div class="glass-card rounded-xl p-6 animate-fadeInUp stagger-2 interactive-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg text-white animate-pulse-custom">
+                        <i class="fas fa-bullseye text-2xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Target Amount</div>
+                        <div class="text-2xl font-bold text-gray-800">$@totalTargets.ToString("N2")</div>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                    <i class="fas fa-target text-blue-500 mr-1"></i>
+                    Combined goal amount
+                </div>
+            </div>
+
+            <!-- Progress Overview Card -->
+            <div class="glass-card rounded-xl p-6 animate-fadeInUp stagger-3 interactive-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-gradient-to-br from-purple-400 to-purple-600 rounded-lg text-white animate-pulse-custom">
+                        <i class="fas fa-chart-pie text-2xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Overall Progress</div>
+                        <div class="text-2xl font-bold text-gray-800">@completionPercentage.ToString("F1")%</div>
+                    </div>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2 progress-animated">
+                    <div class="bg-gradient-to-r from-purple-500 to-indigo-500 h-2 rounded-full transition-all duration-1000" style="width: @completionPercentage%"></div>
+                </div>
+            </div>
+
+            <!-- Achievement Card -->
+            <div class="glass-card rounded-xl p-6 animate-fadeInUp stagger-4 interactive-card">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="p-3 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-lg text-white animate-pulse-custom">
+                        <i class="fas fa-trophy text-2xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Completed Goals</div>
+                        <div class="text-2xl font-bold text-gray-800">@completedGoals</div>
+                    </div>
+                </div>
+                <div class="text-sm text-gray-600">
+                    <i class="fas fa-star text-yellow-500 mr-1"></i>
+                    @activeGoals active goals
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Bar -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8 animate-fadeInUp stagger-2">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-6">
+                    <h3 class="text-lg font-semibold text-gray-800">Quick Actions</h3>                    <div class="flex gap-3">
+                        <a asp-action="Create" class="px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors duration-300 flex items-center">
+                            <i class="fas fa-plus mr-2"></i>New Goal
+                        </a>
+                        <a asp-action="Analytics" class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors duration-300 flex items-center">
+                            <i class="fas fa-chart-bar mr-2"></i>Analytics
+                        </a>
+                        <button id="addFundsBtn" class="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors duration-300">
+                            <i class="fas fa-plus-circle mr-2"></i>Add Funds
+                        </button>
+                        <button id="withdrawBtn" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors duration-300">
+                            <i class="fas fa-minus-circle mr-2"></i>Withdraw
+                        </button>
+                        <button id="transferBtn" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors duration-300">
+                            <i class="fas fa-exchange-alt mr-2"></i>Transfer
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <label for="sortSelect" class="text-sm text-gray-600">Sort by:</label>
+                        <select id="sortSelect" class="px-3 py-1 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            <option value="name">Name</option>
+                            <option value="progress">Progress</option>
+                            <option value="target">Target Amount</option>
+                            <option value="deadline">Deadline</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="gridViewBtn" class="p-2 bg-purple-100 text-purple-600 rounded-lg">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button id="listViewBtn" class="p-2 bg-gray-100 text-gray-600 rounded-lg">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>        <!-- Enhanced Goals Grid with advanced features -->
+        <div id="goalsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var goal in Model.Select((value, index) => new { value, index }))
+                {
+                    var progressPercentage = goal.value.TargetAmount > 0 ? (goal.value.CurrentAmount / goal.value.TargetAmount) * 100 : 0;
+                    var isNearDeadline = goal.value.TargetDate.HasValue && goal.value.TargetDate.Value <= DateTime.Now.AddDays(30);
+                    var daysRemaining = goal.value.TargetDate.HasValue ? (goal.value.TargetDate.Value - DateTime.Now).Days : 0;
+                    
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d animate-fadeInUp interactive-card" style="animation-delay: @((goal.index * 0.1))s">
+                        <!-- Goal Header with improved design -->
+                        <div class="relative gradient-purple p-6 text-white">
+                            <div class="absolute top-4 right-4">
+                                <div class="dropdown">
+                                    <button class="p-2 bg-white bg-opacity-20 rounded-lg hover:bg-opacity-30 transition-all duration-300" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu shadow-lg border-0">
+                                        <li><a class="dropdown-item" asp-action="Details" asp-route-id="@goal.value.Id">
+                                            <i class="fas fa-eye mr-2"></i>View Details
+                                        </a></li>
+                                        <li><a class="dropdown-item" asp-action="AddTransaction" asp-route-id="@goal.value.Id">
+                                            <i class="fas fa-plus mr-2"></i>Add Transaction
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="editGoal('@goal.value.Id')">
+                                            <i class="fas fa-edit mr-2"></i>Edit Goal
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="deleteGoal('@goal.value.Id')">
+                                            <i class="fas fa-trash mr-2"></i>Delete
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                              <div class="flex items-center mb-4">
+                                <div class="p-3 bg-white bg-opacity-20 rounded-lg mr-4 animate-float">
+                                    @{
+                                        var iconClass = !string.IsNullOrEmpty(goal.value.Icon) ? goal.value.Icon : "piggy-bank";
+                                        if (!iconClass.StartsWith("fas fa-"))
+                                        {
+                                            iconClass = "fas fa-" + iconClass;
+                                        }
+                                    }
+                                    <i class="@iconClass text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold mb-1">@goal.value.Name</h3>
+                                    <p class="text-purple-100 text-sm">@goal.value.Category</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Goal Status and Priority Badges -->
+                            <div class="flex gap-2 mb-4">
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                                    @(goal.value.Status == "Active" ? "bg-green-100 text-green-800" : 
+                                      goal.value.Status == "Paused" ? "bg-yellow-100 text-yellow-800" : 
+                                      goal.value.Status == "Completed" ? "bg-blue-100 text-blue-800" : "bg-red-100 text-red-800")">
+                                    @goal.value.Status
+                                </span>
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full 
+                                    @(goal.value.Priority == "Low" ? "bg-gray-100 text-gray-800" : 
+                                      goal.value.Priority == "Medium" ? "bg-blue-100 text-blue-800" : 
+                                      goal.value.Priority == "High" ? "bg-orange-100 text-orange-800" : "bg-red-100 text-red-800")">
+                                    @goal.value.Priority Priority
+                                </span>
+                                @if (isNearDeadline && goal.value.Status == "Active")
+                                {
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 animate-pulse-custom">
+                                        <i class="fas fa-exclamation-triangle mr-1"></i>Due Soon
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        
+                        <!-- Goal Body with enhanced content -->
+                        <div class="p-6">
+                            <!-- Description -->
+                            @if (!string.IsNullOrEmpty(goal.value.Description))
+                            {
+                                <p class="text-gray-600 mb-4 text-sm leading-relaxed">@goal.value.Description</p>
+                            }
+                            
+                            <!-- Progress Section with enhanced visualization -->
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-sm font-semibold text-gray-700">Progress</span>
+                                    <span class="text-sm font-bold text-purple-600">@progressPercentage.ToString("F1")%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-3 progress-animated mb-2">
+                                    <div class="bg-gradient-to-r from-purple-500 to-indigo-500 h-3 rounded-full transition-all duration-1000 animate-glow" 
+                                         style="width: @progressPercentage%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-500">
+                                    <span>$@goal.value.CurrentAmount.ToString("N2")</span>
+                                    <span>$@goal.value.TargetAmount.ToString("N2")</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Amount Details with enhanced layout -->
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="bg-gradient-to-br from-green-50 to-green-100 p-3 rounded-lg">
+                                    <div class="text-xs text-green-600 font-semibold">Current Amount</div>
+                                    <div class="text-lg font-bold text-green-800">$@goal.value.CurrentAmount.ToString("N2")</div>
+                                </div>
+                                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-3 rounded-lg">
+                                    <div class="text-xs text-blue-600 font-semibold">Remaining</div>
+                                    <div class="text-lg font-bold text-blue-800">$@((goal.value.TargetAmount - goal.value.CurrentAmount).ToString("N2"))</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Timeline Information -->
+                            @if (goal.value.TargetDate.HasValue)
+                            {
+                                <div class="flex items-center justify-between text-sm mb-4 p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="fas fa-calendar-alt mr-2 text-purple-500"></i>
+                                        <span>Target Date</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="font-semibold text-gray-800">@goal.value.TargetDate.Value.ToString("MMM dd, yyyy")</div>
+                                        <div class="text-xs @(daysRemaining < 30 ? "text-red-500" : "text-gray-500")">
+                                            @if (daysRemaining > 0)
+                                            {
+                                                <span>@daysRemaining days remaining</span>
+                                            }
+                                            else if (daysRemaining == 0)
+                                            {
+                                                <span class="text-red-600 font-semibold">Due Today!</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-red-600 font-semibold">@Math.Abs(daysRemaining) days overdue</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                              <!-- Action Buttons -->
+                            <div class="flex gap-2 mt-6">
+                                <a asp-action="AddTransaction" asp-route-id="@goal.value.Id" 
+                                   class="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-semibold rounded-lg hover:from-green-600 hover:to-green-700 hover:shadow-lg transform hover:scale-105 transition-all duration-300 text-center ripple border-0 opacity-100">
+                                    <i class="fas fa-plus mr-1"></i>Add Funds
+                                </a>
+                                <a asp-action="Details" asp-route-id="@goal.value.Id" 
+                                   class="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-sm font-semibold rounded-lg hover:from-purple-600 hover:to-indigo-600 hover:shadow-lg transform hover:scale-105 transition-all duration-300 text-center ripple border-0 opacity-100">
+                                    <i class="fas fa-chart-line mr-1"></i>Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Empty State with enhanced design -->
+                <div class="col-span-full flex flex-col items-center justify-center py-16 animate-fadeInUp">
+                    <div class="text-6xl text-gray-300 mb-4 animate-float">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-700 mb-2">No Savings Goals Yet</h3>
+                    <p class="text-gray-500 mb-6 text-center max-w-md">Start your savings journey by creating your first goal. Whether it's for a vacation, emergency fund, or dream purchase!</p>
+                    <a asp-action="Create" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ripple">
+                        <i class="fas fa-plus mr-2"></i>Create Your First Goal
+                    </a>
+                </div>
+            }        </div>
+    </div>
+</div>
+
+<!-- Enhanced JavaScript functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize animations
+    initializeAnimations();
+    
+    // Setup interactive features
+    setupQuickActions();
+    setupSorting();
+    setupViewToggle();
+    setupRippleEffects();
+    
+    // Initialize goal interactions
+    initializeGoalInteractions();
+});
+
+function initializeAnimations() {
+    // Add intersection observer for scroll animations
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animate-fadeInUp');
+            }
+        });
+    });
+    
+    document.querySelectorAll('.interactive-card').forEach(card => {
+        observer.observe(card);
+    });
+}
+
+function setupQuickActions() {
+    // Add Funds functionality
+    document.getElementById('addFundsBtn')?.addEventListener('click', function() {
+        showQuickActionModal('add-funds');
+    });
+    
+    // Withdraw functionality
+    document.getElementById('withdrawBtn')?.addEventListener('click', function() {
+        showQuickActionModal('withdraw');
+    });
+    
+    // Transfer functionality
+    document.getElementById('transferBtn')?.addEventListener('click', function() {
+        showQuickActionModal('transfer');
+    });
+    
+    // Analytics functionality
+    document.getElementById('analyticsBtn')?.addEventListener('click', function() {
+        window.location.href = '@Url.Action("Analytics", "Savings")';
+    });
+}
+
+function setupSorting() {
+    const sortSelect = document.getElementById('sortSelect');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            sortGoals(this.value);
+        });
+    }
+}
+
+function setupViewToggle() {
+    const gridViewBtn = document.getElementById('gridViewBtn');
+    const listViewBtn = document.getElementById('listViewBtn');
+    const container = document.getElementById('goalsContainer');
+    
+    if (gridViewBtn && listViewBtn && container) {
+        gridViewBtn.addEventListener('click', function() {
+            container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8';
+            this.classList.add('bg-purple-100', 'text-purple-600');
+            this.classList.remove('bg-gray-100', 'text-gray-600');
+            listViewBtn.classList.add('bg-gray-100', 'text-gray-600');
+            listViewBtn.classList.remove('bg-purple-100', 'text-purple-600');
+        });
+        
+        listViewBtn.addEventListener('click', function() {
+            container.className = 'grid grid-cols-1 gap-4 mb-8';
+            this.classList.add('bg-purple-100', 'text-purple-600');
+            this.classList.remove('bg-gray-100', 'text-gray-600');
+            gridViewBtn.classList.add('bg-gray-100', 'text-gray-600');
+            gridViewBtn.classList.remove('bg-purple-100', 'text-purple-600');
+        });
+    }
+}
+
+function setupRippleEffects() {
+    document.querySelectorAll('.ripple').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            const ripple = document.createElement('span');
+            ripple.style.cssText = `
+                position: absolute;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.6);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+                left: ${x}px;
+                top: ${y}px;
+                width: ${size}px;
+                height: ${size}px;
+            `;
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+}
+
+function initializeGoalInteractions() {
+    // Goal card hover effects
+    document.querySelectorAll('.interactive-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+}
+
+function sortGoals(criteria) {
+    const container = document.getElementById('goalsContainer');
+    const cards = Array.from(container.children);
+    
+    cards.sort((a, b) => {
+        switch(criteria) {
+            case 'name':
+                return a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent);
+            case 'progress':
+                const progressA = parseFloat(a.querySelector('.bg-gradient-to-r').style.width);
+                const progressB = parseFloat(b.querySelector('.bg-gradient-to-r').style.width);
+                return progressB - progressA;
+            case 'target':
+                const targetA = parseFloat(a.querySelector('.text-blue-800').textContent.replace(/[$,]/g, ''));
+                const targetB = parseFloat(b.querySelector('.text-blue-800').textContent.replace(/[$,]/g, ''));
+                return targetB - targetA;
+            case 'deadline':
+                // Sort by deadline (implement based on your date format)
+                return 0; // Placeholder
+            default:
+                return 0;
+        }
+    });
+    
+    // Clear container and re-append sorted cards
+    container.innerHTML = '';
+    cards.forEach(card => container.appendChild(card));
+}
+
+function showQuickActionModal(action) {
+    // Implement modal functionality based on your preferred modal library
+    alert(`${action} functionality would be implemented here`);
+}
+
+function editGoal(goalId) {
+    window.location.href = `@Url.Action("Edit", "Savings")?id=${goalId}`;
+}
+
+function deleteGoal(goalId) {
+    if (confirm('Are you sure you want to delete this savings goal?')) {
+        // Implement delete functionality
+        window.location.href = `@Url.Action("Delete", "Savings")?id=${goalId}`;
+    }
+}
+
+// Add CSS for ripple animation
+const style = document.createElement('style');
+style.textContent = `
+    @@keyframes ripple {
+        from { transform: scale(0); opacity: 1; }
+        to { transform: scale(1); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+</script>

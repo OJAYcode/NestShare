@@ -1,0 +1,838 @@
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    ViewData["Title"] = "Budget Calculator";
+    var requestToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+}
+
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Budget Calculator</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Create a personalized budget based on your income and expenses to help manage your finances effectively.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Input Section -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Budget Name & Month -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                        <h2 class="text-xl font-semibold text-gray-900">Budget Info</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="budget-name" class="block text-sm font-medium text-gray-700 mb-1">Budget Name</label>
+                                <input type="text" id="budget-name" name="budget-name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent" value="Budget for @DateTime.Now.ToString("MMMM yyyy")">
+                            </div>
+                            <div>
+                                <label for="budget-month" class="block text-sm font-medium text-gray-700 mb-1">Month</label>
+                                <input type="month" id="budget-month" name="budget-month" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent" value="@DateTime.Now.ToString("yyyy-MM")">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Income Section -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                        <h2 class="text-xl font-semibold text-gray-900">Income</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="total-income" class="block text-sm font-medium text-gray-700 mb-1">Monthly Take-Home Pay</label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input type="number" id="total-income" name="total-income" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="4500">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="additional-income" class="block text-sm font-medium text-gray-700 mb-1">Additional Income</label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input type="number" id="additional-income" name="additional-income" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="500">
+                                </div>
+                                <p class="mt-1 text-xs text-gray-500">Side hustles, rental income, etc.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expenses Section -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                        <h2 class="text-xl font-semibold text-gray-900">Monthly Expenses</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-6">
+                            <!-- Housing -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-home mr-2 text-blue-500"></i>Housing
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="housing-expenses" class="block text-sm text-gray-600 mb-1">Rent/Mortgage & Utilities</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="housing-expenses" name="housing-expenses" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="1400">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Utilities -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-bolt mr-2 text-yellow-500"></i>Utilities
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="utilities-expenses" class="block text-sm text-gray-600 mb-1">Electricity, Water, Internet, etc.</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="utilities-expenses" name="utilities-expenses" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="200">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Transportation -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-car mr-2 text-green-500"></i>Transportation
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="transportation-expenses" class="block text-sm text-gray-600 mb-1">Car Payment, Gas, Insurance, Public Transit</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="transportation-expenses" name="transportation-expenses" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="450">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Food -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-utensils mr-2 text-red-500"></i>Food
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="food-expenses" class="block text-sm text-gray-600 mb-1">Groceries, Dining Out</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="food-expenses" name="food-expenses" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="600">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Healthcare -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-heartbeat mr-2 text-pink-500"></i>Healthcare
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="healthcare-expenses" class="block text-sm text-gray-600 mb-1">Insurance, Medications, Doctor Visits</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="healthcare-expenses" name="healthcare-expenses" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="250">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Entertainment -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-film mr-2 text-purple-500"></i>Entertainment
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="entertainment-expenses" class="block text-sm text-gray-600 mb-1">Streaming Services, Movies, Hobbies</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="entertainment-expenses" name="entertainment-expenses" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="150">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Personal -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-shopping-bag mr-2 text-orange-500"></i>Personal
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="personal-expenses" class="block text-sm text-gray-600 mb-1">Clothing, Personal Care, Gym</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="personal-expenses" name="personal-expenses" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="200">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Savings -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-piggy-bank mr-2 text-green-600"></i>Savings
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="savings-allocation" class="block text-sm text-gray-600 mb-1">Emergency Fund, Investments, Goals</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="savings-allocation" name="savings-allocation" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="750">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Debt Payment -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-credit-card mr-2 text-red-600"></i>Debt Payment
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="debt-payment" class="block text-sm text-gray-600 mb-1">Credit Cards, Loans, etc.</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="debt-payment" name="debt-payment" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="300">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Other Expenses -->
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-700 mb-3 flex items-center">
+                                    <i class="fas fa-ellipsis-h mr-2 text-gray-500"></i>Other Expenses
+                                </h4>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label for="other-expenses" class="block text-sm text-gray-600 mb-1">Miscellaneous Expenses</label>
+                                        <div class="relative rounded-md shadow-sm">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <span class="text-gray-500 sm:text-sm">$</span>
+                                            </div>
+                                            <input type="number" id="other-expenses" name="other-expenses" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" min="0" step="0.01" value="100">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Notes -->
+                            <div>
+                                <label for="budget-notes" class="block text-sm font-medium text-gray-700 mb-1">Budget Notes</label>
+                                <textarea id="budget-notes" name="budget-notes" rows="3" class="focus:ring-accent focus:border-accent block w-full px-3 py-2 sm:text-sm border-gray-300 rounded-md" placeholder="Add any notes or reminders about your budget..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex space-x-4">
+                    <button type="button" id="calculate-btn" class="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-accent hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+                        Calculate Budget
+                    </button>
+                    <button type="button" id="save-btn" class="flex-1 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Save Budget
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="lg:col-span-7 space-y-6">
+                <!-- Budget Summary -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                        <h2 class="text-xl font-semibold text-gray-900">Budget Summary</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-blue-50 rounded-lg p-4">
+                                <p class="text-sm font-medium text-blue-800 mb-1">Total Income</p>
+                                <p id="summary-income" class="text-2xl font-bold text-blue-900">$5,000.00</p>
+                            </div>
+                            <div class="bg-red-50 rounded-lg p-4">
+                                <p class="text-sm font-medium text-red-800 mb-1">Total Expenses</p>
+                                <p id="summary-expenses" class="text-2xl font-bold text-red-900">$4,400.00</p>
+                            </div>
+                            <div class="bg-green-50 rounded-lg p-4">
+                                <p class="text-sm font-medium text-green-800 mb-1">Remaining</p>
+                                <p id="summary-remaining" class="text-2xl font-bold text-green-900">$600.00</p>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-2">Status</h3>
+                            <div id="budget-status" class="p-4 rounded-lg bg-green-50">
+                                <div class="flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h3 class="text-sm font-medium text-green-800">Your budget is balanced!</h3>
+                                        <div class="mt-2 text-sm text-green-700">
+                                            <p>You're living within your means. Consider allocating more to savings or debt repayment.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Expense Breakdown</h3>
+                            <div class="h-64 mb-4">
+                                <canvas id="expense-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Recommendations -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-b">
+                        <h2 class="text-xl font-semibold text-gray-900">Recommendations</h2>
+                    </div>
+                    <div class="p-6">
+                        <div id="recommendations-container" class="space-y-4">
+                            <!-- Recommendations will be inserted here by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saved Budgets -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-green-50 to-emerald-50 border-b flex justify-between items-center">
+                        <h2 class="text-xl font-semibold text-gray-900">Your Saved Budgets</h2>
+                        <a href="@Url.Action("Index", "Budget")" class="text-sm text-accent hover:text-accent-dark">View All</a>
+                    </div>
+                    <div id="saved-budgets-container" class="p-6">
+                        <div class="text-center py-8">
+                            <p class="text-gray-500">Loading your saved budgets...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" name="__RequestVerificationToken" value="@requestToken" />
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const calculateBtn = document.getElementById('calculate-btn');
+            const saveBtn = document.getElementById('save-btn');
+            
+            // Income elements
+            const totalIncomeInput = document.getElementById('total-income');
+            const additionalIncomeInput = document.getElementById('additional-income');
+            
+            // Expense elements
+            const housingExpensesInput = document.getElementById('housing-expenses');
+            const utilitiesExpensesInput = document.getElementById('utilities-expenses');
+            const transportationExpensesInput = document.getElementById('transportation-expenses');
+            const foodExpensesInput = document.getElementById('food-expenses');
+            const healthcareExpensesInput = document.getElementById('healthcare-expenses');
+            const entertainmentExpensesInput = document.getElementById('entertainment-expenses');
+            const personalExpensesInput = document.getElementById('personal-expenses');
+            const savingsAllocationInput = document.getElementById('savings-allocation');
+            const debtPaymentInput = document.getElementById('debt-payment');
+            const otherExpensesInput = document.getElementById('other-expenses');
+            
+            // Budget info elements
+            const budgetNameInput = document.getElementById('budget-name');
+            const budgetMonthInput = document.getElementById('budget-month');
+            const budgetNotesInput = document.getElementById('budget-notes');
+            
+            // Summary elements
+            const summaryIncome = document.getElementById('summary-income');
+            const summaryExpenses = document.getElementById('summary-expenses');
+            const summaryRemaining = document.getElementById('summary-remaining');
+            const budgetStatus = document.getElementById('budget-status');
+            
+            // Containers
+            const recommendationsContainer = document.getElementById('recommendations-container');
+            const savedBudgetsContainer = document.getElementById('saved-budgets-container');
+            
+            // Chart
+            let expenseChart;
+            
+            // Initialize the page
+            calculateBudget();
+            createExpenseChart();
+            loadSavedBudgets();
+            
+            // Event listeners
+            calculateBtn.addEventListener('click', function() {
+                calculateBudget();
+                updateExpenseChart();
+                generateRecommendations();
+            });
+            
+            saveBtn.addEventListener('click', function() {
+                saveBudget();
+            });
+            
+            // Functions
+            function calculateBudget() {
+                // Calculate total income
+                const totalIncome = parseFloat(totalIncomeInput.value) || 0;
+                const additionalIncome = parseFloat(additionalIncomeInput.value) || 0;
+                const totalIncomeAmount = totalIncome + additionalIncome;
+                
+                // Calculate total expenses
+                const housingExpenses = parseFloat(housingExpensesInput.value) || 0;
+                const utilitiesExpenses = parseFloat(utilitiesExpensesInput.value) || 0;
+                const transportationExpenses = parseFloat(transportationExpensesInput.value) || 0;
+                const foodExpenses = parseFloat(foodExpensesInput.value) || 0;
+                const healthcareExpenses = parseFloat(healthcareExpensesInput.value) || 0;
+                const entertainmentExpenses = parseFloat(entertainmentExpensesInput.value) || 0;
+                const personalExpenses = parseFloat(personalExpensesInput.value) || 0;
+                const savingsAllocation = parseFloat(savingsAllocationInput.value) || 0;
+                const debtPayment = parseFloat(debtPaymentInput.value) || 0;
+                const otherExpenses = parseFloat(otherExpensesInput.value) || 0;
+                
+                const totalExpenses = housingExpenses + utilitiesExpenses + transportationExpenses +
+                    foodExpenses + healthcareExpenses + entertainmentExpenses +
+                    personalExpenses + savingsAllocation + debtPayment + otherExpenses;
+                
+                // Calculate remaining budget
+                const remainingBudget = totalIncomeAmount - totalExpenses;
+                
+                // Update summary
+                summaryIncome.textContent = `$${totalIncomeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                summaryExpenses.textContent = `$${totalExpenses.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                summaryRemaining.textContent = `$${remainingBudget.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                
+                // Update status
+                if (remainingBudget >= 0) {
+                    budgetStatus.className = 'p-4 rounded-lg bg-green-50';
+                    budgetStatus.innerHTML = `
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-green-800">Your budget is balanced!</h3>
+                                <div class="mt-2 text-sm text-green-700">
+                                    <p>You're living within your means. Consider allocating more to savings or debt repayment.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    budgetStatus.className = 'p-4 rounded-lg bg-red-50';
+                    budgetStatus.innerHTML = `
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-circle text-red-600 text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-red-800">Your expenses exceed your income!</h3>
+                                <div class="mt-2 text-sm text-red-700">
+                                    <p>You need to either increase your income or reduce your expenses by $${Math.abs(remainingBudget).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            function createExpenseChart() {
+                const ctx = document.getElementById('expense-chart').getContext('2d');
+                
+                expenseChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: [
+                            'Housing',
+                            'Utilities',
+                            'Transportation',
+                            'Food',
+                            'Healthcare',
+                            'Entertainment',
+                            'Personal',
+                            'Savings',
+                            'Debt Payment',
+                            'Other'
+                        ],
+                        datasets: [{
+                            data: [
+                                parseFloat(housingExpensesInput.value) || 0,
+                                parseFloat(utilitiesExpensesInput.value) || 0,
+                                parseFloat(transportationExpensesInput.value) || 0,
+                                parseFloat(foodExpensesInput.value) || 0,
+                                parseFloat(healthcareExpensesInput.value) || 0,
+                                parseFloat(entertainmentExpensesInput.value) || 0,
+                                parseFloat(personalExpensesInput.value) || 0,
+                                parseFloat(savingsAllocationInput.value) || 0,
+                                parseFloat(debtPaymentInput.value) || 0,
+                                parseFloat(otherExpensesInput.value) || 0
+                            ],
+                            backgroundColor: [
+                                '#3b82f6', // blue
+                                '#f59e0b', // yellow
+                                '#10b981', // green
+                                '#ef4444', // red
+                                '#ec4899', // pink
+                                '#8b5cf6', // purple
+                                '#f97316', // orange
+                                '#22c55e', // green-500
+                                '#dc2626', // red-600
+                                '#6b7280'  // gray-500
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    boxWidth: 12
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                        return `${label}: $${value.toLocaleString()} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function updateExpenseChart() {
+                expenseChart.data.datasets[0].data = [
+                    parseFloat(housingExpensesInput.value) || 0,
+                    parseFloat(utilitiesExpensesInput.value) || 0,
+                    parseFloat(transportationExpensesInput.value) || 0,
+                    parseFloat(foodExpensesInput.value) || 0,
+                    parseFloat(healthcareExpensesInput.value) || 0,
+                    parseFloat(entertainmentExpensesInput.value) || 0,
+                    parseFloat(personalExpensesInput.value) || 0,
+                    parseFloat(savingsAllocationInput.value) || 0,
+                    parseFloat(debtPaymentInput.value) || 0,
+                    parseFloat(otherExpensesInput.value) || 0
+                ];
+                expenseChart.update();
+            }
+            
+            function generateRecommendations() {
+                // Calculate percentages
+                const totalIncome = parseFloat(totalIncomeInput.value) || 0;
+                const additionalIncome = parseFloat(additionalIncomeInput.value) || 0;
+                const totalIncomeAmount = totalIncome + additionalIncome;
+                
+                const housingExpenses = parseFloat(housingExpensesInput.value) || 0;
+                const utilitiesExpenses = parseFloat(utilitiesExpensesInput.value) || 0;
+                const transportationExpenses = parseFloat(transportationExpensesInput.value) || 0;
+                const foodExpenses = parseFloat(foodExpensesInput.value) || 0;
+                const healthcareExpenses = parseFloat(healthcareExpensesInput.value) || 0;
+                const entertainmentExpenses = parseFloat(entertainmentExpensesInput.value) || 0;
+                const personalExpenses = parseFloat(personalExpensesInput.value) || 0;
+                const savingsAllocation = parseFloat(savingsAllocationInput.value) || 0;
+                const debtPayment = parseFloat(debtPaymentInput.value) || 0;
+                const otherExpenses = parseFloat(otherExpensesInput.value) || 0;
+                
+                const housingPercent = (housingExpenses / totalIncomeAmount) * 100;
+                const savingsPercent = (savingsAllocation / totalIncomeAmount) * 100;
+                const debtPercent = (debtPayment / totalIncomeAmount) * 100;
+                const entertainmentPercent = (entertainmentExpenses / totalIncomeAmount) * 100;
+                
+                // Clear previous recommendations
+                recommendationsContainer.innerHTML = '';
+                
+                // Generate recommendations based on percentages
+                const recommendations = [];
+                
+                if (housingPercent > 30) {
+                    recommendations.push({
+                        icon: 'fa-home',
+                        color: 'blue',
+                        title: 'Housing costs are high',
+                        text: `Your housing expenses are ${housingPercent.toFixed(1)}% of your income. The recommended maximum is 30%. Consider finding ways to reduce housing costs if possible.`
+                    });
+                }
+                
+                if (savingsPercent < 20) {
+                    recommendations.push({
+                        icon: 'fa-piggy-bank',
+                        color: 'green',
+                        title: 'Increase your savings rate',
+                        text: `You're currently saving ${savingsPercent.toFixed(1)}% of your income. Aim for at least 20% to build financial security.`
+                    });
+                }
+                
+                if (debtPercent > 20) {
+                    recommendations.push({
+                        icon: 'fa-credit-card',
+                        color: 'red',
+                        title: 'High debt payments',
+                        text: `Your debt payments are ${debtPercent.toFixed(1)}% of your income. Try to keep this below 20% and prioritize paying off high-interest debt.`
+                    });
+                }
+                
+                if (entertainmentPercent > 10) {
+                    recommendations.push({
+                        icon: 'fa-film',
+                        color: 'purple',
+                        title: 'Entertainment spending could be reduced',
+                        text: `You're spending ${entertainmentPercent.toFixed(1)}% on entertainment. Consider reducing this to 5-10% to free up money for savings or debt repayment.`
+                    });
+                }
+                
+                // Add general recommendation if there are no specific ones
+                if (recommendations.length === 0) {
+                    recommendations.push({
+                        icon: 'fa-thumbs-up',
+                        color: 'green',
+                        title: 'Your budget looks good!',
+                        text: 'Your allocations are within recommended guidelines. Keep up the good work!'
+                    });
+                }
+                
+                // Add recommendations to the container
+                recommendations.forEach(rec => {
+                    const recHtml = `
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 h-6 w-6 rounded-full bg-${rec.color}-100 flex items-center justify-center text-${rec.color}-600 mr-3">
+                                <i class="fas ${rec.icon} text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">${rec.title}</p>
+                                <p class="text-sm text-gray-700 mt-1">${rec.text}</p>
+                            </div>
+                        </div>
+                    `;
+                    recommendationsContainer.innerHTML += recHtml;
+                });
+            }
+            
+            function loadSavedBudgets() {
+                // Fetch saved budgets from the server
+                fetch('@Url.Action("GetRecentBudgets", "Budget")')
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('Failed to load saved budgets');
+                    })
+                    .then(budgets => {
+                        if (budgets && budgets.length > 0) {
+                            savedBudgetsContainer.innerHTML = '<div class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>';
+                            const grid = savedBudgetsContainer.querySelector('.grid');
+                            
+                            // Display up to 4 most recent budgets
+                            const budgetsToShow = budgets.slice(0, 4);
+                            
+                            budgetsToShow.forEach(budget => {
+                                const date = new Date(budget.month);
+                                const formattedDate = date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+                                
+                                const budgetItem = document.createElement('div');
+                                budgetItem.className = 'budget-item bg-white rounded-lg shadow p-4 border-l-4 border-accent';
+                                budgetItem.innerHTML = `
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h3 class="font-medium text-gray-900">${budget.name}</h3>
+                                            <p class="text-xs text-gray-500">${formattedDate}</p>
+                                        </div>
+                                        <a href="@Url.Action("Details", "Budget")/${budget.id}" class="text-xs text-accent hover:text-accent-dark">
+                                            View Details
+                                        </a>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-2 text-xs mt-2">
+                                        <div>
+                                            <span class="text-gray-500">Income:</span>
+                                            <span class="font-medium">$${(budget.totalIncome + budget.additionalIncome).toFixed(2)}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-500">Expenses:</span>
+                                            <span class="font-medium">$${budget.totalExpenses.toFixed(2)}</span>
+                                        </div>
+                                        <div>
+                                            <span class="text-gray-500">Remaining:</span>
+                                            <span class="font-medium ${budget.remainingBudget >= 0 ? 'text-green-600' : 'text-red-600'}">
+                                                $${budget.remainingBudget.toFixed(2)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                `;
+                                grid.appendChild(budgetItem);
+                            });
+                            
+                            if (budgets.length > 4) {
+                                savedBudgetsContainer.innerHTML += `
+                                    <div class="text-center mt-4">
+                                        <a href="@Url.Action("Index", "Budget")" class="text-sm text-accent hover:text-accent-dark">
+                                            View all ${budgets.length} budgets
+                                        </a>
+                                    </div>
+                                `;
+                            }
+                        } else {
+                            savedBudgetsContainer.innerHTML = `
+                                <div class="text-center py-8">
+                                    <p class="text-gray-500 mb-4">You don't have any saved budgets yet.</p>
+                                    <p class="text-sm text-gray-500">Create and save your budget to track your finances over time.</p>
+                                </div>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading saved budgets:', error);
+                        savedBudgetsContainer.innerHTML = `
+                            <div class="text-center py-8">
+                                <p class="text-gray-500">Unable to load saved budgets. Please try again later.</p>
+                            </div>
+                        `;
+                    });
+            }
+            
+            function saveBudget() {
+                // Get all budget data
+                const budgetData = {
+                    name: budgetNameInput.value,
+                    month: new Date(budgetMonthInput.value + '-01'),
+                    totalIncome: parseFloat(totalIncomeInput.value) || 0,
+                    additionalIncome: parseFloat(additionalIncomeInput.value) || 0,
+                    housingExpenses: parseFloat(housingExpensesInput.value) || 0,
+                    utilitiesExpenses: parseFloat(utilitiesExpensesInput.value) || 0,
+                    transportationExpenses: parseFloat(transportationExpensesInput.value) || 0,
+                    foodExpenses: parseFloat(foodExpensesInput.value) || 0,
+                    healthcareExpenses: parseFloat(healthcareExpensesInput.value) || 0,
+                    entertainmentExpenses: parseFloat(entertainmentExpensesInput.value) || 0,
+                    personalExpenses: parseFloat(personalExpensesInput.value) || 0,
+                    savingsAllocation: parseFloat(savingsAllocationInput.value) || 0,
+                    debtPayment: parseFloat(debtPaymentInput.value) || 0,
+                    otherExpenses: parseFloat(otherExpensesInput.value) || 0,
+                    notes: budgetNotesInput.value
+                };
+                
+                // Get the anti-forgery token
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                
+                // Send data to server
+                fetch('@Url.Action("SaveBudgetData", "Budget")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': token
+                    },
+                    body: JSON.stringify(budgetData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Failed to save budget');
+                })
+                .then(data => {
+                    if (data.success) {
+                        // Show success message
+                        showNotification('Budget saved successfully!');
+                        
+                        // Reload saved budgets
+                        loadSavedBudgets();
+                        
+                        // Optionally redirect to the budget details page
+                        setTimeout(() => {
+                            window.location.href = '@Url.Action("Details", "Budget")/' + data.budgetId;
+                        }, 1500);
+                    } else {
+                        showNotification('Error saving budget.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Error saving budget. Please try again.', 'error');
+                });
+            }
+            
+            function showNotification(message, type = 'success') {
+                // Create notification element if it doesn't exist
+                if (!document.getElementById('notification')) {
+                    const notification = document.createElement('div');
+                    notification.id = 'notification';
+                    notification.className = 'fixed bottom-4 right-4 px-4 py-3 rounded-lg shadow-lg flex items-center transform transition-all duration-300 translate-y-20 opacity-0';
+                    notification.innerHTML = `
+                        <i class="mr-2"></i>
+                        <span id="notification-message"></span>
+                    `;
+                    document.body.appendChild(notification);
+                }
+                
+                // Get notification elements
+                const notification = document.getElementById('notification');
+                const notificationIcon = notification.querySelector('i');
+                const notificationMessage = document.getElementById('notification-message');
+                
+                // Set notification type
+                if (type === 'success') {
+                    notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center transform transition-all duration-300 translate-y-20 opacity-0';
+                    notificationIcon.className = 'fas fa-check-circle mr-2';
+                } else {
+                    notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-4 py-3 rounded-lg shadow-lg flex items-center transform transition-all duration-300 translate-y-20 opacity-0';
+                    notificationIcon.className = 'fas fa-exclamation-circle mr-2';
+                }
+                
+                // Update message
+                notificationMessage.textContent = message;
+                
+                // Show notification
+                notification.classList.remove('translate-y-20', 'opacity-0');
+                
+                // Hide after delay
+                setTimeout(() => {
+                    notification.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            }
+        });
+    </script>
+}

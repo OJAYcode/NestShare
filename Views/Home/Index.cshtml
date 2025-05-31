@@ -1,0 +1,498 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<!-- Hero Section with cleaner design -->
+<section class="relative bg-gray-50 py-20 overflow-hidden">
+    <!-- Subtle background gradient -->
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100"></div>
+    
+    <!-- Simple, subtle pattern overlay -->
+    <div class="absolute inset-0 bg-grid-gray-200/30 bg-[length:24px_24px]"></div>
+    
+    <!-- Content container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+            <!-- Left side content with simplified design -->
+            <div class="lg:w-1/2">
+                <!-- Simple badge -->
+                <div class="inline-flex items-center px-3 py-1 rounded-full bg-purple-100 border border-purple-200 mb-6">
+                    <span class="relative flex h-2 w-2 mr-2">
+                        <span class="inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                    </span>
+                    <span class="text-sm font-medium text-purple-800">Smart Financial Tools</span>
+                </div>
+                
+                <!-- Clean, readable heading -->
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">
+                    <span class="block text-gray-900">Take Control of Your</span>
+                    <span class="block mt-2 text-purple-700">Financial Future</span>
+                </h1>
+                
+                <!-- Clear, straightforward description -->
+                <p class="text-lg text-gray-600 mb-8">
+                    Track expenses, manage budgets, and achieve your savings goals with our intuitive financial management platform.
+                </p>
+                
+                <!-- Simple stats with clean design -->
+                <div class="grid grid-cols-3 gap-4 mb-8">
+                    <div class="bg-white text-center p-4 rounded-lg shadow-sm border border-gray-100">
+                        <div class="text-purple-700 text-3xl font-bold" id="counter-users">5K+</div>
+                        <div class="text-gray-600 text-sm">Users</div>
+                    </div>
+                    <div class="bg-white text-center p-4 rounded-lg shadow-sm border border-gray-100">
+                        <div class="text-purple-700 text-3xl font-bold" id="counter-saved">$2M</div>
+                        <div class="text-gray-600 text-sm">Saved</div>
+                    </div>
+                    <div class="bg-white text-center p-4 rounded-lg shadow-sm border border-gray-100">
+                        <div class="text-purple-700 text-3xl font-bold" id="counter-rating">4.8</div>
+                        <div class="text-gray-600 text-sm">App Rating</div>
+                    </div>
+                </div>
+                
+                <!-- Clean CTA buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                    <a asp-area="Identity" asp-page="/Account/Register" class="px-8 py-3 rounded-lg bg-purple-600 text-white font-medium text-center hover:bg-purple-700 transition-colors duration-200 shadow-sm">
+                        <span class="flex items-center justify-center">
+                            Get Started Free
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                            </svg>
+                        </span>
+                    </a>
+                    <a href="#features" class="px-8 py-3 rounded-lg border border-purple-600 text-purple-700 font-medium hover:bg-purple-50 transition-colors duration-200 text-center">
+                        <span class="flex items-center justify-center">
+                            <span>Explore Features</span>
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Right side dashboard with clean design -->
+            <div class="lg:w-1/2 mt-12 lg:mt-0 w-full">
+                <div class="relative max-w-md mx-auto lg:max-w-none">
+                    <!-- Clean shadow for depth -->
+                    <div class="absolute inset-0 bg-purple-100 rounded-xl transform translate-x-4 translate-y-4 -z-10"></div>
+                    
+                    <!-- Dashboard mockup -->
+                    <div class="relative z-20 shadow-lg">
+                        <!-- Main dashboard frame -->
+                        <div class="w-full">
+                            <div class="bg-white rounded-xl overflow-hidden border border-gray-200">
+                                <!-- Browser-like header -->
+                                <div class="h-6 bg-gray-100 flex items-center px-4">
+                                    <div class="flex space-x-2">
+                                        <div class="w-2 h-2 bg-red-400 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                                        <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                                    </div>
+                                    <div class="mx-auto text-xs text-gray-500">financialdashboard.app</div>
+                                </div>
+                                
+                                <!-- Dashboard content -->
+                                <div class="relative pb-[56.25%] overflow-hidden">
+                                    <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/hero/mockup-1.png" 
+                                         class="absolute inset-0 w-full h-full object-cover" 
+                                         alt="Dashboard Mockup">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- First notification card -->
+                        <div class="absolute -top-6 -left-6 z-20 max-w-[65%] sm:max-w-[250px]">
+                            <div class="bg-white rounded-lg shadow-md p-3 sm:p-4 transform rotate-2">
+                                <div class="flex items-center mb-2">
+                                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-2 sm:mr-3 flex-shrink-0">
+                                        <i class="fas fa-chart-line text-sm sm:text-base"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs sm:text-sm font-semibold text-gray-900">Investment Growth</h4>
+                                        <p class="text-xs text-gray-500 hidden sm:block">Last 30 days</p>
+                                    </div>
+                                </div>
+                                <div class="bg-purple-50 p-2 rounded-md">
+                                    <div class="text-xs sm:text-sm text-purple-700">
+                                        <span class="font-bold">+12.5%</span> growth this month
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Second notification card -->
+                        <div class="absolute -bottom-4 -right-4 z-20 max-w-[65%] sm:max-w-[250px]">
+                            <div class="bg-white rounded-lg shadow-md p-3 sm:p-4 transform -rotate-2">
+                                <div class="flex items-center mb-2">
+                                    <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-2 sm:mr-3 flex-shrink-0">
+                                        <i class="fas fa-piggy-bank text-sm sm:text-base"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs sm:text-sm font-semibold text-gray-900">Savings Goal</h4>
+                                        <p class="text-xs text-gray-500 hidden sm:block">Vacation Fund</p>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mb-1 sm:h-2.5 sm:mb-2">
+                                    <div class="bg-green-600 h-full rounded-full" style="width: 75%"></div>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-gray-500">$3,000</span>
+                                    <span class="text-gray-500">$4,000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section - Updated with clean design to match hero section -->
+<section id="features" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <span class="inline-block px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm font-semibold mb-4 border border-purple-200">Features</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Everything you need to manage your finances</h2>
+            <p class="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">Our platform provides powerful tools to track expenses, set budgets, and reach your financial goals.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature Card 1 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mb-4">
+                    <i class="fas fa-chart-pie text-purple-600 text-xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-900">Smart Budgeting</h3>
+                <p class="text-gray-600">
+                    Create customized budgets that adapt to your spending habits and financial goals with AI-powered recommendations.
+                </p>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <a href="#" class="text-purple-600 font-medium flex items-center hover:text-purple-700">
+                        Learn more
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Feature Card 2 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mb-4">
+                    <i class="fas fa-piggy-bank text-purple-600 text-xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-900">Savings Goals</h3>
+                <p class="text-gray-600">
+                    Set and track progress toward your savings goals with visual progress indicators and smart milestone tracking.
+                </p>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <a href="#" class="text-purple-600 font-medium flex items-center hover:text-purple-700">
+                        Learn more
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Feature Card 3 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                <div class="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center mb-4">
+                    <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-gray-900">Advanced Analytics</h3>
+                <p class="text-gray-600">
+                    Gain insights into your spending patterns with detailed reports, trend analysis, and predictive forecasts.
+                </p>
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <a href="#" class="text-purple-600 font-medium flex items-center hover:text-purple-700">
+                        Learn more
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section - Clean light design to match hero section -->
+<section id="testimonials" class="py-20 bg-gray-100 relative overflow-hidden">
+    <!-- Subtle background elements -->
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16">
+            <span class="inline-block px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm font-semibold mb-4 border border-purple-200">Testimonials</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900">What our users say</h2>
+            <p class="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">Don't just take our word for it. Here's what people are saying about our platform.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Testimonial 1 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                <div class="flex items-center mb-4">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" alt="User" class="w-12 h-12 rounded-full object-cover border-2 border-purple-100 mr-4">
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900">Sarah Johnson</h4>
+                        <p class="text-sm text-gray-500">Small Business Owner</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 italic">
+                    "This platform has completely transformed how I manage both my personal and business finances. The insights have helped me save over $5,000 this year alone."
+                </p>
+                <div class="mt-4 flex text-purple-500">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+            
+            <!-- Testimonial 2 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                <div class="flex items-center mb-4">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" alt="User" class="w-12 h-12 rounded-full object-cover border-2 border-purple-100 mr-4">
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900">Michael Chen</h4>
+                        <p class="text-sm text-gray-500">Software Engineer</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 italic">
+                    "As someone who loves data, the analytics in this app are incredible. I've finally been able to understand my spending patterns and make meaningful changes."
+                </p>
+                <div class="mt-4 flex text-purple-500">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+            </div>
+            
+            <!-- Testimonial 3 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                <div class="flex items-center mb-4">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80" alt="User" class="w-12 h-12 rounded-full object-cover border-2 border-purple-100 mr-4">
+                    <div>
+                        <h4 class="text-lg font-semibold text-gray-900">Jessica Williams</h4>
+                        <p class="text-sm text-gray-500">Marketing Manager</p>
+                    </div>
+                </div>
+                <p class="text-gray-600 italic">
+                    "I've tried several budget apps before, but this is the only one I've stuck with. The goal-setting features actually make saving money fun!"
+                </p>
+                <div class="mt-4 flex text-purple-500">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section - Clean design to match other sections -->
+<section id="pricing" class="py-20 bg-white relative overflow-hidden">
+    <!-- Subtle background elements -->
+    <div class="absolute inset-0 bg-gradient-to-br from-white to-gray-50"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16">
+            <span class="inline-block px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm font-semibold mb-4 border border-purple-200">Pricing</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Plans for every financial journey</h2>
+            <p class="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">Choose the perfect plan that fits your needs and budget.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Free Plan -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Free</h3>
+                    <p class="text-gray-600 mb-6">Perfect for getting started with basic budgeting.</p>
+                    <div class="flex items-baseline mb-8">
+                        <span class="text-5xl font-extrabold text-gray-900">$0</span>
+                        <span class="text-gray-500 ml-1">/month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Basic expense tracking</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Simple budget templates</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Monthly financial summary</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="block w-full py-3 px-4 rounded-lg border border-purple-600 text-purple-600 font-medium text-center hover:bg-purple-50 transition-colors duration-200">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Premium Plan -->
+            <div class="bg-white rounded-xl shadow-md relative border-2 border-purple-600">
+                <div class="absolute top-0 inset-x-0 transform -translate-y-1/2 flex justify-center">
+                    <span class="inline-block bg-purple-600 text-white text-sm font-semibold py-1 px-4 rounded-full">Most Popular</span>
+                </div>
+                <div class="p-8 rounded-xl">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Premium</h3>
+                    <p class="text-gray-600 mb-6">Advanced features for serious financial management.</p>
+                    <div class="flex items-baseline mb-8">
+                        <span class="text-5xl font-extrabold text-gray-900">$9.99</span>
+                        <span class="text-gray-500 ml-1">/month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Everything in Free</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Advanced analytics</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Custom categories</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Goal tracking & reminders</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Bill payment reminders</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="block w-full py-3 px-4 rounded-lg bg-purple-600 text-white font-medium text-center hover:bg-purple-700 transition-colors duration-200">
+                        Start 14-Day Trial
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Business Plan -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md hover:border-purple-200 transition-all duration-200">
+                <div class="p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Business</h3>
+                    <p class="text-gray-600 mb-6">Complete solution for business finances.</p>
+                    <div class="flex items-baseline mb-8">
+                        <span class="text-5xl font-extrabold text-gray-900">$19.99</span>
+                        <span class="text-gray-500 ml-1">/month</span>
+                    </div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Everything in Premium</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Multi-user access</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Business reports & exports</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Tax category tracking</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                <i class="fas fa-check text-green-500 text-xs"></i>
+                            </div>
+                            <span class="text-gray-600">Priority support</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="block w-full py-3 px-4 rounded-lg border border-purple-600 text-purple-600 font-medium text-center hover:bg-purple-50 transition-colors duration-200">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section - Clean light design to match other sections -->
+<section class="py-20 bg-gray-50 relative overflow-hidden">
+    <!-- Subtle background elements -->
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100"></div>
+    
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16">
+            <span class="inline-block px-3 py-1 rounded-full bg-purple-100 text-purple-700 text-sm font-semibold mb-4 border border-purple-200">Join Us</span>
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900">Ready to take control of your finances?</h2>
+            <p class="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">Sign up today and start your journey towards financial freedom with our powerful budgeting tools.</p>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+            <a asp-area="Identity" asp-page="/Account/Register" class="px-8 py-4 rounded-lg bg-purple-600 text-white font-medium text-center hover:bg-purple-700 transition-colors duration-200">
+                <span class="flex items-center justify-center">
+                    Get Started Free
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                </span>
+            </a>
+            <a href="#features" class="px-8 py-4 rounded-lg border border-purple-600 text-purple-700 font-medium hover:bg-purple-50 transition-colors duration-200 text-center">
+                <span class="flex items-center justify-center">
+                    <span>Explore Features</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                </span>
+            </a>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simple smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

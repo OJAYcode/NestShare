@@ -1,0 +1,274 @@
+@model Thrift.ViewModels.MakePaymentViewModel
+
+@{
+    ViewData["Title"] = "Make Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-lg-flex">
+                        <div>
+                            <h5 class="mb-0">Make Loan Payment</h5>
+                            <p class="text-sm mb-0">Record a payment for your loan</p>
+                        </div>
+                        <div class="ms-auto my-auto mt-lg-0 mt-4">
+                            <div class="ms-auto my-auto">
+                                <a href="@Url.Action("Details", "Loan", new { id = Model.LoanId })" class="btn btn-outline-primary btn-sm mb-0">
+                                    <i class="fas fa-arrow-left me-1"></i> Back to Loan Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Loan Summary -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-gradient-primary">
+                                <div class="card-body p-3">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div class="numbers">
+                                                <p class="text-white text-sm mb-0 text-capitalize font-weight-bold">@Model.LoanName</p>
+                                                <h5 class="text-white font-weight-bolder mb-0">
+                                                    Balance: @Model.CurrentBalance.ToString("C")
+                                                </h5>
+                                                <p class="text-white text-sm mb-0">
+                                                    Regular Payment: @Model.ScheduledPaymentAmount.ToString("C")
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <div class="icon icon-shape bg-white shadow text-center border-radius-md">
+                                                <i class="ni ni-money-coins text-dark text-lg opacity-10" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-gradient-info">
+                                <div class="card-body p-3">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div class="numbers">
+                                                <p class="text-white text-sm mb-0 text-capitalize font-weight-bold">Next Due Date</p>
+                                                <h5 class="text-white font-weight-bolder mb-0">
+                                                    @(Model.NextDueDate?.ToString("MMM dd, yyyy") ?? "N/A")
+                                                </h5>
+                                                <p class="text-white text-sm mb-0">
+                                                    @(Model.DaysUntilDue > 0 ? $"Due in {Model.DaysUntilDue} days" : 
+                                                      Model.DaysUntilDue == 0 ? "Due today" : 
+                                                      $"Overdue by {Math.Abs(Model.DaysUntilDue)} days")
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            <div class="icon icon-shape bg-white shadow text-center border-radius-md">
+                                                <i class="ni ni-calendar-grid-58 text-dark text-lg opacity-10" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Form -->
+                    <form asp-action="MakePayment" method="post" id="paymentForm">
+                        <input asp-for="LoanId" type="hidden" />
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="PaymentAmount" class="form-control-label">Payment Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input asp-for="PaymentAmount" class="form-control" placeholder="0.00" step="0.01" min="0.01" />
+                                    </div>
+                                    <span asp-validation-for="PaymentAmount" class="text-danger"></span>
+                                    <small class="form-text text-muted">
+                                        Scheduled payment: @Model.ScheduledPaymentAmount.ToString("C")
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="PaymentDate" class="form-control-label">Payment Date</label>
+                                    <input asp-for="PaymentDate" type="date" class="form-control" />
+                                    <span asp-validation-for="PaymentDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-control-label">Quick Payment Options</label>
+                                    <div class="btn-group-vertical d-grid gap-2" role="group">
+                                        <button type="button" class="btn btn-outline-primary btn-sm quick-payment" 
+                                                data-amount="@Model.ScheduledPaymentAmount">
+                                            Regular Payment (@Model.ScheduledPaymentAmount.ToString("C"))
+                                        </button>
+                                        <button type="button" class="btn btn-outline-success btn-sm quick-payment" 
+                                                data-amount="@(Model.ScheduledPaymentAmount * 2)">
+                                            Double Payment (@((Model.ScheduledPaymentAmount * 2).ToString("C")))
+                                        </button>
+                                        <button type="button" class="btn btn-outline-info btn-sm quick-payment" 
+                                                data-amount="@(Math.Min(Model.CurrentBalance, Model.ScheduledPaymentAmount + 100))">
+                                            Extra $100 (@((Math.Min(Model.CurrentBalance, Model.ScheduledPaymentAmount + 100)).ToString("C")))
+                                        </button>
+                                        <button type="button" class="btn btn-outline-warning btn-sm quick-payment" 
+                                                data-amount="@Model.CurrentBalance">
+                                            Pay Off Loan (@Model.CurrentBalance.ToString("C"))
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Notes" class="form-control-label">Payment Notes</label>
+                                    <textarea asp-for="Notes" class="form-control" rows="4" placeholder="Optional notes about this payment"></textarea>
+                                    <span asp-validation-for="Notes" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Breakdown -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card border" id="paymentBreakdown" style="display: none;">
+                                    <div class="card-body p-3">
+                                        <h6 class="mb-3">Payment Breakdown</h6>
+                                        <div class="row">
+                                            <div class="col-md-3 col-6">
+                                                <div class="text-center">
+                                                    <h6 class="font-weight-bolder mb-0" id="principalAmount">$0.00</h6>
+                                                    <p class="text-sm mb-0">Principal</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-6">
+                                                <div class="text-center">
+                                                    <h6 class="font-weight-bolder mb-0" id="interestAmount">$0.00</h6>
+                                                    <p class="text-sm mb-0">Interest</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-6">
+                                                <div class="text-center">
+                                                    <h6 class="font-weight-bolder mb-0" id="newBalance">@Model.CurrentBalance.ToString("C")</h6>
+                                                    <p class="text-sm mb-0">New Balance</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-6">
+                                                <div class="text-center">
+                                                    <h6 class="font-weight-bolder mb-0" id="extraPayment">$0.00</h6>
+                                                    <p class="text-sm mb-0">Extra Payment</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12 text-end">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-check me-1"></i> Record Payment
+                                </button>
+                                <a href="@Url.Action("Details", "Loan", new { id = Model.LoanId })" class="btn btn-outline-secondary ms-2">
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            const currentBalance = @Model.CurrentBalance;
+            const interestRate = @Model.InterestRate / 100 / 12; // Monthly interest rate
+            const scheduledPayment = @Model.ScheduledPaymentAmount;
+            
+            // Quick payment buttons
+            $('.quick-payment').click(function() {
+                const amount = $(this).data('amount');
+                $('#PaymentAmount').val(amount.toFixed(2));
+                calculatePaymentBreakdown();
+            });
+            
+            // Calculate payment breakdown
+            function calculatePaymentBreakdown() {
+                const paymentAmount = parseFloat($('#PaymentAmount').val()) || 0;
+                
+                if (paymentAmount > 0) {
+                    $('#paymentBreakdown').show();
+                    
+                    // Calculate interest portion (current balance * monthly interest rate)
+                    const interestPortion = Math.min(paymentAmount, currentBalance * interestRate);
+                    
+                    // Calculate principal portion
+                    const principalPortion = Math.min(paymentAmount - interestPortion, currentBalance - interestPortion);
+                    
+                    // Calculate extra payment (if any)
+                    const extraPayment = Math.max(0, paymentAmount - scheduledPayment);
+                    
+                    // Calculate new balance
+                    const newBalance = Math.max(0, currentBalance - principalPortion);
+                    
+                    // Update display
+                    $('#principalAmount').text('$' + principalPortion.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                    $('#interestAmount').text('$' + interestPortion.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                    $('#newBalance').text('$' + newBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                    $('#extraPayment').text('$' + extraPayment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                    
+                    // Change extra payment color if there is one
+                    if (extraPayment > 0) {
+                        $('#extraPayment').addClass('text-success');
+                    } else {
+                        $('#extraPayment').removeClass('text-success');
+                    }
+                } else {
+                    $('#paymentBreakdown').hide();
+                }
+            }
+            
+            // Bind calculation to payment amount changes
+            $('#PaymentAmount').on('input', calculatePaymentBreakdown);
+            
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            $('#PaymentDate').val(today);
+            
+            // Form validation
+            $('#paymentForm').on('submit', function(e) {
+                const paymentAmount = parseFloat($('#PaymentAmount').val()) || 0;
+                
+                if (paymentAmount > currentBalance) {
+                    if (!confirm('The payment amount exceeds the current balance. The excess will be recorded as an overpayment. Do you want to continue?')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+                
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                this.classList.add('was-validated');
+            });
+        });
+    </script>
+}

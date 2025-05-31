@@ -1,0 +1,319 @@
+@model ThriftGroupSearchViewModel
+@{
+    ViewData["Title"] = "Search Thrift Groups";
+}
+
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="text-center">
+                <h2 class="mb-2">Discover Thrift Groups</h2>
+                <p class="text-muted">Find and join thrift groups that match your financial goals</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form asp-action="Search" method="get">
+                        <div class="row align-items-end">
+                            <div class="col-md-4 mb-3">
+                                <label for="searchTerm" class="form-label">Search Groups</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    <input asp-for="SearchTerm" class="form-control" placeholder="Search by name or description">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-2 mb-3">
+                                <label asp-for="GroupType" class="form-label">Type</label>
+                                <select asp-for="GroupType" class="form-select" asp-items="Html.GetEnumSelectList<GroupType>()">
+                                    <option value="">All Types</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-2 mb-3">
+                                <label asp-for="ContributionFrequency" class="form-label">Frequency</label>
+                                <select asp-for="ContributionFrequency" class="form-select" asp-items="Html.GetEnumSelectList<ContributionFrequency>()">
+                                    <option value="">All Frequencies</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-2 mb-3">
+                                <label for="sortBy" class="form-label">Sort By</label>
+                                <select asp-for="SortBy" class="form-select">
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="target_high">Highest Target</option>
+                                    <option value="target_low">Lowest Target</option>
+                                    <option value="members_high">Most Members</option>
+                                    <option value="members_low">Least Members</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-2 mb-3">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Filters Toggle -->
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-link p-0 text-decoration-none" data-bs-toggle="collapse" data-bs-target="#advancedFilters">
+                                    <i class="fas fa-filter"></i> Advanced Filters
+                                    <i class="fas fa-chevron-down ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Filters -->
+                        <div class="collapse mt-3" id="advancedFilters">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="minTarget" class="form-label">Min Target Amount (₦)</label>
+                                    <input asp-for="MinTargetAmount" class="form-control" type="number" step="0.01" min="0">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="maxTarget" class="form-label">Max Target Amount (₦)</label>
+                                    <input asp-for="MaxTargetAmount" class="form-control" type="number" step="0.01" min="0">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="minMembers" class="form-label">Min Members</label>
+                                    <input asp-for="MinMembers" class="form-control" type="number" min="1">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="maxMembers" class="form-label">Max Members</label>
+                                    <input asp-for="MaxMembers" class="form-control" type="number" min="1">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="HasAvailableSlots" class="form-check-input" type="checkbox">
+                                        <label asp-for="HasAvailableSlots" class="form-check-label">
+                                            Only show groups with available slots
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        <input asp-for="OnlyActive" class="form-check-input" type="checkbox" checked>
+                                        <label asp-for="OnlyActive" class="form-check-label">
+                                            Only show active groups
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Join by Code -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 bg-primary text-white">
+                <div class="card-body text-center">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-key"></i> Have a Group Code?
+                    </h5>
+                    <p class="card-text mb-3">Join a group instantly using an invitation code</p>
+                    <a href="@Url.Action("JoinByCode")" class="btn btn-light">
+                        <i class="fas fa-sign-in-alt"></i> Join by Code
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="row">
+        <div class="col-12">
+            @if (Model.Groups?.Any() == true)
+            {
+                <!-- Results Header -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        Found @Model.Groups.Count() group@(Model.Groups.Count() != 1 ? "s" : "")
+                        @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                        {
+                            <span class="text-muted">for "@Model.SearchTerm"</span>
+                        }
+                    </h5>
+                    <a href="@Url.Action("Create")" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Create New Group
+                    </a>
+                </div>
+
+                <!-- Groups Grid -->
+                <div class="row">
+                    @foreach (var group in Model.Groups)
+                    {
+                        <div class="col-lg-6 col-xl-4 mb-4">
+                            <div class="card border-0 shadow-sm h-100 group-card" style="transition: transform 0.2s;">
+                                <div class="card-body">
+                                    <!-- Group Header -->
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div class="flex-grow-1">
+                                            <h6 class="card-title mb-1">@group.Name</h6>
+                                            <small class="text-muted">
+                                                Created @group.CreatedDate.ToString("MMM dd, yyyy")
+                                            </small>
+                                        </div>
+                                        <div class="d-flex flex-column align-items-end">
+                                            <span class="badge bg-primary mb-1">@group.GroupType</span>
+                                            @if (group.MemberCount >= group.MaxMembers)
+                                            {
+                                                <span class="badge bg-danger">Full</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-success">@(group.MaxMembers - group.MemberCount) slots left</span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <p class="card-text text-muted small mb-3">
+                                        @(group.Description?.Length > 100 ? group.Description.Substring(0, 100) + "..." : group.Description)
+                                    </p>
+
+                                    <!-- Progress -->
+                                    <div class="mb-3">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <small class="text-muted">Progress</small>
+                                            <small class="text-muted">
+                                                ₦@group.CurrentAmount.ToString("N0") / ₦@group.TargetAmount.ToString("N0")
+                                            </small>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar" role="progressbar" 
+                                                 style="width: @(group.TargetAmount > 0 ? (group.CurrentAmount / group.TargetAmount * 100) : 0)%">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Stats -->
+                                    <div class="row text-center mb-3">
+                                        <div class="col-4">
+                                            <small class="text-muted d-block">Members</small>
+                                            <strong>@group.MemberCount/@group.MaxMembers</strong>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted d-block">Frequency</small>
+                                            <strong class="small">@group.ContributionFrequency</strong>
+                                        </div>
+                                        <div class="col-4">
+                                            <small class="text-muted d-block">Target</small>
+                                            <strong class="small">₦@group.TargetAmount.ToString("N0")</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Actions -->
+                                    <div class="d-grid gap-2">
+                                        <a href="@Url.Action("Details", new { id = group.Id })" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye"></i> View Details
+                                        </a>
+                                        @if (group.MemberCount < group.MaxMembers)
+                                        {
+                                            <form asp-action="Join" asp-route-id="@group.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn btn-success btn-sm w-100">
+                                                    <i class="fas fa-user-plus"></i> Join Group
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-secondary btn-sm" disabled>
+                                                <i class="fas fa-users"></i> Group Full
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <!-- No Results -->
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa-search text-muted" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="text-muted mb-3">No groups found</h4>
+                    <p class="text-muted mb-4">
+                        @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                        {
+                            <span>We couldn't find any groups matching "@Model.SearchTerm". Try adjusting your search criteria.</span>
+                        }
+                        else
+                        {
+                            <span>There are no public groups available at the moment.</span>
+                        }
+                    </p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <a href="@Url.Action("Create")" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create New Group
+                        </a>
+                        <a href="@Url.Action("JoinByCode")" class="btn btn-outline-primary">
+                            <i class="fas fa-key"></i> Join by Code
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Add hover effect to group cards
+            $('.group-card').hover(
+                function() {
+                    $(this).css('transform', 'translateY(-5px)');
+                },
+                function() {
+                    $(this).css('transform', 'translateY(0)');
+                }
+            );
+
+            // Auto-submit form when filters change (with debounce)
+            let searchTimeout;
+            $('#searchTerm').on('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(function() {
+                    $('form').submit();
+                }, 500);
+            });
+
+            $('#GroupType, #ContributionFrequency, #SortBy').on('change', function() {
+                $('form').submit();
+            });
+
+            // Expand advanced filters if any advanced filter has a value
+            if ($('#MinTargetAmount').val() || $('#MaxTargetAmount').val() || 
+                $('#MinMembers').val() || $('#MaxMembers').val()) {
+                $('#advancedFilters').addClass('show');
+            }
+
+            // Join confirmation
+            $('form[action*="Join"]').on('submit', function(e) {
+                const groupName = $(this).closest('.card').find('.card-title').text();
+                if (!confirm(`Are you sure you want to join "${groupName}"?`)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+}

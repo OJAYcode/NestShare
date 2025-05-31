@@ -1,0 +1,398 @@
+﻿@page
+@model Thrift.Areas.Identity.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Sign In";
+}
+
+<style>
+    /* Core animations */
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @@keyframes slideIn {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    
+    @@keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+      @@keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+    }
+    
+    /* Apply animations to elements */
+    .animate-fadeIn { animation: fadeIn 0.8s ease-out forwards; }
+    .animate-slideIn { animation: slideIn 0.8s ease-out forwards; }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    
+    /* Staggered animations for form elements */
+    .login-form > * {
+        opacity: 0;
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+    
+    .login-form > *:nth-child(1) { animation-delay: 0.1s; }
+    .login-form > *:nth-child(2) { animation-delay: 0.2s; }
+    .login-form > *:nth-child(3) { animation-delay: 0.3s; }
+    .login-form > *:nth-child(4) { animation-delay: 0.4s; }
+    .login-form > *:nth-child(5) { animation-delay: 0.5s; }
+    
+    .animate-pulse-focus:focus {
+        animation: pulse 2s infinite;
+    }
+      /* Gradient animation */
+    .bg-gradient-animated {
+        background: linear-gradient(-45deg, #581c87, #8b5cf6, #a855f7, #c084fc);
+        background-size: 400% 400%;
+        animation: gradientBG 15s ease infinite;
+    }
+    
+    @@keyframes gradientBG {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    /* Shine effect for buttons */
+    .shine-effect {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .shine-effect::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            to right, 
+            rgba(255,255,255,0) 0%, 
+            rgba(255,255,255,0.3) 50%, 
+            rgba(255,255,255,0) 100%
+        );
+        transform: rotate(30deg);
+        transition: all 0.5s;
+        opacity: 0;
+    }
+    
+    .shine-effect:hover::after {
+        opacity: 1;
+        left: 100%;
+        top: 100%;
+        transition: all 0.5s;
+    }
+    
+    /* Custom checkbox styling */
+    .custom-checkbox {
+        appearance: none;
+        -webkit-appearance: none;
+        height: 20px;
+        width: 20px;
+        background-color: #f3f4f6;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        outline: none;
+        transition: all 0.2s ease;
+    }
+      .custom-checkbox:hover {
+        border-color: #8b5cf6;
+    }
+    
+    .custom-checkbox:checked {
+        background-color: #8b5cf6;
+        border-color: #8b5cf6;
+    }
+    
+    .custom-checkbox:checked::after {
+        content: '✓';
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    
+    /* Glass effect */
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+    
+    /* 3D hover effect */
+    .hover-3d {
+        transition: all 0.2s ease;
+        transform-style: preserve-3d;
+    }
+    
+    .hover-3d:hover {
+        transform: translateY(-5px) scale(1.01);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Form input focus effect */
+    .input-focus-effect {
+        position: relative;
+    }
+      .input-focus-effect::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: #8b5cf6;
+        transition: width 0.3s ease;
+    }
+    
+    .input-focus-effect:focus-within::after {
+        width: 100%;
+    }
+      /* Purple theme colors */
+    .text-accent { color: #8b5cf6; }
+    .text-accent-dark { color: #7c3aed; }
+    .bg-accent { background-color: #8b5cf6; }
+    .bg-accent-dark { background-color: #7c3aed; }
+    .border-accent { border-color: #8b5cf6; }
+    .ring-accent { --tw-ring-color: #8b5cf6; }
+    .focus\:ring-accent:focus { --tw-ring-color: #8b5cf6; }
+    .focus\:border-accent:focus { border-color: #8b5cf6; }
+    .hover\:text-accent-dark:hover { color: #7c3aed; }
+    .hover\:bg-accent-dark:hover { background-color: #7c3aed; }
+    .group-focus-within\:text-accent:focus-within { color: #8b5cf6; }
+</style>
+
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">    <!-- Background decorative elements -->
+    <div class="absolute inset-0 z-0 overflow-hidden">
+        <div class="absolute top-1/4 right-1/4 w-64 h-64 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+        <div class="absolute bottom-1/4 left-1/4 w-64 h-64 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style="animation-delay: 2s"></div>
+        <div class="absolute top-2/3 right-1/3 w-48 h-48 bg-violet-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-float" style="animation-delay: 4s"></div>
+    </div>
+    
+    <div class="w-full max-w-5xl bg-white rounded-2xl shadow-2xl overflow-hidden z-10 flex flex-col md:flex-row animate-fadeIn hover-3d">
+        <!-- Left side: Welcome illustration -->
+        <div class="hidden md:block md:w-1/2 bg-gradient-animated p-12 text-white relative animate-slideIn order-2 md:order-1">
+            <div class="absolute inset-0 bg-center bg-cover opacity-10" style="background-image: url('https://images.unsplash.com/photo-1591696205602-2f950c417cb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')"></div>
+            
+            <div class="relative z-10 h-full flex flex-col justify-between">
+                <div>                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-8 shadow-lg">
+                        <i class="fas fa-piggy-bank text-purple-600 text-2xl"></i>
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold mb-4">Welcome Back to Thrift!</h2>
+                    <p class="text-lg text-gray-200">Sign in to continue your financial journey and manage your budget effectively.</p>
+                    
+                    <!-- Benefits -->
+                    <div class="mt-8 space-y-4">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-white bg-opacity-20">
+                                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="font-medium text-lg">Track Your Budget</h3>
+                                <p class="text-sm text-gray-300 mt-1">Monitor your income, expenses, and savings goals in real-time.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-white bg-opacity-20">
+                                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="font-medium text-lg">Financial Growth</h3>
+                                <p class="text-sm text-gray-300 mt-1">Set and achieve your savings goals with smart insights.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 flex items-center justify-center rounded-full bg-white bg-opacity-20">
+                                <svg class="h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="font-medium text-lg">Secure & Private</h3>
+                                <p class="text-sm text-gray-300 mt-1">Your financial data is protected with bank-level security.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Testimonial -->
+                <div class="glass-panel p-6 rounded-xl mt-8 animate-fadeIn" style="animation-delay: 0.5s">                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <div class="h-12 w-12 rounded-full bg-purple-400 flex items-center justify-center ring-2 ring-white">
+                                <span class="text-white font-bold">ST</span>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-white italic">"Thrift has completely transformed how I manage my finances. I've saved more in 6 months than I did in the previous year!"</p>
+                            <p class="text-xs text-gray-300 mt-2">- Sarah Thompson, User since 2024</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right side: Login Form -->
+        <div class="w-full md:w-1/2 p-8 md:p-12 order-1 md:order-2">
+            <div class="text-center md:text-left mb-8">
+                <h1 class="text-3xl font-bold text-gray-900">Sign In</h1>
+                <p class="mt-2 text-gray-600">Welcome back to Thrift</p>
+            </div>
+            
+            <form id="account" method="post" class="space-y-6 login-form">
+                <div asp-validation-summary="ModelOnly" class="text-red-500 text-sm p-3 bg-red-50 rounded-md" role="alert"></div>
+                
+                <!-- Email input -->
+                <div class="group">
+                    <label asp-for="Input.Email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <div class="relative rounded-md input-focus-effect">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400 group-focus-within:text-accent transition-colors duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <input asp-for="Input.Email" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200" placeholder="name@example.com" />
+                    </div>
+                    <span asp-validation-for="Input.Email" class="mt-1 text-sm text-red-600"></span>
+                </div>
+                
+                <!-- Password input -->
+                <div class="group">
+                    <label asp-for="Input.Password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative rounded-md input-focus-effect">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400 group-focus-within:text-accent transition-colors duration-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <input asp-for="Input.Password" id="password-input" class="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-200" placeholder="••••••••" />
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <button type="button" id="toggle-password" class="text-gray-400 hover:text-accent focus:outline-none transition-colors duration-200">
+                                <svg id="eye-icon" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                <svg id="eye-off-icon" class="h-5 w-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Input.Password" class="mt-1 text-sm text-red-600"></span>
+                </div>
+                
+                <!-- Remember me and forgot password -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input asp-for="Input.RememberMe" id="remember-me" name="remember-me" type="checkbox" class="custom-checkbox" />
+                        <label for="remember-me" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                    </div>
+                    
+                    <div class="text-sm">
+                        <a id="forgot-password" asp-page="./ForgotPassword" class="font-medium text-accent hover:text-accent-dark transition-colors duration-200 relative group">
+                            Forgot password?
+                            <span class="absolute bottom-0 left-0 h-0.5 w-0 bg-accent group-hover:w-full transition-all duration-300"></span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Login button -->
+                <div>
+                    <button id="login-submit" type="submit" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-accent hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent transition-all duration-200 shine-effect">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        <span class="relative z-10">Sign in</span>
+                    </button>
+                </div>
+                
+                <!-- Divider for social login -->
+                <div class="relative my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with</span>
+                    </div>
+                </div>
+                
+                <!-- Social login buttons -->
+                <div class="grid grid-cols-3 gap-3">
+                    <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                        <svg class="h-5 w-5 text-[#4285F4]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
+                        </svg>
+                    </button>
+                    
+                    <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                        <svg class="h-5 w-5 text-[#1877F2]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M24,12.073c0,-5.8 -4.701,-10.5 -10.5,-10.5c-5.799,0 -10.5,4.7 -10.5,10.5c0,5.242 3.837,9.584 8.86,10.367v-7.33h-2.666v-3.037h2.666v-2.312c0,-2.63 1.567,-4.084 3.965,-4.084c1.15,0 2.351,0.205 2.351,0.205v2.585h-1.324c-1.304,0 -1.711,0.81 -1.711,1.64v1.966h2.912l-0.465,3.037h-2.447v7.33c5.023,-0.783 8.859,-5.125 8.859,-10.367Z"/>
+                        </svg>
+                    </button>
+                    
+                    <button type="button" class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                        <svg class="h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.229,24c-3.096,0 -4.44,-1.904 -6.676,-1.904c-2.272,0 -3.515,1.904 -6.667,1.904c-2.833,0 -5.886,-2.908 -5.886,-8.457c0,-5.395 3.436,-8.046 6.806,-8.046c2.257,0 3.655,1.896 5.432,1.896c1.744,0 2.966,-1.904 5.566,-1.904c1.994,0 4.081,1.092 5.442,2.967l-3.223,1.862c-0.792,-1.089 -2.072,-1.794 -3.383,-1.791c-2.509,0.068 -3.184,1.471 -5.994,1.471c-2.775,0 -3.574,-1.475 -5.94,-1.475c-2.435,0 -4.346,2.055 -4.346,6.02c0,3.912 2.149,6.42 4.346,6.42c2.366,0 3.165,-1.469 5.94,-1.469c2.819,0 3.484,1.388 5.994,1.458Z"/>
+                            <path d="M15.302,8.192c0.282,-1.776 1.462,-3.328 3.184,-4.068c-1.708,-2.172 -3.284,-2.702 -5.32,-2.76c-2.208,-0.098 -4.549,1.331 -5.419,1.331c-0.95,0 -2.996,-1.301 -4.681,-1.301c-3.742,0.068 -7.312,3.16 -7.312,9.839c0,1.958 0.352,3.976 1.056,5.876c0.989,2.626 4.54,9.064 8.254,8.991c1.957,-0.03 3.319,-1.405 5.876,-1.405c2.514,0 3.704,1.405 5.901,1.405c3.743,-0.052 6.813,-5.836 7.747,-8.446c-4.875,-2.302 -4.974,-6.775 -4.974,-6.775c0,0 -3.511,-0.37 -4.312,-3.687Z"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Register link -->
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Don't have an account?
+                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="font-medium text-accent hover:text-accent-dark transition-colors duration-200 ml-1 relative group">
+                            Sign up
+                            <span class="absolute bottom-0 left-0 h-0.5 w-0 bg-accent group-hover:w-full transition-all duration-300"></span>
+                        </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Toggle password visibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePasswordButton = document.getElementById('toggle-password');
+            if (togglePasswordButton) {
+                togglePasswordButton.addEventListener('click', function() {
+                    const passwordInput = document.getElementById('password-input');
+                    const eyeIcon = document.getElementById('eye-icon');
+                    const eyeOffIcon = document.getElementById('eye-off-icon');
+                    
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        eyeIcon.classList.add('hidden');
+                        eyeOffIcon.classList.remove('hidden');
+                    } else {
+                        passwordInput.type = 'password';
+                        eyeIcon.classList.remove('hidden');
+                        eyeOffIcon.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+}

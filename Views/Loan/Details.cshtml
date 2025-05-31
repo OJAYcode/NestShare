@@ -1,0 +1,411 @@
+@model Thrift.ViewModels.LoanDetailsViewModel
+@using Thrift.Models
+@{
+    ViewData["Title"] = "Loan Details - " + Model.LoanName;
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 text-gray-800">
+                <i class="fas fa-money-bill-wave text-primary me-2"></i>
+                @Model.LoanName
+            </h1>
+            <p class="text-muted">@Model.LoanType Loan Details</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-1"></i>
+                Back to Loans
+            </a>
+            @if (Model.Status == LoanStatus.Active)
+            {
+                <a asp-action="MakePayment" asp-route-id="@Model.Id" class="btn btn-success">
+                    <i class="fas fa-credit-card me-1"></i>
+                    Make Payment
+                </a>
+            }
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>
+                Edit
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Loan Overview -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Loan Overview</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="font-weight-bold">Principal Amount:</td>
+                                    <td>@Model.PrincipalAmount.ToString("C")</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Current Balance:</td>
+                                    <td class="text-primary font-weight-bold">@Model.CurrentBalance.ToString("C")</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Monthly Payment:</td>
+                                    <td>@Model.MonthlyPayment.ToString("C")</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Interest Rate:</td>
+                                    <td>@Model.InterestRate.ToString("P2")</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Loan Term:</td>
+                                    <td>@Model.LoanTermMonths months</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="font-weight-bold">Start Date:</td>
+                                    <td>@Model.StartDate.ToString("MMM dd, yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Maturity Date:</td>
+                                    <td>@Model.MaturityDate?.ToString("MMM dd, yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Next Payment:</td>
+                                    <td class="@(Model.NextPaymentDate.HasValue && Model.NextPaymentDate.Value < DateTime.Today.AddDays(7) ? "text-warning font-weight-bold" : "")">
+                                        @(Model.NextPaymentDate?.ToString("MMM dd, yyyy") ?? "N/A")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Status:</td>
+                                    <td>
+                                        @switch (Model.Status)
+                                        {
+                                            case LoanStatus.Active:
+                                                <span class="badge bg-success">Active</span>
+                                                break;
+                                            case LoanStatus.PaidOff:
+                                                <span class="badge bg-primary">Paid Off</span>
+                                                break;
+                                            case LoanStatus.Delinquent:
+                                                <span class="badge bg-danger">Delinquent</span>
+                                                break;
+                                            case LoanStatus.Closed:
+                                                <span class="badge bg-secondary">Closed</span>
+                                                break;
+                                            default:
+                                                <span class="badge bg-warning">@Model.Status</span>
+                                                break;
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="font-weight-bold">Payments Remaining:</td>
+                                    <td>@Model.PaymentsRemaining</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="mt-3">
+                            <h6 class="font-weight-bold">Description:</h6>
+                            <p class="text-muted">@Model.Description</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress and Stats -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Progress</h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-3">
+                        <div class="progress-circle" data-percentage="@Model.ProgressPercentage">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" stroke-dasharray="@Model.ProgressPercentage, 100" d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">@Model.ProgressPercentage.ToString("F1")%</text>
+                            </svg>
+                        </div>
+                        <p class="text-muted mt-2">Loan Progress</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span class="font-weight-bold">Total Paid:</span>
+                            <span class="text-success font-weight-bold">@Model.TotalPaid.ToString("C")</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span class="font-weight-bold">Remaining:</span>
+                            <span class="text-warning font-weight-bold">@Model.RemainingBalance.ToString("C")</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span class="font-weight-bold">Total Interest:</span>
+                            <span class="text-info">@Model.TotalInterest.ToString("C")</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span class="font-weight-bold">Risk Level:</span>
+                            <span class="badge bg-@(Model.RiskLevel == "Low" ? "success" : Model.RiskLevel == "Medium" ? "warning" : "danger")">
+                                @Model.RiskLevel
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Payment History -->
+        <div class="col-lg-7 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Payment History</h6>
+                    <a href="#" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#allPaymentsModal">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.PaymentHistory.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Principal</th>
+                                        <th>Interest</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var payment in Model.PaymentHistory.Take(5))
+                                    {
+                                        <tr>
+                                            <td>@payment.PaymentDate.ToString("MMM dd, yyyy")</td>
+                                            <td class="font-weight-bold">@payment.PaymentAmount.ToString("C")</td>
+                                            <td>@payment.PrincipalAmount.ToString("C")</td>
+                                            <td>@payment.InterestAmount.ToString("C")</td>
+                                            <td>
+                                                <span class="badge bg-@(payment.Status == PaymentStatus.Completed ? "success" : payment.Status == PaymentStatus.Pending ? "warning" : "danger")">
+                                                    @payment.Status
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-credit-card fa-2x text-gray-300 mb-3"></i>
+                            <p class="text-muted">No payments recorded yet</p>
+                            @if (Model.Status == LoanStatus.Active)
+                            {
+                                <a asp-action="MakePayment" asp-route-id="@Model.Id" class="btn btn-primary btn-sm">
+                                    Make First Payment
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Schedule Preview -->
+        <div class="col-lg-5 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Upcoming Payments</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.PaymentSchedule.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Due Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var payment in Model.PaymentSchedule.Where(p => p.Status == PaymentStatus.Pending).Take(5))
+                                    {
+                                        <tr class="@(payment.DueDate < DateTime.Today.AddDays(7) ? "table-warning" : "")">
+                                            <td>@payment.DueDate.ToString("MMM dd")</td>
+                                            <td>@payment.PaymentAmount.ToString("C")</td>
+                                            <td>
+                                                <span class="badge bg-warning">Pending</span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-calendar-alt fa-2x text-gray-300 mb-3"></i>
+                            <p class="text-muted">No payment schedule available</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- All Payments Modal -->
+<div class="modal fade" id="allPaymentsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">All Payment History</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                @if (Model.PaymentHistory.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Principal</th>
+                                    <th>Interest</th>
+                                    <th>Extra Payment</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var payment in Model.PaymentHistory)
+                                {
+                                    <tr>
+                                        <td>@payment.PaymentDate.ToString("MMM dd, yyyy")</td>
+                                        <td class="font-weight-bold">@payment.PaymentAmount.ToString("C")</td>
+                                        <td>@payment.PrincipalAmount.ToString("C")</td>
+                                        <td>@payment.InterestAmount.ToString("C")</td>
+                                        <td>@payment.ExtraPayment.ToString("C")</td>
+                                        <td>
+                                            <span class="badge bg-@(payment.Status == PaymentStatus.Completed ? "success" : payment.Status == PaymentStatus.Pending ? "warning" : "danger")">
+                                                @payment.Status
+                                            </span>
+                                        </td>
+                                        <td>@payment.Notes</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-center text-muted">No payment history available.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .circular-chart {
+            display: block;
+            margin: 10px auto;
+            max-width: 120px;
+            max-height: 120px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: #eee;
+            stroke-width: 3.8;
+        }
+
+        .circle {
+            fill: none;
+            stroke-width: 2.8;
+            stroke-linecap: round;
+            animation: progress 1s ease-out forwards;
+            stroke: #4e73df;
+        }
+
+        .percentage {
+            fill: #666;
+            font-family: sans-serif;
+            font-size: 0.5em;
+            text-anchor: middle;
+        }
+
+        @@keyframes progress {
+            0% {
+                stroke-dasharray: 0 100;
+            }
+        }
+
+        .table-borderless td {
+            border: none;
+            padding: 0.5rem 0;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+        }
+
+        .table-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+        }
+
+        .badge {
+            font-size: 0.75em;
+        }
+    </style>
+}

@@ -1,0 +1,551 @@
+@{
+    ViewData["Title"] = "Savings Goal Tracker";
+}
+
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">Savings Goal Tracker</span>
+            </h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Track your progress toward financial goals and see how small, consistent savings add up over time.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Goal Input Section -->
+            <div class="lg:col-span-5 bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                    <h2 class="text-xl font-semibold text-gray-900">Set Your Goal</h2>
+                </div>
+                <div class="p-6">
+                    <form id="goal-form" class="space-y-6">
+                        <div>
+                            <label for="goal-name" class="block text-sm font-medium text-gray-700 mb-1">Goal Name</label>
+                            <input type="text" id="goal-name" name="goal-name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent" placeholder="e.g. New Car, Emergency Fund, etc." value="Emergency Fund">
+                        </div>
+                        
+                        <div>
+                            <label for="goal-amount" class="block text-sm font-medium text-gray-700 mb-1">Target Amount</label>
+                            <div class="relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                </div>
+                                <input type="number" id="goal-amount" name="goal-amount" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" value="10000" min="1" step="1">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="current-amount" class="block text-sm font-medium text-gray-700 mb-1">Current Savings</label>
+                            <div class="relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                </div>
+                                <input type="number" id="current-amount" name="current-amount" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" value="2500" min="0" step="1">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="target-date" class="block text-sm font-medium text-gray-700 mb-1">Target Date</label>
+                            <input type="date" id="target-date" name="target-date" class="focus:ring-accent focus:border-accent block w-full pl-3 pr-3 py-2 sm:text-sm border-gray-300 rounded-md" value="2025-12-31">
+                        </div>
+                        
+                        <div>
+                            <label for="monthly-contribution" class="block text-sm font-medium text-gray-700 mb-1">Monthly Contribution</label>
+                            <div class="relative rounded-md shadow-sm">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500 sm:text-sm">$</span>
+                                </div>
+                                <input type="number" id="monthly-contribution" name="monthly-contribution" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" value="500" min="1" step="1">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="goal-icon" class="block text-sm font-medium text-gray-700 mb-2">Goal Icon</label>
+                            <div class="grid grid-cols-5 gap-2">
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent active" data-icon="fas fa-shield-alt">
+                                    <i class="fas fa-shield-alt"></i>
+                                </button>
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" data-icon="fas fa-home">
+                                    <i class="fas fa-home"></i>
+                                </button>
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" data-icon="fas fa-car">
+                                    <i class="fas fa-car"></i>
+                                </button>
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" data-icon="fas fa-graduation-cap">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </button>
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" data-icon="fas fa-plane">
+                                    <i class="fas fa-plane"></i>
+                                </button>
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" data-icon="fas fa-laptop">
+                                    <i class="fas fa-laptop"></i>
+                                </button>
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" data-icon="fas fa-ring">
+                                    <i class="fas fa-ring"></i>
+                                </button>
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" data-icon="fas fa-baby">
+                                    <i class="fas fa-baby"></i>
+                                </button>
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" data-icon="fas fa-gift">
+                                    <i class="fas fa-gift"></i>
+                                </button>
+                                <button type="button" class="icon-btn h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent" data-icon="fas fa-umbrella-beach">
+                                    <i class="fas fa-umbrella-beach"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" id="selected-icon" name="selected-icon" value="fas fa-shield-alt">
+                        </div>
+                        
+                        <div class="pt-4">
+                            <button type="button" id="calculate-btn" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-accent hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+                                Calculate & Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Goal Visualization Section -->
+            <div class="lg:col-span-7 space-y-8">
+                <!-- Goal Card -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-purple-50 to-indigo-50 border-b flex justify-between items-center">
+                        <h2 class="text-xl font-semibold text-gray-900">Your Savings Goal</h2>
+                        <button type="button" id="share-goal-btn" class="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-accent hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+                            <i class="fas fa-share-alt mr-1.5"></i> Share
+                        </button>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div id="goal-icon-display" class="h-16 w-16 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mr-4">
+                                <i class="fas fa-shield-alt text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 id="goal-name-display" class="text-2xl font-bold text-gray-900">Emergency Fund</h3>
+                                <div class="mt-1 flex items-center">
+                                    <div class="text-sm text-gray-500 flex items-center">
+                                        <i class="fas fa-calendar-alt mr-1"></i> Target Date: <span id="target-date-display" class="ml-1 font-medium">Dec 31, 2025</span>
+                                    </div>
+                                    <div class="mx-2 text-gray-300">•</div>
+                                    <div id="status-badge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        In Progress
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6">
+                            <div class="flex justify-between mb-2">
+                                <div class="text-sm text-gray-500">Progress</div>
+                                <div class="text-sm font-medium" id="progress-text">$2,500 / $10,000</div>
+                            </div>
+                            <div class="h-4 w-full bg-gray-200 rounded-full overflow-hidden">
+                                <div id="progress-bar" class="h-4 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full" style="width: 25%"></div>
+                            </div>
+                            <div class="flex justify-between mt-2">
+                                <div class="text-xs text-gray-500" id="percent-complete">25% complete</div>
+                                <div class="text-xs text-gray-500" id="amount-remaining">$7,500 to go</div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                            <div class="bg-indigo-50 rounded-lg p-4 flex flex-col items-center justify-center">
+                                <div class="text-xs text-indigo-700 font-medium uppercase tracking-wide mb-1">Monthly Contribution</div>
+                                <div id="monthly-contribution-display" class="text-2xl font-bold text-indigo-700">$500</div>
+                            </div>
+                            <div class="bg-purple-50 rounded-lg p-4 flex flex-col items-center justify-center">
+                                <div class="text-xs text-purple-700 font-medium uppercase tracking-wide mb-1">Months Remaining</div>
+                                <div id="months-remaining" class="text-2xl font-bold text-purple-700">15</div>
+                            </div>
+                            <div class="bg-blue-50 rounded-lg p-4 flex flex-col items-center justify-center">
+                                <div class="text-xs text-blue-700 font-medium uppercase tracking-wide mb-1">Projected Completion</div>
+                                <div id="completion-date" class="text-2xl font-bold text-blue-700">Sep 2025</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Savings Timeline -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-b">
+                        <h2 class="text-xl font-semibold text-gray-900">Savings Timeline</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="h-64">
+                            <canvas id="savings-chart"></canvas>
+                        </div>
+                        <div class="flex justify-center space-x-4 mt-4">
+                            <button type="button" id="chart-view-line" class="px-3 py-1 text-xs font-medium rounded-md bg-accent text-white">
+                                Line Chart
+                            </button>
+                            <button type="button" id="chart-view-bar" class="px-3 py-1 text-xs font-medium rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300">
+                                Bar Chart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tips Section -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="px-6 py-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-b">
+                        <h2 class="text-xl font-semibold text-gray-900">Tips to Reach Your Goal Faster</h2>
+                    </div>
+                    <div class="p-6">
+                        <div id="tips-container" class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-700">Increasing your monthly contribution by just $100 would help you reach your goal <span class="font-medium">3 months earlier</span>.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-700">Consider setting up automatic transfers to your savings account on payday to make saving effortless.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 h-6 w-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3">
+                                    <i class="fas fa-check text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-700">Look for high-yield savings accounts that could help your money grow faster with compound interest.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const goalForm = document.getElementById('goal-form');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const iconButtons = document.querySelectorAll('.icon-btn');
+        const selectedIconInput = document.getElementById('selected-icon');
+        const chartViewLine = document.getElementById('chart-view-line');
+        const chartViewBar = document.getElementById('chart-view-bar');
+        const shareGoalBtn = document.getElementById('share-goal-btn');
+        
+        // Goal elements
+        const goalNameInput = document.getElementById('goal-name');
+        const goalAmountInput = document.getElementById('goal-amount');
+        const currentAmountInput = document.getElementById('current-amount');
+        const targetDateInput = document.getElementById('target-date');
+        const monthlyContributionInput = document.getElementById('monthly-contribution');
+        
+        // Display elements
+        const goalNameDisplay = document.getElementById('goal-name-display');
+        const goalIconDisplay = document.getElementById('goal-icon-display');
+        const targetDateDisplay = document.getElementById('target-date-display');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const percentComplete = document.getElementById('percent-complete');
+        const amountRemaining = document.getElementById('amount-remaining');
+        const monthlyContributionDisplay = document.getElementById('monthly-contribution-display');
+        const monthsRemaining = document.getElementById('months-remaining');
+        const completionDate = document.getElementById('completion-date');
+        const statusBadge = document.getElementById('status-badge');
+        
+        // Chart
+        let savingsChart;
+        
+        // Initialize the page
+        updateGoalVisuals();
+        createChart('line');
+        
+        // Event listeners
+        calculateBtn.addEventListener('click', function() {
+            updateGoalVisuals();
+            updateChart();
+            updateTips();
+            
+            // Show success message
+            showNotification('Goal updated successfully!');
+        });
+        
+        // Icon selection
+        iconButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                iconButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-purple-100', 'text-purple-600');
+                    btn.classList.add('bg-gray-100', 'text-gray-600');
+                });
+                
+                // Add active class to clicked button
+                this.classList.remove('bg-gray-100', 'text-gray-600');
+                this.classList.add('active', 'bg-purple-100', 'text-purple-600');
+                
+                // Update hidden input with selected icon
+                selectedIconInput.value = this.dataset.icon;
+                
+                // Update the goal card icon
+                goalIconDisplay.innerHTML = `<i class="${this.dataset.icon} text-2xl"></i>`;
+            });
+        });
+        
+        // Chart view toggle
+        chartViewLine.addEventListener('click', function() {
+            chartViewLine.classList.remove('bg-gray-200', 'text-gray-700');
+            chartViewLine.classList.add('bg-accent', 'text-white');
+            chartViewBar.classList.remove('bg-accent', 'text-white');
+            chartViewBar.classList.add('bg-gray-200', 'text-gray-700');
+            createChart('line');
+        });
+        
+        chartViewBar.addEventListener('click', function() {
+            chartViewBar.classList.remove('bg-gray-200', 'text-gray-700');
+            chartViewBar.classList.add('bg-accent', 'text-white');
+            chartViewLine.classList.remove('bg-accent', 'text-white');
+            chartViewLine.classList.add('bg-gray-200', 'text-gray-700');
+            createChart('bar');
+        });
+        
+        // Share button
+        shareGoalBtn.addEventListener('click', function() {
+            const goalData = {
+                name: goalNameInput.value,
+                target: goalAmountInput.value,
+                current: currentAmountInput.value,
+                date: targetDateInput.value,
+                monthly: monthlyContributionInput.value
+            };
+            
+            // In a real app, this would share via email or social media
+            // For demo purposes, we'll show a notification and copy to clipboard
+            
+            const shareText = `I'm saving for ${goalData.name}! Current progress: $${goalData.current} of $${goalData.target}. Check out my savings goal at NestShare!`;
+            
+            navigator.clipboard.writeText(shareText)
+                .then(() => {
+                    showNotification('Goal details copied to clipboard! You can now share it.');
+                })
+                .catch(err => {
+                    showNotification('Failed to copy share text.');
+                });
+        });
+        
+        // Functions
+        function updateGoalVisuals() {
+            // Get form values
+            const goalName = goalNameInput.value;
+            const goalAmount = parseFloat(goalAmountInput.value);
+            const currentAmount = parseFloat(currentAmountInput.value);
+            const targetDate = new Date(targetDateInput.value);
+            const monthlyContribution = parseFloat(monthlyContributionInput.value);
+            
+            // Update goal card
+            goalNameDisplay.textContent = goalName;
+            
+            // Format target date
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            targetDateDisplay.textContent = targetDate.toLocaleDateString('en-US', options);
+            
+            // Calculate progress percentage
+            const progressPercent = Math.min(100, (currentAmount / goalAmount) * 100);
+            progressBar.style.width = `${progressPercent}%`;
+            
+            // Update progress text
+            progressText.textContent = `$${currentAmount.toLocaleString()} / $${goalAmount.toLocaleString()}`;
+            percentComplete.textContent = `${Math.round(progressPercent)}% complete`;
+            amountRemaining.textContent = `$${(goalAmount - currentAmount).toLocaleString()} to go`;
+            
+            // Update metrics
+            monthlyContributionDisplay.textContent = `$${monthlyContribution.toLocaleString()}`;
+            
+            // Calculate months remaining based on monthly contribution
+            const amountRemaining = goalAmount - currentAmount;
+            const monthsToComplete = Math.ceil(amountRemaining / monthlyContribution);
+            monthsRemaining.textContent = monthsToComplete;
+            
+            // Calculate projected completion date
+            const today = new Date();
+            const projectedDate = new Date(today);
+            projectedDate.setMonth(projectedDate.getMonth() + monthsToComplete);
+            
+            const month = projectedDate.toLocaleString('default', { month: 'short' });
+            const year = projectedDate.getFullYear();
+            completionDate.textContent = `${month} ${year}`;
+            
+            // Update status badge
+            if (currentAmount >= goalAmount) {
+                statusBadge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800';
+                statusBadge.textContent = 'Completed';
+            } else if (projectedDate > targetDate) {
+                statusBadge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800';
+                statusBadge.textContent = 'Behind Schedule';
+            } else {
+                statusBadge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800';
+                statusBadge.textContent = 'On Track';
+            }
+        }
+        
+        function createChart(type) {
+            const ctx = document.getElementById('savings-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (savingsChart) {
+                savingsChart.destroy();
+            }
+            
+            // Get values for calculations
+            const goalAmount = parseFloat(goalAmountInput.value);
+            const currentAmount = parseFloat(currentAmountInput.value);
+            const monthlyContribution = parseFloat(monthlyContributionInput.value);
+            
+            // Calculate future projections
+            const amountRemaining = goalAmount - currentAmount;
+            const monthsToComplete = Math.ceil(amountRemaining / monthlyContribution);
+            
+            // Generate data for chart
+            const labels = [];
+            const projectedData = [];
+            
+            // Start with current amount
+            let runningTotal = currentAmount;
+            const today = new Date();
+            
+            for (let i = 0; i <= monthsToComplete; i++) {
+                const date = new Date(today);
+                date.setMonth(today.getMonth() + i);
+                
+                // Format the month and year
+                const month = date.toLocaleString('default', { month: 'short' });
+                const year = date.getFullYear();
+                labels.push(`${month} ${year}`);
+                
+                // Add the first data point as current amount
+                if (i === 0) {
+                    projectedData.push(runningTotal);
+                } else {
+                    runningTotal += monthlyContribution;
+                    // Cap at goal amount
+                    projectedData.push(Math.min(runningTotal, goalAmount));
+                }
+            }
+            
+            // Create the chart
+            savingsChart = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Projected Savings',
+                        data: projectedData,
+                        backgroundColor: 'rgba(138, 92, 246, 0.2)',
+                        borderColor: 'rgba(138, 92, 246, 1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: type === 'line'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.raw.toLocaleString()}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            },
+                            grid: {
+                                display: true,
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateChart() {
+            createChart(savingsChart.config.type);
+        }
+        
+        function updateTips() {
+            // Get values for calculations
+            const goalAmount = parseFloat(goalAmountInput.value);
+            const currentAmount = parseFloat(currentAmountInput.value);
+            const monthlyContribution = parseFloat(monthlyContributionInput.value);
+            
+            // Calculate current timeline
+            const amountRemaining = goalAmount - currentAmount;
+            const currentMonthsToComplete = Math.ceil(amountRemaining / monthlyContribution);
+            
+            // Calculate time saved with increased contribution
+            const increasedContribution = monthlyContribution + 100;
+            const increasedMonthsToComplete = Math.ceil(amountRemaining / increasedContribution);
+            const monthsSaved = currentMonthsToComplete - increasedMonthsToComplete;
+            
+            // Update the first tip
+            const tipsContainer = document.getElementById('tips-container');
+            const firstTip = tipsContainer.querySelector('div:first-child div:last-child p');
+            
+            if (monthsSaved > 0) {
+                firstTip.innerHTML = `Increasing your monthly contribution by just $100 would help you reach your goal <span class="font-medium">${monthsSaved} ${monthsSaved === 1 ? 'month' : 'months'} earlier</span>.`;
+            } else {
+                firstTip.innerHTML = `Consider finding additional income sources to increase your monthly contribution and reach your goal faster.`;
+            }
+        }
+        
+        function showNotification(message) {
+            // Create notification element if it doesn't exist
+            if (!document.getElementById('notification')) {
+                const notification = document.createElement('div');
+                notification.id = 'notification';
+                notification.className = 'fixed bottom-4 right-4 bg-accent text-white px-4 py-3 rounded-lg shadow-lg flex items-center transform transition-all duration-300 translate-y-20 opacity-0';
+                notification.innerHTML = `
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span id="notification-message"></span>
+                `;
+                document.body.appendChild(notification);
+            }
+            
+            // Get notification elements
+            const notification = document.getElementById('notification');
+            const notificationMessage = document.getElementById('notification-message');
+            
+            // Update message
+            notificationMessage.textContent = message;
+            
+            // Show notification
+            notification.classList.remove('translate-y-20', 'opacity-0');
+            
+            // Hide after delay
+            setTimeout(() => {
+                notification.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    });
+</script>
+}

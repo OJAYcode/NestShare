@@ -1,0 +1,286 @@
+@page
+@model Thrift.Areas.Identity.Pages.Account.RegistrationSuccessModel
+@{
+    ViewData["Title"] = "Registration Successful";
+    var email = ViewData["Email"] as string;
+}
+
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl animate-pulse" style="animation-duration: 8s;"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-gradient-to-tr from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse" style="animation-duration: 12s;"></div>
+        <div class="absolute top-1/3 left-1/4 w-64 h-64 bg-gradient-to-tr from-green-400/10 to-teal-400/10 rounded-full blur-3xl animate-pulse" style="animation-duration: 10s;"></div>
+        
+        <!-- Floating particles -->
+        <div class="particles absolute inset-0 z-0">
+            @for (var i = 0; i < 20; i++)
+            {
+                <div class="particle absolute rounded-full bg-white/30 backdrop-blur-sm"
+                     style="width: @(Random.Shared.Next(4, 8))px; height: @(Random.Shared.Next(4, 8))px; 
+                            top: @(Random.Shared.Next(0, 100))%; 
+                            left: @(Random.Shared.Next(0, 100))%;
+                            animation: float @(Random.Shared.Next(15, 25))s linear infinite;">
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Success card with glassmorphism effect -->
+    <div class="max-w-4xl mx-auto relative z-10">
+        <div class="bg-white/80 backdrop-blur-md shadow-2xl rounded-3xl overflow-hidden border border-white/50">
+            <div class="p-6 sm:p-10">
+                <!-- Success header with checkmark animation -->
+                <div class="flex flex-col items-center justify-center mb-8 relative">
+                    <div class="w-24 h-24 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center mb-6 shadow-lg animate-scaleIn">
+                        <svg class="w-12 h-12 text-white animate-checkmark" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 animate-fadeUp" style="animation-delay: 0.2s;">
+                        Registration Successful!
+                    </h1>
+                    <p class="text-lg text-gray-600 text-center mt-2 max-w-lg animate-fadeUp" style="animation-delay: 0.4s;">
+                        Your account has been created and you're ready to start your financial journey with Thrift.
+                    </p>
+                    
+                    <!-- Email badge -->
+                    @if (!string.IsNullOrEmpty(email))
+                    {
+                        <div class="mt-4 inline-flex items-center px-4 py-2 bg-indigo-100 rounded-full animate-fadeUp" style="animation-delay: 0.6s;">
+                            <svg class="w-5 h-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <span class="text-indigo-700 font-medium">@email</span>
+                        </div>
+                    }
+                </div>
+                
+                <!-- Content panels with hover effects -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                    <!-- What's next card -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group animate-fadeUp" style="animation-delay: 0.8s;">
+                        <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mb-4 group-hover:bg-indigo-200 transition-colors">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">What's Next</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-center">
+                                <span class="mr-2 text-green-500">✓</span>
+                                <span>Log in with your new account</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="mr-2 text-green-500">✓</span>
+                                <span>Complete your profile</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="mr-2 text-green-500">✓</span>
+                                <span>Create your first budget</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Benefits card -->
+                    <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group animate-fadeUp" style="animation-delay: 1s;">
+                        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Your Benefits</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-center">
+                                <span class="mr-2 text-purple-500">★</span>
+                                <span>Personalized budget templates</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="mr-2 text-purple-500">★</span>
+                                <span>Expense tracking tools</span>
+                            </li>
+                            <li class="flex items-center">
+                                <span class="mr-2 text-purple-500">★</span>
+                                <span>Savings goal visualization</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Support card -->
+                    <div class="bg-gradient-to-br from-teal-50 to-green-50 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 group animate-fadeUp" style="animation-delay: 1.2s;">
+                        <div class="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center mb-4 group-hover:bg-teal-200 transition-colors">
+                            <svg class="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Need Support?</h3>
+                        <p class="text-gray-600 mb-4">Our team is here to help you get started with your financial journey.</p>
+                        <a href="#" class="text-teal-600 hover:text-teal-800 font-medium inline-flex items-center group-hover:underline">
+                            <span>Visit our help center</span>
+                            <svg class="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Action buttons -->
+                <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fadeUp" style="animation-delay: 1.4s;">
+                    <a asp-area="Identity" asp-page="/Account/Login" class="w-full sm:w-auto px-8 py-3 rounded-lg bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-medium shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 transform hover:-translate-y-1 text-center">
+                        <span class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                            </svg>
+                            Log in to Your Account
+                        </span>
+                    </a>
+                    <a asp-controller="Home" asp-action="Index" class="w-full sm:w-auto px-8 py-3 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium shadow hover:shadow-lg hover:border-gray-400 transition-all duration-300 text-center">
+                        <span class="flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7m-7-7v14"></path>
+                            </svg>
+                            Return to Home
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Success counter -->
+        <div class="mt-8 text-center text-gray-500 text-sm animate-fadeUp" style="animation-delay: 1.6s;">
+            <p>Joining <span class="font-semibold text-indigo-600">25,000+</span> users who are taking control of their finances with Thrift</p>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* Advanced animations */
+        @@keyframes scaleIn {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @@keyframes checkmark {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
+        
+        @@keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        25% { transform: translateY(-10px) translateX(10px); }
+            50% { transform: translateY(0px) translateX(20px); }
+            75% { transform: translateY(10px) translateX(10px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+        
+        .animate-scaleIn {
+            animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        .animate-checkmark {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: checkmark 0.8s ease-in-out forwards 0.4s;
+        }
+        
+        .animate-fadeUp {
+            opacity: 0;
+            animation: fadeUp 0.8s ease-out forwards;
+        }
+        
+        /* Smooth scrolling */
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+        
+        /* Better gradient transitions */
+        .bg-gradient-to-br, .bg-gradient-to-r, .bg-gradient-to-tr {
+            background-size: 200% 200%;
+            animation: gradientMove 15s ease infinite;
+        }
+        
+        @@keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Confetti animation effect when page loads
+            const confettiCount = 200;
+            const confettiColors = ['#584DEA', '#9747FF', '#7DF9FF', '#FFD166', '#EF476F'];
+            
+            const confettiContainer = document.createElement('div');
+            confettiContainer.className = 'fixed inset-0 pointer-events-none z-50';
+            document.body.appendChild(confettiContainer);
+            
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    createConfetti(confettiContainer, confettiColors);
+                }, i * 20);
+            }
+            
+            // Clean up confetti after animation completes
+            setTimeout(() => {
+                confettiContainer.classList.add('opacity-0');
+                confettiContainer.style.transition = 'opacity 1s ease';
+                
+                setTimeout(() => {
+                    confettiContainer.remove();
+                }, 1000);
+            }, 5000);
+        });
+        
+        function createConfetti(container, colors) {
+            const confetti = document.createElement('div');
+            
+            // Random properties
+            const size = Math.floor(Math.random() * 10) + 5;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const left = Math.random() * 100;
+            const isRound = Math.random() > 0.5;
+            
+            // Set styles
+            confetti.style.position = 'absolute';
+            confetti.style.width = `${size}px`;
+            confetti.style.height = `${size}px`;
+            confetti.style.backgroundColor = color;
+            confetti.style.left = `${left}vw`;
+            confetti.style.top = '-20px';
+            confetti.style.borderRadius = isRound ? '50%' : '0';
+            confetti.style.opacity = Math.random() + 0.4;
+            
+            // Animation
+            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+            confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+            
+            // Add to container
+            container.appendChild(confetti);
+            
+            // Remove after animation completes
+            setTimeout(() => {
+                confetti.remove();
+            }, 5000);
+        }
+    </script>
+
+    <style>
+        @@keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+    </style>
+}

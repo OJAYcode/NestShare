@@ -1,0 +1,265 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Email Confirmed";
+}
+
+<div class="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-100 via-teal-100 to-cyan-100 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <!-- Advanced decorative elements -->
+    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-30">
+        <div class="absolute top-10 left-10 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+        <div class="absolute top-0 right-10 w-72 h-72 bg-cyan-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        <!-- Additional smaller blobs for more visual interest -->
+        <div class="absolute top-1/3 right-1/4 w-32 h-32 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-3000"></div>
+        <div class="absolute bottom-1/4 right-1/3 w-48 h-48 bg-green-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-5000"></div>
+    </div>
+
+    <div class="max-w-md mx-auto z-10 relative">
+        <!-- Success particle animation -->
+        <div class="absolute inset-0 z-0 particles-container"></div>
+        
+        <!-- 3D perspective wrapper -->
+        <div class="perspective-1000">
+            <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-[0_20px_50px_rgba(8,_112,_184,_0.15)] overflow-hidden transform transition-all duration-500 hover:shadow-[0_20px_70px_rgba(8,_112,_184,_0.25)] hover:scale-[1.02] z-10 border border-white/50 group card-3d">
+                <!-- Enhanced header with 3D depth effect and glowing accent -->
+                <div class="bg-gradient-to-r from-teal-600 via-emerald-600 to-green-600 px-6 pt-8 pb-6 relative">
+                    <div class="absolute inset-0 bg-grid-white/10 bg-grid-8"></div>
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-green-500/30 rounded-full filter blur-xl opacity-70 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                    
+                    <div class="flex items-center justify-center relative">
+                        <div class="h-20 w-20 rounded-full bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-sm flex items-center justify-center p-1 shadow-lg border border-white/20 group-hover:scale-110 transition-transform duration-500">
+                            <svg class="h-12 w-12 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                    </div>
+                    <h2 class="mt-4 text-center text-3xl font-extrabold text-white drop-shadow-md tracking-tight">@ViewData["Title"]</h2>
+                    <p class="mt-2 text-center text-white/80 text-sm">Your email has been successfully verified</p>
+                    
+                    <!-- Animated accent line -->
+                    <div class="w-16 h-1 bg-gradient-to-r from-yellow-400 via-green-500 to-teal-500 rounded-full mx-auto mt-3 animate-pulse"></div>
+                </div>
+
+                <!-- Enhanced content with glassmorphism -->
+                <div class="px-8 py-10 relative bg-gradient-to-b from-white/100 to-white/80">
+                    <!-- Success checkmark with enhanced animation -->
+                    <div class="text-center">
+                        <div class="mx-auto h-28 w-28 rounded-full bg-gradient-to-br from-green-100 to-teal-200 flex items-center justify-center border-4 border-white shadow-[inset_0_2px_10px_rgba(0,0,0,0.07)] group-hover:shadow-[inset_0_2px_15px_rgba(0,0,0,0.12)] transition-all duration-500">
+                            <svg class="h-14 w-14 text-green-500 drop-shadow animate-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Status message display with elegant styling -->
+                    <div class="mt-8">
+                        <div class="text-center">
+                            <div class="@(Model.StatusMessage.StartsWith("Error") ? "bg-red-50/90 text-red-700 border-red-500" : "bg-green-50/90 text-green-700 border-green-500") backdrop-blur-sm border-l-4 p-5 rounded-lg shadow-sm transform transition-all duration-500 hover:shadow-md hover:-translate-y-1">
+                                <p class="text-lg font-medium mb-2">@(Model.StatusMessage.StartsWith("Error") ? "There was a problem" : "Success!")</p>
+                                <p class="text-sm">@Model.StatusMessage</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-10 text-center">
+                        <a asp-area="Identity" asp-page="/Account/Login" 
+                           class="inline-flex items-center px-5 py-3 border border-gray-300 shadow-sm text-sm font-medium rounded-xl text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+                            <svg class="h-4 w-4 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14" />
+                            </svg>
+                            Proceed to Login
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Enhanced footer with glossy effect -->
+                <div class="px-6 py-4 bg-gradient-to-b from-gray-50 to-gray-100 border-t border-gray-200">
+                    <div class="text-xs text-center text-gray-500 flex justify-center items-center space-x-1">
+                        <span>Need help? </span>
+                        <a href="#" class="font-medium text-teal-600 hover:text-teal-500 transition-colors underline decoration-transparent hover:decoration-teal-500 decoration-2 underline-offset-2">
+                            Contact Support
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Advanced blob animation */
+    @@keyframes blob {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+    }
+    
+    .animate-blob {
+        animation: blob 7s infinite;
+    }
+    
+    .animation-delay-2000 {
+        animation-delay: 2s;
+    }
+    
+    .animation-delay-3000 {
+        animation-delay: 3s;
+    }
+    
+    .animation-delay-4000 {
+        animation-delay: 4s;
+    }
+    
+    .animation-delay-5000 {
+        animation-delay: 5s;
+    }
+    
+    /* Enhanced success animation */
+    @@keyframes success {
+        0% { transform: scale(0); opacity: 0; stroke-dasharray: 1, 150; stroke-dashoffset: 0; }
+        20% { transform: scale(1.2); opacity: 1; }
+        40% { transform: scale(0.9); }
+        60% { transform: scale(1.1); }
+        80% { transform: scale(0.95); }
+        100% { transform: scale(1); stroke-dasharray: 90, 150; stroke-dashoffset: -90; }
+    }
+    
+    .animate-success {
+        animation: success 1.2s ease-out forwards;
+    }
+    
+    /* Grid background */
+    .bg-grid-white\/10 {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.1'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .bg-grid-8 {
+        background-size: 16px 16px;
+    }
+    
+    /* 3D card effects */
+    .perspective-1000 {
+        perspective: 1000px;
+    }
+    
+    .card-3d {
+        transform-style: preserve-3d;
+        backface-visibility: hidden;
+    }
+    
+    .card-3d:hover {
+        transform: rotateX(2deg) rotateY(2deg) scale(1.02);
+    }
+</style>
+
+@section Scripts {
+<script>
+    // Advanced particle animation for success
+    document.addEventListener('DOMContentLoaded', function() {
+        // Create a canvas for the particles
+        const canvas = document.createElement('canvas');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '1';
+        document.body.appendChild(canvas);
+        
+        const ctx = canvas.getContext('2d');
+        const particleCount = 50;
+        const particles = [];
+        
+        // Particle colors - fresh green/teal palette
+        const colors = [
+            '#34d399', '#10b981', '#059669', '#047857',
+            '#0d9488', '#14b8a6', '#2dd4bf', '#5eead4',
+            '#a7f3d0', '#6ee7b7', '#d1fae5'
+        ];
+        
+        // Create particles with different properties
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 5 + 2,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speedX: (Math.random() - 0.5) * 2,
+                speedY: (Math.random() - 0.5) * 2,
+                opacity: Math.random() * 0.5 + 0.5
+            });
+        }
+        
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                
+                // Update position
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                // Bounce off edges
+                if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                
+                // Draw particle
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color + Math.floor(p.opacity * 255).toString(16).padStart(2, '0');
+                ctx.fill();
+                
+                // Draw connecting lines between nearby particles
+                for (let j = i + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(73, 209, 178, ${0.2 * (1 - distance / 100)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        // 3D tilt effect based on mouse position
+        const card = document.querySelector('.card-3d');
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX;
+            const y = e.clientY;
+            
+            // Get card position
+            const rect = card.getBoundingClientRect();
+            const cardCenterX = rect.left + rect.width / 2;
+            const cardCenterY = rect.top + rect.height / 2;
+            
+            // Calculate rotation based on mouse position relative to card center
+            const rotateY = (x - cardCenterX) / 20;
+            const rotateX = (cardCenterY - y) / 20;
+            
+            // Apply rotation (limited to small angles)
+            card.style.transform = `rotateY(${Math.min(Math.max(rotateY, -5), 5)}deg) rotateX(${Math.min(Math.max(rotateX, -5), 5)}deg)`;
+        });
+        
+        // Reset rotation when mouse leaves
+        document.addEventListener('mouseleave', () => {
+            card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+        });
+    });
+</script>
+}

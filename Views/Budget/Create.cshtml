@@ -1,0 +1,260 @@
+@model Thrift.Models.ViewModels.BudgetViewModel
+@{
+    ViewData["Title"] = "Create Budget";
+}
+
+<div class="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <nav class="flex mb-3" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a asp-controller="Budget" asp-action="Index" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-900">
+                            <i class="fas fa-file-invoice-dollar mr-2"></i>
+                            Budgets
+                        </a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <i class="fas fa-chevron-right text-gray-400 mx-2 text-xs"></i>
+                            <span class="text-sm font-medium text-gray-500">Create New Budget</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+            
+            <h1 class="text-3xl font-bold text-gray-900">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+                    Create New Budget
+                </span>
+            </h1>
+            <p class="mt-2 text-gray-600">Set up your monthly budget to track income and expenses</p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                <h2 class="text-xl font-semibold text-gray-900">Budget Details</h2>
+            </div>
+            <div class="p-6">                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="All" class="text-red-500 text-sm mb-4"></div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div>
+                            <label asp-for="Name" class="block text-sm font-medium text-gray-700 mb-1">Budget Name</label>
+                            <input asp-for="Name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent" />
+                            <span asp-validation-for="Name" class="text-red-500 text-xs"></span>
+                        </div>
+                        
+                        <div>
+                            <label asp-for="Month" class="block text-sm font-medium text-gray-700 mb-1">Month</label>
+                            <input asp-for="Month" type="month" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-accent focus:border-accent" value="@DateTime.Now.ToString("yyyy-MM")" />
+                            <span asp-validation-for="Month" class="text-red-500 text-xs"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Income</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label asp-for="TotalIncome" class="block text-sm font-medium text-gray-700 mb-1">Monthly Take-Home Pay</label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="TotalIncome" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="TotalIncome" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <div>
+                                <label asp-for="AdditionalIncome" class="block text-sm font-medium text-gray-700 mb-1">Additional Income</label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="AdditionalIncome" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="AdditionalIncome" class="text-red-500 text-xs"></span>
+                                <p class="mt-1 text-xs text-gray-500">Side hustles, investments, etc.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Expenses</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Housing -->
+                            <div>
+                                <label asp-for="HousingExpenses" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-home text-blue-500 mr-1.5"></i> Housing
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="HousingExpenses" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="HousingExpenses" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <!-- Utilities -->
+                            <div>
+                                <label asp-for="UtilitiesExpenses" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-bolt text-yellow-500 mr-1.5"></i> Utilities
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="UtilitiesExpenses" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="UtilitiesExpenses" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <!-- Transportation -->
+                            <div>
+                                <label asp-for="TransportationExpenses" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-car text-green-500 mr-1.5"></i> Transportation
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="TransportationExpenses" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="TransportationExpenses" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <!-- Food -->
+                            <div>
+                                <label asp-for="FoodExpenses" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-utensils text-red-500 mr-1.5"></i> Food
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="FoodExpenses" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="FoodExpenses" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <!-- Healthcare -->
+                            <div>
+                                <label asp-for="HealthcareExpenses" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-heartbeat text-pink-500 mr-1.5"></i> Healthcare
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="HealthcareExpenses" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="HealthcareExpenses" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <!-- Entertainment -->
+                            <div>
+                                <label asp-for="EntertainmentExpenses" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-film text-purple-500 mr-1.5"></i> Entertainment
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="EntertainmentExpenses" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="EntertainmentExpenses" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <!-- Personal -->
+                            <div>
+                                <label asp-for="PersonalExpenses" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-shopping-bag text-orange-500 mr-1.5"></i> Personal
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="PersonalExpenses" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="PersonalExpenses" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <!-- Savings -->
+                            <div>
+                                <label asp-for="SavingsAllocation" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-piggy-bank text-green-600 mr-1.5"></i> Savings
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="SavingsAllocation" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="SavingsAllocation" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <!-- Debt Payment -->
+                            <div>
+                                <label asp-for="DebtPayment" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-credit-card text-red-600 mr-1.5"></i> Debt Payment
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="DebtPayment" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="DebtPayment" class="text-red-500 text-xs"></span>
+                            </div>
+                            
+                            <!-- Other Expenses -->
+                            <div>
+                                <label asp-for="OtherExpenses" class="block text-sm font-medium text-gray-700 mb-1">
+                                    <i class="fas fa-ellipsis-h text-gray-500 mr-1.5"></i> Other Expenses
+                                </label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <span class="text-gray-500 sm:text-sm">$</span>
+                                    </div>
+                                    <input asp-for="OtherExpenses" type="number" step="0.01" min="0" class="focus:ring-accent focus:border-accent block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="OtherExpenses" class="text-red-500 text-xs"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label asp-for="Notes" class="block text-sm font-medium text-gray-700 mb-1">Budget Notes</label>
+                        <textarea asp-for="Notes" rows="3" class="focus:ring-accent focus:border-accent block w-full px-3 py-2 sm:text-sm border-gray-300 rounded-md" placeholder="Add any notes or reminders about your budget..."></textarea>
+                        <span asp-validation-for="Notes" class="text-red-500 text-xs"></span>
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3">
+                        <a asp-controller="Budget" asp-action="Index" class="inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+                            Cancel
+                        </a>
+                        <button type="submit" class="inline-flex justify-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-accent hover:bg-accent-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent">
+                            Create Budget
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            $('form').on('submit', function(e) {
+                console.log('Form submitted');
+                console.log('Form data:', $(this).serialize());
+            });
+        });
+    </script>
+}

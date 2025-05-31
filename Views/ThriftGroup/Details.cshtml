@@ -1,0 +1,299 @@
+@model ThriftGroupDetailsViewModel
+@{
+    ViewData["Title"] = Model.Group.Name;
+}
+
+<div class="container mt-4">
+    <!-- Group Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="card-title mb-2">@Model.Group.Name</h1>
+                            <p class="card-text mb-3">@Model.Group.Description</p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-light text-dark">@Model.Group.GroupType</span>
+                                <span class="badge bg-light text-dark">@Model.Group.ContributionFrequency</span>
+                                <span class="badge bg-light text-dark">₦@Model.Group.TargetAmount.ToString("N2")</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="mb-2">
+                                <h4>₦@Model.Group.CurrentAmount.ToString("N2")</h4>
+                                <small>of ₦@Model.Group.TargetAmount.ToString("N2")</small>
+                            </div>
+                            <div class="progress mb-3" style="height: 8px;">
+                                <div class="progress-bar bg-warning" role="progressbar" 
+                                     style="width: @(Model.Group.TargetAmount > 0 ? (Model.Group.CurrentAmount / Model.Group.TargetAmount * 100) : 0)%">
+                                </div>
+                            </div>
+                            @if (Model.IsUserMember)
+                            {
+                                <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#contributeModal">
+                                    <i class="fas fa-plus"></i> Contribute
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-users text-primary mb-2" style="font-size: 2rem;"></i>
+                    <h4 class="mb-1">@Model.Group.MemberCount</h4>
+                    <small class="text-muted">of @Model.Group.MaxMembers Members</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-calendar text-success mb-2" style="font-size: 2rem;"></i>
+                    <h4 class="mb-1">@((DateTime.Now - Model.Group.CreatedDate).Days)</h4>
+                    <small class="text-muted">Days Active</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-exchange-alt text-info mb-2" style="font-size: 2rem;"></i>
+                    <h4 class="mb-1">@Model.RecentTransactions.Count()</h4>
+                    <small class="text-muted">Recent Transactions</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-target text-warning mb-2" style="font-size: 2rem;"></i>
+                    <h4 class="mb-1">@(Model.Group.EndDate?.ToString("MMM dd") ?? "No End")</h4>
+                    <small class="text-muted">Target Date</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="groupTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions" type="button" role="tab">
+                <i class="fas fa-list"></i> Transactions
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab">
+                <i class="fas fa-users"></i> Members
+            </button>
+        </li>
+        @if (Model.IsUserAdmin)
+        {
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="manage-tab" data-bs-toggle="tab" data-bs-target="#manage" type="button" role="tab">
+                    <i class="fas fa-cog"></i> Manage
+                </button>
+            </li>
+        }
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content mt-3" id="groupTabContent">
+        <!-- Transactions Tab -->
+        <div class="tab-pane fade show active" id="transactions" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    @if (Model.RecentTransactions.Any())
+                    {
+                        @foreach (var transaction in Model.RecentTransactions)
+                        {
+                            <div class="d-flex justify-content-between align-items-center py-3 border-bottom">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3">
+                                        @if (transaction.TransactionType == GroupTransactionType.Contribution)
+                                        {
+                                            <i class="fas fa-arrow-up text-success"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fas fa-arrow-down text-danger"></i>
+                                        }
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">@transaction.Description</h6>
+                                        <small class="text-muted">@transaction.TransactionDate.ToString("MMM dd, yyyy")</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <h6 class="mb-1 @(transaction.TransactionType == GroupTransactionType.Contribution ? "text-success" : "text-danger")">
+                                        @(transaction.TransactionType == GroupTransactionType.Contribution ? "+" : "-")₦@transaction.Amount.ToString("N2")
+                                    </h6>
+                                    <small class="text-muted">@transaction.Status</small>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <i class="fas fa-receipt text-muted mb-3" style="font-size: 3rem;"></i>
+                            <h5 class="text-muted">No transactions yet</h5>
+                            <p class="text-muted">Be the first to make a contribution!</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Members Tab -->
+        <div class="tab-pane fade" id="members" role="tabpanel">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var member in Model.Members)
+                        {
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card border-0 bg-light">
+                                    <div class="card-body text-center">
+                                        <div class="mb-3">
+                                            <i class="fas fa-user-circle text-primary" style="font-size: 3rem;"></i>
+                                        </div>
+                                        <h6 class="mb-1">@member.UserName</h6>
+                                        <small class="text-muted d-block mb-2">@member.Role</small>
+                                        <div class="mb-2">
+                                            <strong>₦@member.TotalContributions.ToString("N2")</strong>
+                                            <small class="text-muted d-block">Total Contributed</small>
+                                        </div>
+                                        <span class="badge @(member.IsActive ? "bg-success" : "bg-secondary")">
+                                            @(member.IsActive ? "Active" : "Inactive")
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Tab (Admin Only) -->
+        @if (Model.IsUserAdmin)
+        {
+            <div class="tab-pane fade" id="manage" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Group Settings</h5>
+                                <div class="d-grid gap-2">
+                                    <a href="@Url.Action("Edit", new { id = Model.Group.Id })" class="btn btn-outline-primary">
+                                        <i class="fas fa-edit"></i> Edit Group
+                                    </a>
+                                    <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#inviteModal">
+                                        <i class="fas fa-user-plus"></i> Invite Members
+                                    </button>
+                                    <button class="btn btn-outline-secondary" onclick="copyGroupCode()">
+                                        <i class="fas fa-copy"></i> Copy Group Code
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Group Code</h5>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" value="@Model.Group.GroupCode" id="groupCodeInput" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" onclick="copyGroupCode()">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted">Share this code with others to let them join your group</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="d-flex gap-2">
+                <a href="@Url.Action("Index")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to Groups
+                </a>
+                @if (Model.IsUserMember && !Model.IsUserAdmin)
+                {
+                    <form asp-action="Leave" asp-route-id="@Model.Group.Id" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to leave this group?')">
+                            <i class="fas fa-sign-out-alt"></i> Leave Group
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contribute Modal -->
+@if (Model.IsUserMember)
+{
+    <div class="modal fade" id="contributeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form asp-action="Contribute" asp-route-id="@Model.Group.Id" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Make Contribution</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Amount (₦)</label>
+                            <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description (Optional)</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter a description for this contribution"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Contribute</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function copyGroupCode() {
+        const input = document.getElementById('groupCodeInput');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(input.value);
+        
+        // Show feedback
+        const button = event.target.closest('button');
+        const originalHtml = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.classList.remove('btn-outline-secondary');
+        button.classList.add('btn-success');
+        
+        setTimeout(() => {
+            button.innerHTML = originalHtml;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-secondary');
+        }, 2000);
+    }
+</script>

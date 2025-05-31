@@ -1,0 +1,487 @@
+@model Thrift.Models.AccountBalanceViewModel
+@{
+    ViewData["Title"] = "Account Balance Details";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 text-gray-800">
+                <i class="fas fa-wallet text-primary me-2"></i>
+                Account Balance Details
+            </h1>
+            <p class="text-muted">Detailed breakdown of your financial status</p>
+        </div>
+        <div>
+            <a asp-action="Index" class="btn btn-outline-secondary me-2">
+                <i class="fas fa-arrow-left me-1"></i>
+                Back to Summary
+            </a>
+            <a asp-action="Refresh" class="btn btn-outline-success">
+                <i class="fas fa-sync-alt me-1"></i>
+                Refresh Data
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Net Worth Breakdown -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Net Worth Breakdown</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="font-weight-bold mb-3">Assets: @Model.Balance.TotalAssets.ToString("C")</h5>
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Asset</th>
+                                        <th class="text-end">Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Savings</td>
+                                        <td class="text-end">@Model.Balance.SavingsBalance.ToString("C")</td>
+                                    </tr>
+                                    <!-- Add other asset categories as they become available -->
+                                    <tr>
+                                        <td class="fw-bold">Total Assets</td>
+                                        <td class="text-end fw-bold">@Model.Balance.TotalAssets.ToString("C")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="font-weight-bold mb-3">Liabilities: @Model.Balance.TotalLiabilities.ToString("C")</h5>
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Liability</th>
+                                        <th class="text-end">Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Loans</td>
+                                        <td class="text-end">@Model.Balance.LoanBalance.ToString("C")</td>
+                                    </tr>
+                                    <!-- Add other liability categories as they become available -->
+                                    <tr>
+                                        <td class="fw-bold">Total Liabilities</td>
+                                        <td class="text-end fw-bold">@Model.Balance.TotalLiabilities.ToString("C")</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded">
+                                <h5 class="mb-0">Net Worth</h5>
+                                <h5 class="mb-0 @(Model.Balance.NetWorth >= 0 ? "text-success" : "text-danger")">
+                                    @Model.Balance.NetWorth.ToString("C")
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Budget Details -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Budget Details</h6>
+                    <a asp-controller="Budget" asp-action="Index" class="btn btn-sm btn-primary">
+                        View All Budgets
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.CurrentBudget != null)
+                    {
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="font-weight-bold mb-3">Income: @((Model.CurrentBudget.TotalIncome + Model.CurrentBudget.AdditionalIncome).ToString("C"))</h5>
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Source</th>
+                                            <th class="text-end">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Primary Income</td>
+                                            <td class="text-end">@Model.CurrentBudget.TotalIncome.ToString("C")</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Additional Income</td>
+                                            <td class="text-end">@Model.CurrentBudget.AdditionalIncome.ToString("C")</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Total Income</td>
+                                            <td class="text-end fw-bold">@((Model.CurrentBudget.TotalIncome + Model.CurrentBudget.AdditionalIncome).ToString("C"))</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="font-weight-bold mb-3">Expenses: @Model.CurrentBudget.TotalExpenses.ToString("C")</h5>
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Category</th>
+                                            <th class="text-end">Amount</th>
+                                            <th class="text-end">% of Income</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            decimal totalIncome = Model.CurrentBudget.TotalIncome + Model.CurrentBudget.AdditionalIncome;
+                                        }
+                                        <tr>
+                                            <td>Housing</td>
+                                            <td class="text-end">@Model.CurrentBudget.HousingExpenses.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.HousingExpenses / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Utilities</td>
+                                            <td class="text-end">@Model.CurrentBudget.UtilitiesExpenses.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.UtilitiesExpenses / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Transportation</td>
+                                            <td class="text-end">@Model.CurrentBudget.TransportationExpenses.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.TransportationExpenses / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Food</td>
+                                            <td class="text-end">@Model.CurrentBudget.FoodExpenses.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.FoodExpenses / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Healthcare</td>
+                                            <td class="text-end">@Model.CurrentBudget.HealthcareExpenses.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.HealthcareExpenses / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Entertainment</td>
+                                            <td class="text-end">@Model.CurrentBudget.EntertainmentExpenses.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.EntertainmentExpenses / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Personal</td>
+                                            <td class="text-end">@Model.CurrentBudget.PersonalExpenses.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.PersonalExpenses / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Savings</td>
+                                            <td class="text-end">@Model.CurrentBudget.SavingsAllocation.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.SavingsAllocation / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Debt Payment</td>
+                                            <td class="text-end">@Model.CurrentBudget.DebtPayment.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.DebtPayment / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Other</td>
+                                            <td class="text-end">@Model.CurrentBudget.OtherExpenses.ToString("C")</td>
+                                            <td class="text-end">@(totalIncome > 0 ? ((Model.CurrentBudget.OtherExpenses / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Total Expenses</td>
+                                            <td class="text-end fw-bold">@Model.CurrentBudget.TotalExpenses.ToString("C")</td>
+                                            <td class="text-end fw-bold">@(totalIncome > 0 ? ((Model.CurrentBudget.TotalExpenses / totalIncome) * 100).ToString("F1") : "0")%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded">
+                                    <h5 class="mb-0">Remaining Budget</h5>
+                                    <h5 class="mb-0 @(Model.CurrentBudget.RemainingBudget >= 0 ? "text-success" : "text-danger")">
+                                        @Model.CurrentBudget.RemainingBudget.ToString("C")
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-5">
+                            <p class="mb-3">You don't have any active budgets.</p>
+                            <a asp-controller="Budget" asp-action="Create" class="btn btn-primary">
+                                <i class="fas fa-plus me-1"></i>
+                                Create Budget
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Metrics -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Financial Metrics</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-muted">Debt-to-Income Ratio</h6>
+                                    <div class="display-4 mb-2">@Model.Balance.DebtToIncomeRatio.ToString("F1")%</div>
+                                    <p class="card-text small">
+                                        @if (Model.Balance.DebtToIncomeRatio <= 20)
+                                        {
+                                            <span class="text-success">Excellent (Below 20%)</span>
+                                        }
+                                        else if (Model.Balance.DebtToIncomeRatio <= 36)
+                                        {
+                                            <span class="text-primary">Good (20%-36%)</span>
+                                        }
+                                        else if (Model.Balance.DebtToIncomeRatio <= 42)
+                                        {
+                                            <span class="text-warning">Fair (37%-42%)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger">Poor (Above 42%)</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-muted">Savings Rate</h6>
+                                    <div class="display-4 mb-2">@Model.Balance.SavingsRate.ToString("F1")%</div>
+                                    <p class="card-text small">
+                                        @if (Model.Balance.SavingsRate >= 20)
+                                        {
+                                            <span class="text-success">Excellent (20%+)</span>
+                                        }
+                                        else if (Model.Balance.SavingsRate >= 15)
+                                        {
+                                            <span class="text-primary">Good (15%-20%)</span>
+                                        }
+                                        else if (Model.Balance.SavingsRate >= 10)
+                                        {
+                                            <span class="text-warning">Fair (10%-15%)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger">Low (Below 10%)</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h6 class="card-title text-muted">Budget Utilization</h6>
+                                    @if (Model.CurrentBudget != null)
+                                    {
+                                        <div class="display-4 mb-2">@Model.CurrentBudget.PercentageUsed.ToString("F1")%</div>
+                                        <p class="card-text small">
+                                            @if (Model.CurrentBudget.PercentageUsed < 75)
+                                            {
+                                                <span class="text-success">Good (Below 75%)</span>
+                                            }
+                                            else if (Model.CurrentBudget.PercentageUsed < 90)
+                                            {
+                                                <span class="text-warning">Close (75%-90%)</span>
+                                            }
+                                            else if (Model.CurrentBudget.PercentageUsed < 100)
+                                            {
+                                                <span class="text-danger">Tight (90%-100%)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-danger">Over Budget (100%+)</span>
+                                            }
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <div class="display-4 mb-2">N/A</div>
+                                        <p class="card-text small text-muted">No active budget</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Loans & Savings Goals -->
+    <div class="row">
+        <!-- Active Loans -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Active Loans</h6>
+                    <a asp-controller="Loan" asp-action="Index" class="btn btn-sm btn-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.ActiveLoans.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Loan</th>
+                                        <th>Type</th>
+                                        <th class="text-end">Balance</th>
+                                        <th class="text-end">Monthly</th>
+                                        <th>Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var loan in Model.ActiveLoans)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a asp-controller="Loan" asp-action="Details" asp-route-id="@loan.Id">
+                                                    @loan.LoanName
+                                                </a>
+                                            </td>
+                                            <td>@loan.LoanType</td>
+                                            <td class="text-end">@loan.RemainingBalance.ToString("C")</td>
+                                            <td class="text-end">@loan.MonthlyPayment.ToString("C")</td>
+                                            <td>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" 
+                                                         style="width: @loan.ProgressPercentage%;" 
+                                                         aria-valuenow="@loan.ProgressPercentage" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100" 
+                                                         data-bs-toggle="tooltip" 
+                                                         title="@loan.ProgressPercentage.ToString("F1")% paid">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <p class="mb-0">No active loans</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Savings Goals -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Savings Goals</h6>
+                    <a asp-controller="Savings" asp-action="Index" class="btn btn-sm btn-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.TopSavingsGoals.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Goal</th>
+                                        <th>Category</th>
+                                        <th class="text-end">Current</th>
+                                        <th class="text-end">Target</th>
+                                        <th>Progress</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var goal in Model.TopSavingsGoals)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a asp-controller="Savings" asp-action="Details" asp-route-id="@goal.Id">
+                                                    @goal.Name
+                                                </a>
+                                            </td>
+                                            <td>@goal.Category</td>
+                                            <td class="text-end">@goal.CurrentAmount.ToString("C")</td>
+                                            <td class="text-end">@goal.TargetAmount.ToString("C")</td>
+                                            <td>
+                                                @{
+                                                    var percentage = goal.TargetAmount > 0 ? 
+                                                        (int)Math.Min(100, (goal.CurrentAmount / goal.TargetAmount) * 100) : 0;
+                                                }
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar bg-success" role="progressbar" 
+                                                         style="width: @percentage%;" 
+                                                         aria-valuenow="@percentage" 
+                                                         aria-valuemin="0" 
+                                                         aria-valuemax="100" 
+                                                         data-bs-toggle="tooltip" 
+                                                         title="@percentage% complete">
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <p class="mb-0">No savings goals</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        });
+    </script>
+}

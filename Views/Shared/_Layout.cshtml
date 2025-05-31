@@ -1,0 +1,623 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    string username = "";
+    if (SignInManager.IsSignedIn(User))
+    {
+        var user = await UserManager.GetUserAsync(User);
+        if (user != null)
+        {
+            // Try to get username from UserName field, or use Email as fallback
+            username = !string.IsNullOrEmpty(user.UserName) ? user.UserName : User.Identity.Name;
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Thrift</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Thrift.styles.css" asp-append-version="true" />
+    
+    @await RenderSectionAsync("Styles", required: false)
+    <style>
+        :root {
+            --color-accent: #8b5cf6;
+            --color-accent-dark: #7c3aed;
+        }
+        
+        .text-accent {
+            color: var(--color-accent);
+        }
+        
+        .bg-accent {
+            background-color: var(--color-accent);
+        }
+        
+        .hover\:bg-accent-dark:hover {
+            background-color: var(--color-accent-dark);
+        }
+        
+        .hover\:text-accent-dark:hover {
+            color: var(--color-accent-dark);
+        }
+        
+        .focus\:ring-accent:focus {
+            --tw-ring-color: var(--color-accent);
+        }
+        
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+
+        /* Update your CSS styles */
+        /* Add these new styles to your existing style block */
+        .hero-heading {
+            color: #ffffff;
+            font-weight: 700;
+        }
+        
+        .hero-text {
+            color: #f3f4f6; /* Lighter gray, almost white */
+            font-weight: 400;
+        }
+        
+        /* For gradient text, increase the contrast */
+        .gradient-text-enhanced {
+            background: linear-gradient(90deg, #a855f7, #6366f1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        /* Animation for pulse effect */
+        @@keyframes pulse-slow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse-slow 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        /* Add z-index support for negative values (needed for background elements) */
+        .-z-10 { z-index: -10; }
+
+        /* Add these additional styles to your head section */
+        /* Advanced 3D effect for cards */
+        .card-3d {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .card-3d:hover {
+            transform: rotateY(5deg) rotateX(5deg) translateZ(10px);
+        }
+        
+        /* Glassmorphism effect with better visual appeal */
+        .glass-morph {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Advanced gradient animations */
+        .animated-gradient {
+            background: linear-gradient(-45deg, #6366f1, #8b5cf6, #d946ef, #ec4899);
+            background-size: 400% 400%;
+            animation: gradient-shift 15s ease infinite;
+        }
+        
+        @@keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Particle effect */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Advanced text animations */
+        @@keyframes reveal-text {
+            0% { clip-path: inset(0 100% 0 0); }
+            100% { clip-path: inset(0 0 0 0); }
+        }
+        
+        .reveal-text {
+            animation: reveal-text 1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+        }
+        
+        .reveal-text-delay-1 {
+            animation-delay: 0.2s;
+        }
+        
+        .reveal-text-delay-2 {
+            animation-delay: 0.4s;
+        }
+        
+        /* Magnetic button effect */
+        .magnetic-btn {
+            transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        
+        /* Floating animations */
+        @@keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-delay-1 {
+            animation: float 6s ease-in-out 1s infinite;
+        }
+        
+        .floating-delay-2 {
+            animation: float 6s ease-in-out 2s infinite;
+        }
+        
+        /* Animation delays */
+        .delay-200 {
+            animation-delay: 0.2s;
+        }
+        
+        .delay-300 {
+            animation-delay: 0.3s;
+        }
+        
+        .delay-400 {
+            animation-delay: 0.4s;
+        }
+        
+        .delay-500 {
+            animation-delay: 0.5s;
+        }
+        
+        .delay-700 {
+            animation-delay: 0.7s;
+        }
+        
+        .delay-900 {
+            animation-delay: 0.9s;
+        }
+        
+        /* Mesh gradient background */
+        .mesh-gradient {
+            background-color: hsla(270, 60%, 30%, 0.2);
+            background-image:
+                radial-gradient(at 64% 64%, hsla(222, 78%, 70%, 0.5) 0px, transparent 50%),
+                radial-gradient(at 14% 89%, hsla(276, 91%, 79%, 0.5) 0px, transparent 50%),
+                radial-gradient(at 93% 16%, hsla(262, 90%, 80%, 0.5) 0px, transparent 50%),
+                radial-gradient(at 34% 28%, hsla(269, 78%, 69%, 0.5) 0px, transparent 50%);
+        }
+        
+        /* Advanced text shadow */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* Morphing blob shape */
+        .blob {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: morph 8s ease-in-out infinite;
+        }
+        
+        @@keyframes morph {
+            0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #8b5cf6, #6366f1);
+            border-radius: 3px;
+        }
+        
+        /* Neon glow effect */
+        .neon-glow {
+            box-shadow: 0 0 5px #8b5cf6, 0 0 15px #8b5cf6, 0 0 30px #8b5cf6, 0 0 60px #8b5cf6;
+        }
+        
+        /* Text typing animation */
+        .typing::after {
+            content: '|';
+            animation: blink 1s infinite;
+        }
+        
+        @@keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        /* 3D parallax effect */
+        .parallax-container {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+        
+        .parallax-element {
+            transform: translateZ(0);
+            transition: transform 0.2s ease-out;
+        }
+        
+        /* Noise texture overlay */
+        .noise-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            opacity: 0.05;
+            mix-blend-mode: overlay;
+        }
+
+        /* Add these z-index classes if they're missing */
+        .-z-10 {
+            z-index: -10 !important;
+        }
+        .z-10 {
+            z-index: 10 !important;
+        }
+        .z-20 {
+            z-index: 20 !important;
+        }
+        .z-30 {
+            z-index: 30 !important;
+        }
+
+        /* Add this CSS for grid pattern */
+        .bg-grid-white {
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0V20M0 1H20' stroke='white' stroke-opacity='0.1' stroke-width='1'/%3E%3C/svg%3E");
+        }
+
+        /* Add these animation classes */
+        @@keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .floating-delay-1 {
+            animation: float 6s ease-in-out 1s infinite;
+        }
+        
+        .floating-delay-2 {
+            animation: float 6s ease-in-out 2s infinite;
+        }
+        
+        @@keyframes morph {
+            0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        }
+        
+        .blob {
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: morph 8s ease-in-out infinite;
+        }
+        
+        .card-3d {
+            transition: transform 0.3s ease;
+        }
+        
+        .card-3d:hover {
+            transform: translateY(-5px) rotateX(5deg) rotateY(5deg);
+        }
+        
+        /* Animation for fade-in elements */
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <header class="sticky top-0 z-50">
+        <nav class="bg-white shadow-md w-full backdrop-blur-sm bg-white/90">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <!-- Logo and brand section -->
+                    <div class="flex items-center">
+                        <a asp-controller="Home" asp-action="Index" class="flex-shrink-0 flex items-center">
+                            <div class="h-8 w-8 bg-gradient-to-r from-purple-400 to-indigo-500 rounded-md flex items-center justify-center">
+                                <i class="fas fa-home text-white"></i>
+                            </div>
+                            <span class="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">NestShare</span>
+                        </a>
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="flex items-center lg:hidden">
+                        <button type="button" class="mobile-menu-button inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-accent" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Desktop navigation menu with icons -->
+                    <div class="hidden lg:flex lg:items-center lg:justify-end lg:flex-1 lg:space-x-4">
+                        <div class="flex space-x-4">
+                            <a asp-controller="Home" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 flex items-center">
+                                <i class="fas fa-home mr-2 text-purple-500"></i>
+                                Home
+                            </a>
+                            <a asp-controller="Budget" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 flex items-center">
+                                <i class="fas fa-chart-pie mr-2 text-purple-500"></i>
+                                Budgets
+                            </a>                            <a asp-controller="Savings" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 flex items-center group relative">
+                                <i class="fas fa-piggy-bank mr-2 text-purple-500"></i>
+                                Savings
+                                <i class="fas fa-chevron-down ml-2 text-xs text-gray-400 group-hover:text-gray-600"></i>
+                                <!-- Dropdown Menu -->
+                                <div class="absolute top-full left-0 mt-1 w-48 bg-white rounded-md shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">                                <div class="py-1">
+                                        <a asp-controller="Savings" asp-action="Index" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                            <i class="fas fa-list mr-2 text-purple-500"></i>
+                                            My Goals
+                                        </a>
+                                        <a asp-controller="Savings" asp-action="Analytics" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                            <i class="fas fa-chart-bar mr-2 text-purple-500"></i>
+                                            Analytics
+                                        </a>
+                                        <a asp-controller="Savings" asp-action="Challenges" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                            <i class="fas fa-gamepad mr-2 text-purple-500"></i>
+                                            Challenges
+                                        </a>
+                                        <a asp-controller="Savings" asp-action="Notifications" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                            <i class="fas fa-bell mr-2 text-purple-500"></i>
+                                            Notifications
+                                        </a>
+                                        <a asp-controller="Savings" asp-action="Create" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                            <i class="fas fa-plus mr-2 text-purple-500"></i>
+                                            New Goal
+                                        </a>
+                                    </div>
+                                </div>
+                            </a>                            <div class="dropdown">
+                                <a class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 flex items-center dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-money-bill-wave mr-2 text-purple-500"></i>
+                                    Loans
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" asp-controller="Loan" asp-action="Index">
+                                        <i class="fas fa-list mr-2"></i>
+                                        My Loans
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Loan" asp-action="Create">
+                                        <i class="fas fa-plus mr-2"></i>
+                                        New Loan
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Loan" asp-action="Calculator">
+                                        <i class="fas fa-calculator mr-2"></i>
+                                        Loan Calculator
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Loan" asp-action="Analytics">
+                                        <i class="fas fa-chart-bar mr-2"></i>
+                                        Loan Analytics
+                                    </a>
+                                </div>                            </div>                            <a asp-controller="ThriftGroup" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 flex items-center">
+                                <i class="fas fa-users mr-2 text-purple-500"></i>
+                                Thrift Groups
+                            </a>
+                            <a asp-controller="AccountBalance" asp-action="Index" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 flex items-center">
+                                <i class="fas fa-wallet mr-2 text-purple-500"></i>
+                                Account Balance
+                            </a>
+                        </div>
+
+                        <!-- Authentication links for desktop -->
+                        <div class="flex items-center ml-4">                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-sm text-gray-700">Hello, @(string.IsNullOrEmpty(username) ? "User" : username)!</span>
+                                    <a asp-area="Identity" asp-page="/Account/Manage/Index" class="text-purple-500 hover:text-purple-700 transition-colors duration-200">
+                                        <i class="fas fa-user-circle text-xl" title="My Account"></i>
+                                    </a>
+                                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                                        <button type="submit" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-purple-500 hover:bg-purple-600">Logout</button>
+                                    </form>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="flex items-center space-x-2">
+                                    <a asp-area="Identity" asp-page="/Account/Register" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Register</a>
+                                    <a asp-area="Identity" asp-page="/Account/Login" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-purple-500 hover:bg-purple-600">Login</a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile menu, show/hide based on menu state -->
+            <div class="lg:hidden mobile-menu hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    <a asp-controller="Home" asp-action="Index" class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
+                        <i class="fas fa-home w-6 text-purple-500"></i>
+                        Home
+                    </a>
+                    <a asp-controller="Budget" asp-action="Index" class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
+                        <i class="fas fa-chart-pie w-6 text-purple-500"></i>
+                        Budgets
+                    </a>                    <a asp-controller="Savings" asp-action="Index" class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
+                        <i class="fas fa-piggy-bank w-6 text-purple-500"></i>
+                        Savings
+                    </a>
+                    <a asp-controller="Savings" asp-action="Analytics" class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 ml-6">
+                        <i class="fas fa-chart-bar w-6 text-purple-500"></i>
+                        Savings Analytics
+                    </a>
+                    <a asp-controller="Savings" asp-action="Challenges" class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 ml-6">
+                        <i class="fas fa-gamepad w-6 text-purple-500"></i>
+                        Savings Challenges
+                    </a>
+                    <a asp-controller="Savings" asp-action="Notifications" class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 ml-6">
+                        <i class="fas fa-bell w-6 text-purple-500"></i>
+                        Notifications
+                    </a>                    <a asp-controller="Loan" asp-action="Index" class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
+                        <i class="fas fa-money-bill-wave w-6 text-purple-500"></i>
+                        Loans
+                    </a>                    <a asp-controller="ThriftGroup" asp-action="Index" class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
+                        <i class="fas fa-users w-6 text-purple-500"></i>
+                        Thrift Groups
+                    </a>
+                    <a asp-controller="AccountBalance" asp-action="Index" class="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">
+                        <i class="fas fa-wallet w-6 text-purple-500"></i>
+                        Account Balance
+                    </a>
+                </div>
+                
+                <!-- Authentication links for mobile -->
+                <div class="pt-4 pb-3 border-t border-gray-200">                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="px-2 space-y-1">
+                            <div class="px-3 py-2 text-base font-medium text-gray-700 flex items-center justify-between">
+                                <span>Hello, @(string.IsNullOrEmpty(username) ? "User" : username)!</span>
+                                <a asp-area="Identity" asp-page="/Account/Manage/Index" class="text-purple-500 hover:text-purple-700 transition-colors duration-200">
+                                    <i class="fas fa-user-circle text-xl" title="My Account"></i>
+                                </a>
+                            </div>
+                            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                                <button type="submit" class="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Logout</button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="px-2 space-y-1">
+                            <a asp-area="Identity" asp-page="/Account/Register" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Register</a>
+                            <a asp-area="Identity" asp-page="/Account/Login" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50">Login</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-gray-800 text-white">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="mb-8 md:mb-0">
+                    <h3 class="text-xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">NestShare</h3>
+                    <p class="text-gray-300">Empowering financial freedom through smarter saving and spending habits.</p>
+                    <div class="flex mt-4 space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors duration-200"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200"><i class="fas fa-chevron-right text-xs mr-2 text-purple-500"></i>Home</a></li>
+                        <li><a href="#features" class="text-gray-300 hover:text-white transition-colors duration-200"><i class="fas fa-chevron-right text-xs mr-2 text-purple-500"></i>Features</a></li>
+                        <li><a href="#testimonials" class="text-gray-300 hover:text-white transition-colors duration-200"><i class="fas fa-chevron-right text-xs mr-2 text-purple-500"></i>Testimonials</a></li>
+                        <li><a href="#pricing" class="text-gray-300 hover:text-white transition-colors duration-200"><i class="fas fa-chevron-right text-xs mr-2 text-purple-500"></i>Pricing</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200"><i class="fas fa-chevron-right text-xs mr-2 text-purple-500"></i>Blog</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200"><i class="fas fa-chevron-right text-xs mr-2 text-purple-500"></i>Help Center</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200"><i class="fas fa-chevron-right text-xs mr-2 text-purple-500"></i>Contact Us</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition-colors duration-200"><i class="fas fa-chevron-right text-xs mr-2 text-purple-500"></i>FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Newsletter</h4>
+                    <p class="text-gray-300 mb-4">Subscribe to our newsletter for tips and updates.</p>
+                    <form class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 w-full text-gray-900 rounded-l-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <button type="submit" class="bg-purple-500 hover:bg-purple-600 transition-colors duration-200 px-4 py-2 rounded-r-md text-white">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-300">&copy; 2025 - NestShare - All Rights Reserved</div>
+                <div class="mt-4 md:mt-0">
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-gray-300 hover:text-white transition-colors duration-200">Privacy Policy</a>
+                    <span class="text-gray-500 mx-2">|</span>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors duration-200">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.querySelector('.mobile-menu-button');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

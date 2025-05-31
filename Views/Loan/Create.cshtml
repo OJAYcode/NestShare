@@ -1,0 +1,308 @@
+@model Thrift.ViewModels.CreateLoanViewModel
+@{
+    ViewData["Title"] = "Add New Loan";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 text-gray-800">
+                <i class="fas fa-plus text-primary me-2"></i>
+                Add New Loan
+            </h1>
+            <p class="text-muted">Enter your loan details to start tracking</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Loans
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Loan Information</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post" id="loanForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Basic Information -->
+                        <div class="mb-4">
+                            <h6 class="text-primary mb-3">Basic Information</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="LoanName" class="form-label">Loan Name *</label>
+                                    <input asp-for="LoanName" class="form-control" placeholder="e.g., Personal Loan, Car Loan" />
+                                    <span asp-validation-for="LoanName" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="LoanType" class="form-label">Loan Type *</label>
+                                    <select asp-for="LoanType" class="form-select" asp-items="Html.GetEnumSelectList<LoanType>()">
+                                        <option value="">Select loan type</option>
+                                    </select>
+                                    <span asp-validation-for="LoanType" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mb-3">
+                                    <label asp-for="Description" class="form-label">Description</label>
+                                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Optional description or notes about this loan"></textarea>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loan Terms -->
+                        <div class="mb-4">
+                            <h6 class="text-primary mb-3">Loan Terms</h6>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="PrincipalAmount" class="form-label">Principal Amount *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input asp-for="PrincipalAmount" class="form-control" placeholder="0.00" />
+                                    </div>
+                                    <span asp-validation-for="PrincipalAmount" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="InterestRate" class="form-label">Interest Rate *</label>
+                                    <div class="input-group">
+                                        <input asp-for="InterestRate" class="form-control" placeholder="0.00" step="0.01" />
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                    <span asp-validation-for="InterestRate" class="text-danger"></span>
+                                </div>                                <div class="col-md-4 mb-3">
+                                    <label asp-for="TermInMonths" class="form-label">Loan Term *</label>
+                                    <div class="input-group">
+                                        <input asp-for="TermInMonths" class="form-control" placeholder="12" />
+                                        <span class="input-group-text">months</span>
+                                    </div>
+                                    <span asp-validation-for="TermInMonths" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="InterestType" class="form-label">Interest Type *</label>
+                                    <select asp-for="InterestType" class="form-select" asp-items="Html.GetEnumSelectList<InterestType>()">
+                                        <option value="">Select interest type</option>
+                                    </select>
+                                    <span asp-validation-for="InterestType" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="PaymentFrequency" class="form-label">Payment Frequency *</label>
+                                    <select asp-for="PaymentFrequency" class="form-select" asp-items="Html.GetEnumSelectList<PaymentFrequency>()">
+                                        <option value="">Select payment frequency</option>
+                                    </select>
+                                    <span asp-validation-for="PaymentFrequency" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dates -->
+                        <div class="mb-4">
+                            <h6 class="text-primary mb-3">Important Dates</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="StartDate" class="form-label">Loan Start Date *</label>
+                                    <input asp-for="StartDate" class="form-control" type="date" />
+                                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="FirstPaymentDate" class="form-label">First Payment Date *</label>
+                                    <input asp-for="FirstPaymentDate" class="form-control" type="date" />
+                                    <span asp-validation-for="FirstPaymentDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calculated Information Display -->
+                        <div class="mb-4" id="calculatedInfo" style="display: none;">
+                            <h6 class="text-success mb-3">Calculated Loan Information</h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Monthly Payment</h6>
+                                            <h4 class="text-primary" id="monthlyPayment">$0.00</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Total Interest</h6>
+                                            <h4 class="text-warning" id="totalInterest">$0.00</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Total Payment</h6>
+                                            <h4 class="text-info" id="totalPayment">$0.00</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <button type="button" id="calculateBtn" class="btn btn-outline-info">
+                                    <i class="fas fa-calculator me-1"></i>
+                                    Calculate Payment
+                                </button>
+                                <a asp-controller="Database" asp-action="Index" class="btn btn-outline-warning ms-2">
+                                    <i class="fas fa-database me-1"></i>
+                                    Database Diagnostics
+                                </a>
+                            </div>
+                            <div>
+                                <a asp-action="Index" class="btn btn-secondary me-2">Cancel</a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-1"></i>
+                                    Create Loan
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            const nextMonthStr = nextMonth.toISOString().split('T')[0];
+            
+            $('#StartDate').val(today);
+            $('#FirstPaymentDate').val(nextMonthStr);
+
+            // Calculate payment button handler
+            $('#calculateBtn').click(function() {
+                calculateLoanPayment();
+            });            // Auto-calculate when fields change
+            $('#PrincipalAmount, #InterestRate, #TermInMonths, #InterestType').on('input change', function() {
+                if (isFormValid()) {
+                    calculateLoanPayment();
+                }
+            });
+
+            function isFormValid() {
+                const principal = parseFloat($('#PrincipalAmount').val()) || 0;
+                const rate = parseFloat($('#InterestRate').val()) || 0;
+                const term = parseInt($('#TermInMonths').val()) || 0;
+                const interestType = $('#InterestType').val();
+
+                return principal > 0 && rate > 0 && term > 0 && interestType;
+            }            function calculateLoanPayment() {
+                const principal = parseFloat($('#PrincipalAmount').val()) || 0;
+                const annualRate = parseFloat($('#InterestRate').val()) / 100 || 0;
+                const termMonths = parseInt($('#TermInMonths').val()) || 0;
+                const interestType = $('#InterestType').val();
+
+                if (principal <= 0 || annualRate <= 0 || termMonths <= 0) {
+                    $('#calculatedInfo').hide();
+                    return;
+                }
+
+                let monthlyPayment = 0;
+                let totalInterest = 0;
+
+                if (interestType === 'Simple') {
+                    // Simple interest calculation
+                    totalInterest = principal * annualRate * (termMonths / 12);
+                    monthlyPayment = (principal + totalInterest) / termMonths;
+                } else {
+                    // Compound interest (standard amortization)
+                    const monthlyRate = annualRate / 12;
+                    if (monthlyRate > 0) {
+                        monthlyPayment = principal * (monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / 
+                                       (Math.pow(1 + monthlyRate, termMonths) - 1);
+                        totalInterest = (monthlyPayment * termMonths) - principal;
+                    } else {
+                        monthlyPayment = principal / termMonths;
+                        totalInterest = 0;
+                    }
+                }
+
+                const totalPayment = principal + totalInterest;
+
+                // Update display
+                $('#monthlyPayment').text('$' + monthlyPayment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                $('#totalInterest').text('$' + totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                $('#totalPayment').text('$' + totalPayment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                
+                $('#calculatedInfo').show();
+            }            // Form validation enhancement
+            $('form').on('submit', function(e) {
+                if (!isFormValid()) {
+                    e.preventDefault();
+                    alert('Please fill in all required fields with valid values.');
+                    return false;
+                }
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .form-label {
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+        
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        
+        .input-group-text {
+            background-color: #f8f9fc;
+            border-color: #d1d3e2;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        
+        #calculatedInfo .card {
+            transition: transform 0.2s;
+        }
+        
+        #calculatedInfo .card:hover {
+            transform: translateY(-2px);
+        }
+        
+        .text-primary {
+            color: #4e73df !important;
+        }
+        
+        .btn-primary {
+            background-color: #4e73df;
+            border-color: #4e73df;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            border-color: #2653d4;
+        }
+    </style>
+}

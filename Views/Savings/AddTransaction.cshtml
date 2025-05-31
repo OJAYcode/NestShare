@@ -1,0 +1,588 @@
+@model Thrift.Models.SavingsTransaction
+@{
+    ViewData["Title"] = "Add Transaction";
+    var goal = ViewBag.SavingsGoal as Thrift.Models.SavingsGoal;
+    var progressPercentage = goal.TargetAmount > 0 ? (goal.CurrentAmount / goal.TargetAmount * 100) : 0;
+}
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 py-6 relative overflow-hidden">
+    <!-- Floating background elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 opacity-20">
+        <div class="absolute top-20 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
+        <div class="absolute bottom-32 left-16 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: -3s;"></div>
+        <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: -6s;"></div>
+        
+        <!-- Floating money icons -->
+        <div class="absolute top-1/4 left-1/4 text-purple-200 animate-float" style="animation-delay: -1s;">
+            <i class="fas fa-coins text-4xl"></i>
+        </div>
+        <div class="absolute bottom-1/3 right-1/4 text-indigo-200 animate-float" style="animation-delay: -4s;">
+            <i class="fas fa-dollar-sign text-3xl"></i>
+        </div>
+        <div class="absolute top-3/4 left-1/3 text-pink-200 animate-float" style="animation-delay: -2s;">
+            <i class="fas fa-money-bill-wave text-3xl"></i>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+        <!-- Header Section -->
+        <div class="text-center mb-8 animate-fadeInUp">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white mb-4 shadow-lg">
+                <i class="fas fa-plus text-2xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Add Transaction
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Record a new transaction for <span class="font-semibold text-purple-600">@goal.Name</span>
+            </p>
+        </div>
+
+        <!-- Goal Overview Card -->
+        <div class="max-w-4xl mx-auto mb-8 animate-fadeInUp" style="animation-delay: 0.1s;">
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6">                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white">
+                            @{
+                                var iconClass = !string.IsNullOrEmpty(goal.Icon) ? goal.Icon : "piggy-bank";
+                                if (!iconClass.StartsWith("fas fa-"))
+                                {
+                                    iconClass = "fas fa-" + iconClass;
+                                }
+                            }
+                            <i class="@iconClass"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">@goal.Name</h3>
+                            <p class="text-sm text-gray-500">@goal.Category Goal</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Progress</div>
+                        <div class="text-2xl font-bold text-purple-600">@progressPercentage.ToString("F1")%</div>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+                    <!-- Current Amount -->
+                    <div class="text-center p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                        <div class="text-2xl font-bold text-green-600">@goal.CurrentAmount.ToString("C")</div>
+                        <div class="text-sm text-green-700">Current Balance</div>
+                    </div>
+                    
+                    <!-- Target Amount -->
+                    <div class="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                        <div class="text-2xl font-bold text-blue-600">@goal.TargetAmount.ToString("C")</div>
+                        <div class="text-sm text-blue-700">Target Amount</div>
+                    </div>
+                    
+                    <!-- Remaining Amount -->
+                    <div class="text-center p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl border border-orange-200">
+                        <div class="text-2xl font-bold text-orange-600">@((goal.TargetAmount - goal.CurrentAmount).ToString("C"))</div>
+                        <div class="text-sm text-orange-700">Remaining</div>
+                    </div>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="relative">
+                    <div class="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-500 relative"
+                             style="width: @Math.Min(progressPercentage, 100)%">
+                            <div class="absolute inset-0 bg-white/30 animate-shimmer"></div>
+                        </div>
+                    </div>
+                    <div class="absolute -top-1 left-0 right-0 flex justify-between text-xs text-gray-500">
+                        <span>$0</span>
+                        <span>@goal.TargetAmount.ToString("C")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Form -->
+        <div class="max-w-3xl mx-auto animate-fadeInUp" style="animation-delay: 0.2s;">
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl overflow-hidden">
+                <!-- Form Header -->
+                <div class="bg-gradient-to-r from-purple-500 to-indigo-600 p-6 text-white">
+                    <h2 class="text-2xl font-semibold flex items-center">
+                        <i class="fas fa-receipt mr-3"></i>
+                        Transaction Details
+                    </h2>
+                    <p class="text-purple-100 mt-1">Enter the transaction information below</p>
+                </div>
+
+                <!-- Form Content -->
+                <div class="p-8">
+                    <form asp-action="AddTransaction" method="post" class="space-y-8" id="transactionForm">
+                        <div asp-validation-summary="ModelOnly" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md text-red-700 mb-6"></div>
+                        
+                        <input type="hidden" asp-for="SavingsGoalId" value="@goal.Id" />
+                        
+                        <!-- Transaction Type Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                                    <i class="fas fa-exchange-alt text-purple-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Transaction Type</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Deposit Option -->
+                                <label class="transaction-type-card cursor-pointer" data-type="Deposit">
+                                    <input type="radio" asp-for="Type" value="Deposit" class="sr-only transaction-type-radio" />
+                                    <div class="p-6 rounded-xl border-2 border-gray-200 hover:border-green-500 transition-all duration-200 bg-white/70 backdrop-blur-sm">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                                                <i class="fas fa-plus text-green-600 text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-semibold text-gray-800">Deposit</h4>
+                                                <p class="text-sm text-gray-600">Add money to your goal</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <!-- Withdrawal Option -->
+                                <label class="transaction-type-card cursor-pointer" data-type="Withdrawal">
+                                    <input type="radio" asp-for="Type" value="Withdrawal" class="sr-only transaction-type-radio" />
+                                    <div class="p-6 rounded-xl border-2 border-gray-200 hover:border-red-500 transition-all duration-200 bg-white/70 backdrop-blur-sm">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                                                <i class="fas fa-minus text-red-600 text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-lg font-semibold text-gray-800">Withdrawal</h4>
+                                                <p class="text-sm text-gray-600">Remove money from your goal</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <span asp-validation-for="Type" class="text-red-500 text-sm"></span>
+                        </div>
+
+                        <!-- Amount Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+                                    <i class="fas fa-dollar-sign text-green-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Amount</h3>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="relative">
+                                    <input asp-for="Amount" type="number" step="0.01" min="0"
+                                           class="w-full px-6 py-4 text-2xl border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm pl-16 text-center"
+                                           placeholder="0.00" id="amountInput" />
+                                    <div class="absolute inset-y-0 left-0 pl-6 flex items-center">
+                                        <span class="text-gray-500 font-bold text-2xl">$</span>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="Amount" class="text-red-500 text-sm"></span>
+                                
+                                <!-- Quick Amount Buttons -->
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                    <button type="button" class="quick-amount-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-all duration-200" data-amount="25">
+                                        $25
+                                    </button>
+                                    <button type="button" class="quick-amount-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-all duration-200" data-amount="50">
+                                        $50
+                                    </button>
+                                    <button type="button" class="quick-amount-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-all duration-200" data-amount="100">
+                                        $100
+                                    </button>
+                                    <button type="button" class="quick-amount-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-purple-100 hover:text-purple-700 transition-all duration-200" data-amount="200">
+                                        $200
+                                    </button>
+                                </div>
+                                
+                                <!-- Warning Message -->
+                                <div id="withdrawal-warning" class="bg-red-50 border border-red-200 rounded-lg p-4 hidden">
+                                    <div class="flex items-center space-x-2">
+                                        <i class="fas fa-exclamation-triangle text-red-500"></i>
+                                        <span class="text-red-700 font-medium">Withdrawal cannot exceed current balance of @goal.CurrentAmount.ToString("C")</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-calendar text-blue-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Transaction Date</h3>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <div class="relative">
+                                    <input asp-for="TransactionDate" type="date"
+                                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm pl-12" />
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center">
+                                        <i class="fas fa-calendar text-gray-400"></i>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="TransactionDate" class="text-red-500 text-sm"></span>
+                                
+                                <!-- Quick Date Buttons -->
+                                <div class="grid grid-cols-3 gap-3">
+                                    <button type="button" class="quick-date-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition-all duration-200" data-date="today">
+                                        Today
+                                    </button>
+                                    <button type="button" class="quick-date-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition-all duration-200" data-date="yesterday">
+                                        Yesterday
+                                    </button>
+                                    <button type="button" class="quick-date-btn px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-blue-100 hover:text-blue-700 transition-all duration-200" data-date="week">
+                                        1 Week Ago
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Note Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                    <i class="fas fa-sticky-note text-indigo-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Note (Optional)</h3>
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <textarea asp-for="Note" rows="4"
+                                          class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm resize-none"
+                                          placeholder="Add a note about this transaction (e.g., salary deposit, coffee money withdrawal, etc.)"></textarea>
+                                <span asp-validation-for="Note" class="text-red-500 text-sm"></span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                            <button type="submit" 
+                                    class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2"
+                                    id="submitBtn">
+                                <i class="fas fa-save"></i>
+                                <span>Save Transaction</span>
+                            </button>
+                            
+                            <a asp-action="Details" asp-route-id="@goal.Id"
+                               class="flex-1 bg-gray-100 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-200 transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Cancel</span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction Preview -->
+        <div class="max-w-3xl mx-auto mt-8 animate-fadeInUp" style="animation-delay: 0.3s;">
+            <div id="transactionPreview" class="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 hidden">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                        <i class="fas fa-eye text-blue-600"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-blue-900">Transaction Preview</h3>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-info-circle text-blue-500"></i>
+                        <span class="text-blue-800">Type: <span id="previewType">-</span></span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-dollar-sign text-blue-500"></i>
+                        <span class="text-blue-800">Amount: <span id="previewAmount">$0.00</span></span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-calculator text-blue-500"></i>
+                        <span class="text-blue-800">New Balance: <span id="previewBalance">@goal.CurrentAmount.ToString("C")</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <style>
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+            50% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            75% {
+                transform: translateY(-5px) rotate(-1deg);
+            }
+        }
+
+        @@keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-shimmer {
+            animation: shimmer 2s infinite;
+        }
+
+        /* Transaction type selection styles */
+        .transaction-type-radio:checked + div {
+            border-color: #8b5cf6;
+            background-color: rgba(139, 92, 246, 0.05);
+            transform: scale(1.02);
+        }
+
+        .transaction-type-radio:checked + div .fa-plus {
+            color: #16a34a;
+        }
+
+        .transaction-type-radio:checked + div .fa-minus {
+            color: #dc2626;
+        }
+
+        /* Button hover effects */
+        .quick-amount-btn:hover,
+        .quick-date-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Form focus animations */
+        .form-focus-effect {
+            transition: all 0.3s ease;
+        }
+
+        .form-focus-effect:focus-within {
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.15);
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('transactionForm');
+            const amountInput = document.getElementById('amountInput');
+            const typeRadios = document.querySelectorAll('.transaction-type-radio');
+            const quickAmountBtns = document.querySelectorAll('.quick-amount-btn');
+            const quickDateBtns = document.querySelectorAll('.quick-date-btn');
+            const withdrawalWarning = document.getElementById('withdrawal-warning');
+            const transactionPreview = document.getElementById('transactionPreview');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            const currentBalance = @goal.CurrentAmount;
+            
+            // Initialize form
+            initializeForm();
+            setupEventListeners();
+            
+            function initializeForm() {
+                // Set default date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('@Html.IdFor(m => m.TransactionDate)').value = today;
+                
+                // Add form focus effects
+                const inputs = form.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.classList.add('form-focus-effect');
+                });
+            }
+            
+            function setupEventListeners() {
+                // Transaction type selection
+                typeRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        updateTransactionTypeUI();
+                        validateAndPreview();
+                    });
+                });
+                
+                // Amount input validation
+                amountInput.addEventListener('input', function() {
+                    validateAmount();
+                    validateAndPreview();
+                });
+                
+                // Quick amount buttons
+                quickAmountBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const amount = this.dataset.amount;
+                        amountInput.value = amount;
+                        validateAmount();
+                        validateAndPreview();
+                        
+                        // Visual feedback
+                        this.classList.add('bg-purple-500', 'text-white');
+                        setTimeout(() => {
+                            this.classList.remove('bg-purple-500', 'text-white');
+                        }, 200);
+                    });
+                });
+                
+                // Quick date buttons
+                quickDateBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const dateType = this.dataset.date;
+                        const dateInput = document.getElementById('@Html.IdFor(m => m.TransactionDate)');
+                        let date = new Date();
+                        
+                        switch(dateType) {
+                            case 'today':
+                                break;
+                            case 'yesterday':
+                                date.setDate(date.getDate() - 1);
+                                break;
+                            case 'week':
+                                date.setDate(date.getDate() - 7);
+                                break;
+                        }
+                        
+                        dateInput.value = date.toISOString().split('T')[0];
+                        
+                        // Visual feedback
+                        this.classList.add('bg-blue-500', 'text-white');
+                        setTimeout(() => {
+                            this.classList.remove('bg-blue-500', 'text-white');
+                        }, 200);
+                    });
+                });
+                
+                // Form submission
+                form.addEventListener('submit', function(e) {
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing...';
+                    submitBtn.disabled = true;
+                });
+                
+                // Real-time preview updates
+                form.addEventListener('input', validateAndPreview);
+            }
+            
+            function updateTransactionTypeUI() {
+                const selectedType = document.querySelector('.transaction-type-radio:checked')?.value;
+                
+                // Update quick amount button suggestions based on type
+                quickAmountBtns.forEach(btn => {
+                    if (selectedType === 'Withdrawal') {
+                        const amount = parseFloat(btn.dataset.amount);
+                        if (amount > currentBalance) {
+                            btn.disabled = true;
+                            btn.classList.add('opacity-50', 'cursor-not-allowed');
+                        } else {
+                            btn.disabled = false;
+                            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                        }
+                    } else {
+                        btn.disabled = false;
+                        btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                });
+            }
+            
+            function validateAmount() {
+                const amount = parseFloat(amountInput.value) || 0;
+                const selectedType = document.querySelector('.transaction-type-radio:checked')?.value;
+                
+                if (selectedType === 'Withdrawal' && amount > currentBalance) {
+                    withdrawalWarning.classList.remove('hidden');
+                    amountInput.classList.add('border-red-500');
+                    amountInput.classList.remove('border-gray-200');
+                    return false;
+                } else {
+                    withdrawalWarning.classList.add('hidden');
+                    amountInput.classList.remove('border-red-500');
+                    amountInput.classList.add('border-gray-200');
+                    return true;
+                }
+            }
+            
+            function validateAndPreview() {
+                const amount = parseFloat(amountInput.value) || 0;
+                const selectedType = document.querySelector('.transaction-type-radio:checked')?.value;
+                
+                if (amount > 0 && selectedType) {
+                    updateTransactionPreview(selectedType, amount);
+                    transactionPreview.classList.remove('hidden');
+                } else {
+                    transactionPreview.classList.add('hidden');
+                }
+            }
+            
+            function updateTransactionPreview(type, amount) {
+                const previewType = document.getElementById('previewType');
+                const previewAmount = document.getElementById('previewAmount');
+                const previewBalance = document.getElementById('previewBalance');
+                
+                previewType.textContent = type;
+                previewAmount.textContent = '$' + amount.toFixed(2);
+                
+                let newBalance = currentBalance;
+                if (type === 'Deposit') {
+                    newBalance += amount;
+                } else if (type === 'Withdrawal') {
+                    newBalance -= amount;
+                }
+                
+                previewBalance.textContent = '$' + newBalance.toFixed(2);
+                
+                // Color coding
+                if (type === 'Deposit') {
+                    previewAmount.className = 'text-green-600 font-semibold';
+                } else {
+                    previewAmount.className = 'text-red-600 font-semibold';
+                }
+            }
+            
+            // Add animation delays to form sections
+            const sections = document.querySelectorAll('.space-y-6');
+            sections.forEach((section, index) => {
+                section.style.animationDelay = `${index * 0.1}s`;
+                section.classList.add('animate-fadeInUp');
+            });
+            
+            // Add hover effects to transaction type cards
+            const typeCards = document.querySelectorAll('.transaction-type-card');
+            typeCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.querySelector('div').classList.add('transform', 'scale-105');
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.querySelector('div').classList.remove('transform', 'scale-105');
+                });
+            });
+        });
+    </script>
+}

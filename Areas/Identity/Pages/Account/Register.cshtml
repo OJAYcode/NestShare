@@ -1,0 +1,528 @@
+﻿@page
+@model Thrift.Areas.Identity.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Create Your Account";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <!-- Dynamic animated background -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl animate-pulse" style="animation-duration: 8s;"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-gradient-to-tr from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse" style="animation-duration: 12s;"></div>
+        <div class="absolute top-1/3 left-1/4 w-64 h-64 bg-gradient-to-tr from-green-400/10 to-teal-400/10 rounded-full blur-3xl animate-pulse" style="animation-duration: 10s;"></div>
+        
+        <!-- Floating particles -->
+        <div class="particles absolute inset-0 z-0">
+            @for (var i = 0; i < 20; i++)
+            {
+                <div class="particle absolute rounded-full bg-white/30 backdrop-blur-sm"
+                     style="width: @(Random.Shared.Next(4, 8))px; height: @(Random.Shared.Next(4, 8))px; 
+                            left: @(Random.Shared.Next(0, 100))%; top: @(Random.Shared.Next(0, 100))%;
+                            animation: float @(Random.Shared.Next(15, 40))s linear infinite;
+                            animation-delay: -@(Random.Shared.Next(0, 20))s;">
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto z-10 relative">
+        <!-- Page header with 3D logo effect -->
+        <div class="text-center mb-8">
+            <div class="logo-container perspective-1000 inline-block mb-4">
+                <div class="logo-3d relative h-16 w-16 mx-auto transform transition-transform duration-700 hover:rotate-y-180">
+                    <div class="logo-front absolute inset-0 flex items-center justify-center bg-gradient-to-tr from-indigo-500 to-blue-600 rounded-xl shadow-lg transform backface-hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div class="logo-back absolute inset-0 flex items-center justify-center bg-gradient-to-bl from-purple-500 to-indigo-600 rounded-xl shadow-lg transform backface-hidden rotate-y-180">
+                        <span class="text-white font-bold text-xl">T</span>
+                    </div>
+                </div>
+            </div>
+            <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-blue-500 to-purple-600 tracking-tight">Create Your Account</h1>
+            <p class="mt-2 text-lg text-gray-600 max-w-xl mx-auto">Join Thrift and take control of your financial future with smart budgeting, savings tracking, and personalized insights</p>
+        </div>
+
+        <!-- Main card with glass morphism and 3D hover effect -->
+        <div class="bg-white/80 backdrop-blur-sm shadow-2xl rounded-2xl overflow-hidden border border-white/50 transform perspective-1000 group hover:shadow-indigo-500/20 transition-all duration-500">
+            <div class="card-inner transform transition-transform duration-500 group-hover:scale-[0.99]">
+                <!-- Animated progress steps -->
+                <div class="px-6 pt-6">
+                    <div class="flex items-center justify-between">
+                        <div class="w-full flex items-center">
+                            <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-r from-indigo-600 to-blue-600 text-white font-semibold text-sm z-10 shadow-lg">
+                                <div class="absolute inset-0 rounded-full bg-white/30 animate-ping opacity-50" style="animation-duration: 2s;"></div>
+                                1
+                            </div>
+                            <div class="flex-1 h-1 bg-gradient-to-r from-indigo-600 to-blue-400"></div>
+                        </div>
+                        <div class="w-full flex items-center">
+                            <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-600 font-semibold text-sm z-10 border-2 border-white/80 shadow-sm">
+                                2
+                            </div>
+                            <div class="flex-1 h-1 bg-gray-200"></div>
+                        </div>
+                        <div class="w-full flex items-center justify-end">
+                            <div class="relative flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 text-gray-600 font-semibold text-sm z-10 border-2 border-white/80 shadow-sm">
+                                3
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-xs mt-2 px-1 text-gray-600">
+                        <span class="font-medium">Account</span>
+                        <span>Personal Info</span>
+                        <span>Preferences</span>
+                    </div>
+                </div>
+
+                <!-- Form content with enhanced styling -->
+                <div class="p-6 sm:p-8">
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="space-y-8">
+                        <div asp-validation-summary="ModelOnly" class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-md animate-fadeIn" role="alert"></div>
+
+                        <!-- Account details section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-indigo-600 text-white shadow-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                                <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-500">Account Details</h2>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                <div class="sm:col-span-3 group">
+                                    <label asp-for="Input.Email" class="block text-sm font-medium text-gray-700 group-focus-within:text-indigo-600 transition-colors duration-200">Email address</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <input asp-for="Input.Email" class="pl-10 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md transition-all duration-200" placeholder="your.email@example.com" autocomplete="email" />
+                                        <div class="absolute inset-y-0 right-0 flex items-center">
+                                            <div class="h-4 w-4 text-green-500 hidden email-valid">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="Input.Email" class="text-sm text-red-600 mt-1 inline-block"></span>
+                                    <p class="text-xs text-gray-500 mt-1">We'll never share your email with anyone else.</p>
+                                </div>
+
+                                <div class="sm:col-span-3 group">
+                                    <label asp-for="Input.Username" class="block text-sm font-medium text-gray-700 group-focus-within:text-indigo-600 transition-colors duration-200">Username</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                        </div>
+                                        <input asp-for="Input.Username" class="pl-10 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md transition-all duration-200" placeholder="Choose a unique username" />
+                                    </div>
+                                    <span asp-validation-for="Input.Username" class="text-sm text-red-600 mt-1 inline-block"></span>
+                                    <p class="text-xs text-gray-500 mt-1">This will be your public display name.</p>
+                                </div>
+
+                                <div class="sm:col-span-3 group">
+                                    <label asp-for="Input.Password" class="block text-sm font-medium text-gray-700 group-focus-within:text-indigo-600 transition-colors duration-200">Password</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                            </svg>
+                                        </div>
+                                        <input asp-for="Input.Password" class="pl-10 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md transition-all duration-200" autocomplete="new-password" />
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer toggle-password group">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 group-hover:text-indigo-500 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="Input.Password" class="text-sm text-red-600 mt-1 inline-block"></span>
+                                    <div class="password-strength mt-2 flex flex-col space-y-1">
+                                        <div class="flex h-1.5 rounded-full bg-gray-200 overflow-hidden">
+                                            <div class="strength-indicator w-0 h-full transition-all duration-300"></div>
+                                        </div>
+                                        <div class="flex justify-between text-xs text-gray-500">
+                                            <span>Weak</span>
+                                            <span>Medium</span>
+                                            <span>Strong</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sm:col-span-3 group">
+                                    <label asp-for="Input.ConfirmPassword" class="block text-sm font-medium text-gray-700 group-focus-within:text-indigo-600 transition-colors duration-200">Confirm password</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                            </svg>
+                                        </div>
+                                        <input asp-for="Input.ConfirmPassword" class="pl-10 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md transition-all duration-200" autocomplete="new-password" />
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                            <div class="passwords-match h-5 w-5 text-green-500 hidden">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="Input.ConfirmPassword" class="text-sm text-red-600 mt-1 inline-block"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal information section with advanced animations -->
+                        <div class="space-y-6 pt-6 border-t border-gray-200 animate-fadeIn" style="animation-delay: 200ms;">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 text-white shadow-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                                    </svg>
+                                </div>
+                                <h2 class="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-500">Personal Information</h2>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                                <div class="sm:col-span-3 hover:scale-[1.01] transition-transform duration-200">
+                                    <label asp-for="Input.FirstName" class="block text-sm font-medium text-gray-700">First name</label>
+                                    <input asp-for="Input.FirstName" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                                    <span asp-validation-for="Input.FirstName" class="text-sm text-red-600 mt-1 inline-block"></span>
+                                </div>
+
+                                <div class="sm:col-span-3 hover:scale-[1.01] transition-transform duration-200">
+                                    <label asp-for="Input.LastName" class="block text-sm font-medium text-gray-700">Last name</label>
+                                    <input asp-for="Input.LastName" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                                    <span asp-validation-for="Input.LastName" class="text-sm text-red-600 mt-1 inline-block"></span>
+                                </div>
+
+                                <div class="sm:col-span-3 group hover:scale-[1.01] transition-transform duration-200">
+                                    <label asp-for="Input.PhoneNumber" class="block text-sm font-medium text-gray-700 group-focus-within:text-indigo-600 transition-colors duration-200">Phone number</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                            </svg>
+                                        </div>
+                                        <input asp-for="Input.PhoneNumber" class="pl-10 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="+1 (555) 987-6543" />
+                                    </div>
+                                    <span asp-validation-for="Input.PhoneNumber" class="text-sm text-red-600 mt-1 inline-block"></span>
+                                </div>
+
+                                <div class="sm:col-span-3 group hover:scale-[1.01] transition-transform duration-200">
+                                    <label asp-for="Input.DateOfBirth" class="block text-sm font-medium text-gray-700 group-focus-within:text-indigo-600 transition-colors duration-200">Date of birth</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 012 2z" />
+                                            </svg>
+                                        </div>
+                                        <input asp-for="Input.DateOfBirth" class="pl-10 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                                    </div>
+                                    <span asp-validation-for="Input.DateOfBirth" class="text-sm text-red-600 mt-1 inline-block"></span>
+                                </div>
+
+                                <!-- Address field with auto-complete animation -->
+                                <div class="sm:col-span-6 group hover:scale-[1.01] transition-transform duration-200">
+                                    <label asp-for="Input.Address" class="block text-sm font-medium text-gray-700 group-focus-within:text-indigo-600 transition-colors duration-200">Street address</label>
+                                    <div class="mt-1 relative rounded-md shadow-sm">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-indigo-500 transition-colors duration-200">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                        </div>
+                                        <input asp-for="Input.Address" class="pl-10 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md address-autocomplete" placeholder="Start typing your address..." />
+                                    </div>
+                                    <span asp-validation-for="Input.Address" class="text-sm text-red-600 mt-1 inline-block"></span>
+                                </div>
+
+                                <div class="sm:col-span-3 hover:scale-[1.01] transition-transform duration-200">
+                                    <label asp-for="Input.City" class="block text-sm font-medium text-gray-700">City</label>
+                                    <input asp-for="Input.City" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                                    <span asp-validation-for="Input.City" class="text-sm text-red-600"></span>
+                                </div>
+
+                                <div class="sm:col-span-3 hover:scale-[1.01] transition-transform duration-200">
+                                    <label asp-for="Input.State" class="block text-sm font-medium text-gray-700">State / Province</label>
+                                    <input asp-for="Input.State" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                                    <span asp-validation-for="Input.State" class="text-sm text-red-600"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms and conditions with advanced styling -->
+                        <div class="pt-6 border-t border-gray-200 animate-fadeIn" style="animation-delay: 400ms;">
+                            <div class="flex items-start p-4 bg-indigo-50 rounded-lg border border-indigo-100 hover:bg-indigo-100 transition-colors duration-200">
+                                <div class="flex items-center h-5">
+                                    <input id="terms" name="terms" type="checkbox" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded transition-all duration-200" required>
+                                </div>
+                                <div class="ml-3 text-sm">
+                                    <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="text-indigo-600 hover:text-indigo-500 underline decoration-2 decoration-indigo-200 hover:decoration-indigo-500 underline-offset-2 transition-all">Terms of Service</a> and <a href="#" class="text-indigo-600 hover:text-indigo-500 underline decoration-2 decoration-indigo-200 hover:decoration-indigo-500 underline-offset-2 transition-all">Privacy Policy</a></label>
+                                    <p class="text-gray-500 mt-1">By creating an account, you agree to our terms and that you have read our data policy.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit button with advanced effects -->
+                        <div class="animate-fadeIn" style="animation-delay: 600ms;">
+                            <button type="submit" class="relative w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-xl text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 overflow-hidden group">
+                                <span class="relative z-10 flex items-center">
+                                    <span>Create Account</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                    </svg>
+                                </span>
+                                <div class="absolute top-0 left-0 w-full h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
+                            </button>
+                        </div>
+
+                        <!-- Sign in link with hover effect -->
+                        <div class="text-center text-sm text-gray-600 animate-fadeIn" style="animation-delay: 800ms;">
+                            Already have an account? 
+                            <a asp-page="./Login" class="font-medium text-indigo-600 hover:text-indigo-500 relative group">
+                                <span class="underline decoration-2 decoration-indigo-200 group-hover:decoration-indigo-500 underline-offset-2 transition-all">Sign in instead</span>
+                                <span class="absolute -bottom-px left-0 w-0 h-0.5 bg-indigo-500 group-hover:w-full transition-all duration-300"></span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Bottom edge with animated gradient -->
+                <div class="h-2 bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced security badges -->
+        <div class="mt-10 flex flex-wrap justify-center gap-6 items-center animate-fadeIn" style="animation-delay: 1s;">
+            <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+                <div class="w-6 h-6 flex items-center justify-center bg-indigo-100 rounded-full text-indigo-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <span class="text-xs font-medium text-gray-700">Secure Connection</span>
+            </div>
+            <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+                <div class="w-6 h-6 flex items-center justify-center bg-green-100 rounded-full text-green-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                </div>
+                <span class="text-xs font-medium text-gray-700">Privacy Protected</span>
+            </div>
+            <div class="flex items-center space-x-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105">
+                <div class="w-6 h-6 flex items-center justify-center bg-blue-100 rounded-full text-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <span class="text-xs font-medium text-gray-700">256-bit Encryption</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <style>
+        /* Advanced animations */
+        @@keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @@keyframes float {
+            0% { transform: translateY(0px) translateX(0px); }
+            25% { transform: translateY(-10px) translateX(10px); }
+            50% { transform: translateY(0px) translateX(20px); }
+            75% { transform: translateY(10px) translateX(10px); }
+            100% { transform: translateY(0px) translateX(0px); }
+        }
+
+        @@keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Utility classes */
+        .animate-shimmer {
+            animation: shimmer 2s infinite;
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .backface-hidden {
+            backface-visibility: hidden;
+        }
+
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        /* Hover transforms */
+        .group:hover .group-hover\:rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+
+        .group:hover .group-hover\:translate-x-1 {
+            transform: translateX(0.25rem);
+        }
+
+        .group:hover .group-hover\:scale-\[0\.99\] {
+            transform: scale(0.99);
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle password visibility with enhanced animation
+            const toggleButtons = document.querySelectorAll('.toggle-password');
+            
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.parentNode.querySelector('input');
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    
+                    // Change the eye icon with animation
+                    if (type === 'text') {
+                        this.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                        </svg>`;
+                    } else {
+                        this.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 group-hover:text-indigo-500 transition-colors duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>`;
+                    }
+                });
+            });
+            
+            // Enhanced password strength indicator with animations and tips
+            const passwordInput = document.querySelector('input[name="Input.Password"]');
+            const passwordStrengthIndicator = document.querySelector('.strength-indicator');
+            const confirmPasswordInput = document.querySelector('input[name="Input.ConfirmPassword"]');
+            const passwordsMatchIcon = document.querySelector('.passwords-match');
+            
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                let color = 'bg-red-500';
+                
+                if (password.length >= 8) strength += 1;
+                if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength += 1;
+                if (password.match(/\d/)) strength += 1;
+                if (password.match(/[^a-zA-Z\d]/)) strength += 1;
+                
+                // Set color based on strength
+                if (strength === 0) color = 'bg-gray-300';
+                else if (strength === 1) color = 'bg-red-500';
+                else if (strength === 2) color = 'bg-yellow-500';
+                else if (strength === 3) color = 'bg-green-500';
+                else if (strength === 4) color = 'bg-emerald-500';
+                
+                // Animate width change
+                passwordStrengthIndicator.className = `strength-indicator h-full transition-all duration-300 ${color}`;
+                passwordStrengthIndicator.style.width = (25 * strength) + '%';
+                
+                // Check if passwords match when both have values
+                if (confirmPasswordInput.value.length > 0) {
+                    checkPasswordsMatch();
+                }
+            });
+            
+            // Check if passwords match
+            confirmPasswordInput.addEventListener('input', checkPasswordsMatch);
+            
+            function checkPasswordsMatch() {
+                if (passwordInput.value === confirmPasswordInput.value && confirmPasswordInput.value.length > 0) {
+                    passwordsMatchIcon.classList.remove('hidden');
+                } else {
+                    passwordsMatchIcon.classList.add('hidden');
+                }
+            }
+            
+            // Email validation with real-time feedback
+            const emailInput = document.querySelector('input[name="Input.Email"]');
+            const emailValidIcon = document.querySelector('.email-valid');
+            
+            emailInput.addEventListener('input', function() {
+                const email = this.value;
+                const emailRegex = new RegExp('^[^\\s@@]+@@[^\\s@@]+\\.[^\\s@@]+$');
+                if (email.indexOf('@@') > 0 && email.indexOf('.') > email.indexOf('@@')) {
+                    emailValidIcon.classList.remove('hidden');
+                } else {
+                    emailValidIcon.classList.add('hidden');
+                }
+            });
+            
+            // Address autocomplete simulation
+            const addressInput = document.querySelector('.address-autocomplete');
+            
+            addressInput.addEventListener('focus', function() {
+                // Simulate address autocomplete with a delay
+                this.setAttribute('placeholder', 'Type to search for your address...');
+            });
+            
+            addressInput.addEventListener('blur', function() {
+                this.setAttribute('placeholder', 'Start typing your address...');
+            });
+            
+            // Add a subtle animation to all form fields on focus
+            const formInputs = document.querySelectorAll('input, select');
+            
+            formInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    // Fix this line - replace the optional chaining with a proper null check
+                    const group = this.closest('.group');
+                    if (group) group.classList.add('scale-[1.01]');
+                });
+                
+                input.addEventListener('blur', function() {
+                    // Fix this line too
+                    const group = this.closest('.group');
+                    if (group) group.classList.remove('scale-[1.01]');
+                });
+            });
+            
+            // Animated 3D card effect
+            const card = document.querySelector('.card-inner');
+            const container = document.querySelector('.perspective-1000');
+            
+            if (card && container) {
+                container.addEventListener('mousemove', function(e) {
+                    const rect = container.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateY = (x - centerX) / 50;
+                    const rotateX = (centerY - y) / 50;
+                    
+                    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(0.99)`;
+                });
+                
+                container.addEventListener('mouseleave', function() {
+                    card.style.transform = 'rotateX(0) rotateY(0) scale(1)';
+                });
+            }
+        });
+    </script>
+}

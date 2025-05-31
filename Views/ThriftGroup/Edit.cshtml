@@ -1,0 +1,320 @@
+@model CreateThriftGroupViewModel
+@{
+    ViewData["Title"] = "Edit Thrift Group";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-4">
+                <h2 class="mb-2">Edit Thrift Group</h2>
+                <p class="text-muted">Update your group settings and information</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="card border-0 shadow">
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <!-- Basic Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-info-circle"></i> Basic Information
+                                </h5>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Name" class="form-label">Group Name *</label>
+                                <input asp-for="Name" class="form-control" placeholder="e.g., Family Savings Circle">
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="GroupType" class="form-label">Group Type *</label>
+                                <select asp-for="GroupType" class="form-select" asp-items="Html.GetEnumSelectList<GroupType>()">
+                                    <option value="">Select Group Type</option>
+                                </select>
+                                <span asp-validation-for="GroupType" class="text-danger"></span>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-exclamation-triangle text-warning"></i> 
+                                    Changing group type may affect existing members
+                                </small>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label asp-for="Description" class="form-label">Description</label>
+                                <textarea asp-for="Description" class="form-control" rows="3" 
+                                         placeholder="Describe the purpose and goals of your thrift group"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <!-- Financial Settings -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-money-bill-wave"></i> Financial Settings
+                                </h5>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TargetAmount" class="form-label">Target Amount (₦) *</label>
+                                <input asp-for="TargetAmount" class="form-control" type="number" step="0.01" min="1" 
+                                       placeholder="100000">
+                                <span asp-validation-for="TargetAmount" class="text-danger"></span>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle text-info"></i> 
+                                    Current amount: ₦@ViewBag.CurrentAmount?.ToString("N2")
+                                </small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ContributionFrequency" class="form-label">Contribution Frequency *</label>
+                                <select asp-for="ContributionFrequency" class="form-select" asp-items="Html.GetEnumSelectList<ContributionFrequency>()">
+                                    <option value="">Select Frequency</option>
+                                </select>
+                                <span asp-validation-for="ContributionFrequency" class="text-danger"></span>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-exclamation-triangle text-warning"></i> 
+                                    This may affect member expectations
+                                </small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="MinContribution" class="form-label">Minimum Contribution (₦)</label>
+                                <input asp-for="MinContribution" class="form-control" type="number" step="0.01" min="0" 
+                                       placeholder="1000">
+                                <span asp-validation-for="MinContribution" class="text-danger"></span>
+                                <small class="form-text text-muted">Leave empty for no minimum</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="MaxContribution" class="form-label">Maximum Contribution (₦)</label>
+                                <input asp-for="MaxContribution" class="form-control" type="number" step="0.01" min="0" 
+                                       placeholder="50000">
+                                <span asp-validation-for="MaxContribution" class="text-danger"></span>
+                                <small class="form-text text-muted">Leave empty for no maximum</small>
+                            </div>
+                        </div>
+
+                        <!-- Group Settings -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary mb-3">
+                                    <i class="fas fa-users-cog"></i> Group Settings
+                                </h5>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="MaxMembers" class="form-label">Maximum Members *</label>
+                                <input asp-for="MaxMembers" class="form-control" type="number" min="2" max="100" 
+                                       placeholder="10">
+                                <span asp-validation-for="MaxMembers" class="text-danger"></span>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle text-info"></i> 
+                                    Current members: @ViewBag.CurrentMemberCount
+                                </small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EndDate" class="form-label">End Date (Optional)</label>
+                                <input asp-for="EndDate" class="form-control" type="date">
+                                <span asp-validation-for="EndDate" class="text-danger"></span>
+                                <small class="form-text text-muted">When should this group end?</small>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <div class="form-check">
+                                    <input asp-for="IsPublic" class="form-check-input" type="checkbox">
+                                    <label asp-for="IsPublic" class="form-check-label">
+                                        Make this group public
+                                    </label>
+                                    <small class="form-text text-muted d-block">
+                                        Public groups can be discovered and joined by anyone. Private groups require invitations or group codes.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <div class="form-check">
+                                    <input asp-for="RequireApproval" class="form-check-input" type="checkbox">
+                                    <label asp-for="RequireApproval" class="form-check-label">
+                                        Require approval for new members
+                                    </label>
+                                    <small class="form-text text-muted d-block">
+                                        New members will need approval from group admins before joining.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Warning Messages -->
+                        <div class="alert alert-warning d-flex align-items-start mb-4">
+                            <i class="fas fa-exclamation-triangle me-2 mt-1"></i>
+                            <div>
+                                <strong>Important:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>Reducing max members below current count may require removing members</li>
+                                    <li>Changing contribution frequency will affect member expectations</li>
+                                    <li>Members will be notified of significant changes</li>
+                                    <li>Some changes may require member approval</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <a href="@Url.Action("Details", new { id = ViewBag.GroupId })" class="btn btn-secondary">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="card border-danger mt-4">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Danger Zone
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h6 class="text-danger mb-1">Delete this group</h6>
+                            <p class="text-muted mb-0">
+                                Once you delete a group, there is no going back. This will permanently delete the group, 
+                                all transactions, and remove all members.
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="fas fa-trash"></i> Delete Group
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Delete Group
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <strong>This action cannot be undone!</strong>
+                </div>
+                <p>Are you absolutely sure you want to delete this group? This will:</p>
+                <ul>
+                    <li>Permanently delete the group and all its data</li>
+                    <li>Remove all members from the group</li>
+                    <li>Delete all transaction history</li>
+                    <li>Cancel any pending invitations</li>
+                </ul>
+                <p>Type <strong>DELETE</strong> to confirm:</p>
+                <input type="text" id="deleteConfirmation" class="form-control" placeholder="Type DELETE to confirm">
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form asp-action="Delete" asp-route-id="@ViewBag.GroupId" method="post" class="d-inline">
+                    <button type="submit" id="deleteButton" class="btn btn-danger" disabled>
+                        <i class="fas fa-trash"></i> Delete Group
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            // Form validation enhancements
+            $('form').on('submit', function(e) {
+                const minContrib = parseFloat($('#MinContribution').val()) || 0;
+                const maxContrib = parseFloat($('#MaxContribution').val()) || 0;
+                
+                if (minContrib > 0 && maxContrib > 0 && minContrib >= maxContrib) {
+                    e.preventDefault();
+                    alert('Maximum contribution must be greater than minimum contribution.');
+                    return false;
+                }
+
+                const maxMembers = parseInt($('#MaxMembers').val());
+                const currentMembers = @ViewBag.CurrentMemberCount;
+                
+                if (maxMembers < currentMembers) {
+                    if (!confirm(`You are reducing max members to ${maxMembers} but currently have ${currentMembers} members. This may require removing some members. Continue?`)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+
+                const endDate = new Date($('#EndDate').val());
+                const today = new Date();
+                
+                if ($('#EndDate').val() && endDate <= today) {
+                    e.preventDefault();
+                    alert('End date must be in the future.');
+                    return false;
+                }
+
+                const targetAmount = parseFloat($('#TargetAmount').val());
+                const currentAmount = @ViewBag.CurrentAmount;
+                
+                if (targetAmount < currentAmount) {
+                    if (!confirm(`You are setting target amount to ₦${targetAmount.toLocaleString()} but current amount is ₦${currentAmount.toLocaleString()}. Continue?`)) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }
+            });
+
+            // Delete confirmation
+            $('#deleteConfirmation').on('input', function() {
+                const value = $(this).val();
+                $('#deleteButton').prop('disabled', value !== 'DELETE');
+            });
+
+            // Set minimum date for end date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            $('#EndDate').attr('min', tomorrow.toISOString().split('T')[0]);
+
+            // Highlight changed fields
+            $('input, select, textarea').on('change', function() {
+                $(this).addClass('border-warning');
+            });
+
+            // Warning for significant changes
+            $('#GroupType, #ContributionFrequency').on('change', function() {
+                if (!$(this).data('warned')) {
+                    alert('This change may affect existing members and their expectations. Consider notifying them.');
+                    $(this).data('warned', true);
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,258 @@
+@model Thrift.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 py-6">
+    <div class="container mx-auto px-4">
+        <!-- Header Section -->
+        <div class="text-center mb-8 animate-fadeInUp">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white mb-4 shadow-lg">
+                <i class="fas fa-user-circle text-2xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                My Profile
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Manage your account settings and personal information
+            </p>
+        </div>
+
+        <!-- Status Message -->
+        @if (TempData["StatusMessage"] != null)
+        {
+            <div class="max-w-2xl mx-auto mb-6 animate-fadeInUp">
+                <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle text-green-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">
+                                @TempData["StatusMessage"]
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <!-- Main Profile Form -->
+        <div class="max-w-2xl mx-auto animate-fadeInUp" style="animation-delay: 0.1s;">
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl overflow-hidden">
+                <!-- Form Header -->
+                <div class="bg-gradient-to-r from-purple-500 to-indigo-600 p-6 text-white">
+                    <h2 class="text-2xl font-semibold flex items-center">
+                        <i class="fas fa-user-edit mr-3"></i>
+                        Profile Information
+                    </h2>
+                    <p class="text-purple-100 mt-1">Update your personal details and preferences</p>
+                </div>
+
+                <!-- Form Content -->
+                <div class="p-8">
+                    <form asp-action="Profile" method="post" class="space-y-6">
+                        <div asp-validation-summary="ModelOnly" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md text-red-700 mb-6"></div>
+                        
+                        <!-- Personal Information Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                                    <i class="fas fa-user text-purple-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Personal Information</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- First Name -->
+                                <div class="space-y-2">
+                                    <label asp-for="FirstName" class="block text-sm font-semibold text-gray-700">First Name</label>
+                                    <div class="relative">
+                                        <input asp-for="FirstName" 
+                                               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm pl-12"
+                                               placeholder="Enter your first name..." />
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <i class="fas fa-user text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="FirstName" class="text-red-500 text-sm"></span>
+                                </div>
+
+                                <!-- Last Name -->
+                                <div class="space-y-2">
+                                    <label asp-for="LastName" class="block text-sm font-semibold text-gray-700">Last Name</label>
+                                    <div class="relative">
+                                        <input asp-for="LastName" 
+                                               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm pl-12"
+                                               placeholder="Enter your last name..." />
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <i class="fas fa-user text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="LastName" class="text-red-500 text-sm"></span>
+                                </div>
+                            </div>
+
+                            <!-- Email (Read-only) -->
+                            <div class="space-y-2">
+                                <label asp-for="Email" class="block text-sm font-semibold text-gray-700">Email Address</label>
+                                <div class="relative">
+                                    <input asp-for="Email" readonly
+                                           class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-500 pl-12"
+                                           placeholder="Your email address..." />
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-envelope text-gray-400"></i>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-gray-500">Email cannot be changed</p>
+                            </div>
+
+                            <!-- Phone Number -->
+                            <div class="space-y-2">
+                                <label asp-for="PhoneNumber" class="block text-sm font-semibold text-gray-700">Phone Number</label>
+                                <div class="relative">
+                                    <input asp-for="PhoneNumber" 
+                                           class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm pl-12"
+                                           placeholder="Enter your phone number..." />
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-phone text-gray-400"></i>
+                                    </div>
+                                </div>
+                                <span asp-validation-for="PhoneNumber" class="text-red-500 text-sm"></span>
+                            </div>
+                        </div>
+
+                        <!-- Preferences Section -->
+                        <div class="space-y-6">
+                            <div class="flex items-center space-x-3 mb-4">
+                                <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                    <i class="fas fa-cog text-indigo-600"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-800">Preferences</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Preferred Currency -->
+                                <div class="space-y-2">
+                                    <label asp-for="PreferredCurrency" class="block text-sm font-semibold text-gray-700">Preferred Currency</label>
+                                    <div class="relative">
+                                        <select asp-for="PreferredCurrency" 
+                                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm pl-12 appearance-none">
+                                            <option value="USD">USD - US Dollar</option>
+                                            <option value="EUR">EUR - Euro</option>
+                                            <option value="GBP">GBP - British Pound</option>
+                                            <option value="CAD">CAD - Canadian Dollar</option>
+                                            <option value="AUD">AUD - Australian Dollar</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <i class="fas fa-dollar-sign text-gray-400"></i>
+                                        </div>
+                                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="PreferredCurrency" class="text-red-500 text-sm"></span>
+                                </div>
+
+                                <!-- Default Theme -->
+                                <div class="space-y-2">
+                                    <label asp-for="DefaultTheme" class="block text-sm font-semibold text-gray-700">Default Theme</label>
+                                    <div class="relative">
+                                        <select asp-for="DefaultTheme" 
+                                                class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white/70 backdrop-blur-sm pl-12 appearance-none">
+                                            <option value="light">Light Theme</option>
+                                            <option value="dark">Dark Theme</option>
+                                            <option value="auto">Auto (System)</option>
+                                        </select>
+                                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                            <i class="fas fa-palette text-gray-400"></i>
+                                        </div>
+                                        <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                            <i class="fas fa-chevron-down text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="DefaultTheme" class="text-red-500 text-sm"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
+                            <button type="submit" 
+                                    class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transform hover:scale-[1.02] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
+                                <i class="fas fa-save"></i>
+                                <span>Save Changes</span>
+                            </button>
+                            
+                            <a asp-action="ChangePassword"
+                               class="flex-1 bg-gray-100 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:bg-gray-200 transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-key"></i>
+                                <span>Change Password</span>
+                            </a>
+                            
+                            <a asp-controller="Dashboard" asp-action="Index"
+                               class="flex-1 bg-white border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold hover:border-gray-400 transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Back to Dashboard</span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Settings Cards -->
+        <div class="max-w-2xl mx-auto mt-8 animate-fadeInUp" style="animation-delay: 0.2s;">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Security Card -->
+                <div class="bg-gradient-to-br from-red-50 to-pink-50 border border-red-200 rounded-2xl p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-red-600"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-red-900">Security</h3>
+                    </div>
+                    <p class="text-red-800 text-sm mb-4">Manage your account security settings</p>
+                    <a asp-action="ChangePassword" class="inline-flex items-center text-sm text-red-700 hover:text-red-900 font-medium">
+                        <span>Change Password</span>
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- Account Info Card -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                            <i class="fas fa-info-circle text-blue-600"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-blue-900">Account Info</h3>
+                    </div>
+                    <p class="text-blue-800 text-sm mb-4">View your account activity and statistics</p>
+                    <a asp-controller="Dashboard" asp-action="Index" class="inline-flex items-center text-sm text-blue-700 hover:text-blue-900 font-medium">
+                        <span>View Dashboard</span>
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <style>
+        @@keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+    </style>
+}

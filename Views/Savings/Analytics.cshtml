@@ -1,0 +1,741 @@
+@{
+    ViewData["Title"] = "Savings Analytics";
+    // Simulated data - in real application, this would come from the controller
+    var totalGoals = 8;
+    var activeGoals = 5;
+    var completedGoals = 3;
+    var totalSaved = 15250.75m;
+    var totalTarget = 25000.00m;
+    var monthlyAverage = 1200.50m;
+    var savingsRate = 18.5m;
+}
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50 py-6 relative overflow-hidden">
+    <!-- Floating background elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0 opacity-20">
+        <div class="absolute top-20 right-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
+        <div class="absolute bottom-32 left-16 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: -3s;"></div>
+        <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: -6s;"></div>
+        
+        <!-- Floating analytics icons -->
+        <div class="absolute top-1/4 left-1/4 text-purple-200 animate-float" style="animation-delay: -1s;">
+            <i class="fas fa-chart-bar text-4xl"></i>
+        </div>
+        <div class="absolute bottom-1/3 right-1/4 text-indigo-200 animate-float" style="animation-delay: -4s;">
+            <i class="fas fa-analytics text-3xl"></i>
+        </div>
+        <div class="absolute top-3/4 left-1/3 text-pink-200 animate-float" style="animation-delay: -2s;">
+            <i class="fas fa-chart-pie text-3xl"></i>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+        <!-- Header Section -->
+        <div class="text-center mb-8 animate-fadeInUp">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 text-white mb-4 shadow-lg">
+                <i class="fas fa-chart-line text-2xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent mb-2">
+                Savings Analytics
+            </h1>
+            <p class="text-gray-600 text-lg max-w-2xl mx-auto">
+                Comprehensive insights into your savings performance and trends
+            </p>
+        </div>
+
+        <!-- Key Metrics Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fadeInUp" style="animation-delay: 0.1s;">
+            <!-- Total Saved -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6 hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white">
+                        <i class="fas fa-piggy-bank text-xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Total Saved</div>
+                        <div class="text-2xl font-bold text-green-600" id="totalSavedCounter">$0</div>
+                    </div>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-shimmer relative" style="width: @(totalSaved / totalTarget * 100)%">
+                        <div class="absolute inset-0 bg-white/30 animate-shimmer"></div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-500 mt-2">@((totalSaved / totalTarget * 100).ToString("F1"))% of total targets</div>
+            </div>
+
+            <!-- Active Goals -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6 hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white">
+                        <i class="fas fa-bullseye text-xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Active Goals</div>
+                        <div class="text-2xl font-bold text-blue-600" id="activeGoalsCounter">0</div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 text-xs text-gray-500">
+                    <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+                    <span>@completedGoals completed</span>
+                    <span class="w-2 h-2 bg-gray-300 rounded-full"></span>
+                    <span>@(totalGoals - activeGoals - completedGoals) paused</span>
+                </div>
+            </div>
+
+            <!-- Monthly Average -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6 hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white">
+                        <i class="fas fa-calendar-alt text-xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Monthly Average</div>
+                        <div class="text-2xl font-bold text-purple-600" id="monthlyAvgCounter">$0</div>
+                    </div>
+                </div>
+                <div class="flex items-center text-xs">
+                    <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+                    <span class="text-green-600 font-medium">+12.5%</span>
+                    <span class="text-gray-500 ml-1">vs last month</span>
+                </div>
+            </div>
+
+            <!-- Savings Rate -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl p-6 hover:transform hover:scale-105 transition-all duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white">
+                        <i class="fas fa-percentage text-xl"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-gray-500">Savings Rate</div>
+                        <div class="text-2xl font-bold text-orange-600" id="savingsRateCounter">0%</div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-500">
+                    <span class="text-green-600 font-medium">Excellent!</span> Above recommended 15%
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Analytics Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Savings Progress Chart -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl overflow-hidden animate-fadeInUp" style="animation-delay: 0.2s;">
+                <div class="bg-gradient-to-r from-purple-500 to-indigo-600 p-6 text-white">
+                    <h3 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-chart-line mr-3"></i>
+                        Savings Progress Over Time
+                    </h3>
+                    <p class="text-purple-100 mt-1">Track your cumulative savings growth</p>
+                </div>
+                <div class="p-6">
+                    <canvas id="savingsProgressChart" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Goal Distribution -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl overflow-hidden animate-fadeInUp" style="animation-delay: 0.3s;">
+                <div class="bg-gradient-to-r from-indigo-500 to-blue-600 p-6 text-white">
+                    <h3 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-chart-pie mr-3"></i>
+                        Goals by Category
+                    </h3>
+                    <p class="text-indigo-100 mt-1">Distribution of your savings goals</p>
+                </div>
+                <div class="p-6">
+                    <canvas id="goalDistributionChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monthly Breakdown & Top Performing Goals -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Monthly Savings Breakdown -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl overflow-hidden animate-fadeInUp" style="animation-delay: 0.4s;">
+                <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-6 text-white">
+                    <h3 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-chart-bar mr-3"></i>
+                        Monthly Savings Breakdown
+                    </h3>
+                    <p class="text-green-100 mt-1">Monthly deposit and withdrawal patterns</p>
+                </div>
+                <div class="p-6">
+                    <canvas id="monthlyBreakdownChart" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Performing Goals -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl overflow-hidden animate-fadeInUp" style="animation-delay: 0.5s;">
+                <div class="bg-gradient-to-r from-pink-500 to-rose-600 p-6 text-white">
+                    <h3 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-trophy mr-3"></i>
+                        Top Performing Goals
+                    </h3>
+                    <p class="text-pink-100 mt-1">Goals with highest completion rates</p>
+                </div>
+                <div class="p-6 space-y-4">
+                    <!-- Goal 1 -->
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 hover:transform hover:scale-105 transition-all duration-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                <i class="fas fa-car text-green-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">New Car Fund</h4>
+                                <p class="text-sm text-gray-600">Emergency</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-green-600">95%</div>
+                            <div class="text-xs text-gray-500">$9,500 / $10,000</div>
+                        </div>
+                    </div>
+
+                    <!-- Goal 2 -->
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 hover:transform hover:scale-105 transition-all duration-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                <i class="fas fa-plane text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Vacation Fund</h4>
+                                <p class="text-sm text-gray-600">Travel</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-blue-600">87%</div>
+                            <div class="text-xs text-gray-500">$2,175 / $2,500</div>
+                        </div>
+                    </div>
+
+                    <!-- Goal 3 -->
+                    <div class="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200 hover:transform hover:scale-105 transition-all duration-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                <i class="fas fa-home text-purple-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Home Down Payment</h4>
+                                <p class="text-sm text-gray-600">Real Estate</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-purple-600">72%</div>
+                            <div class="text-xs text-gray-500">$3,600 / $5,000</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights & Recommendations -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Smart Insights -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl overflow-hidden animate-fadeInUp" style="animation-delay: 0.6s;">
+                <div class="bg-gradient-to-r from-cyan-500 to-blue-600 p-6 text-white">
+                    <h3 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-lightbulb mr-3"></i>
+                        Smart Insights
+                    </h3>
+                    <p class="text-cyan-100 mt-1">AI-powered recommendations for your savings</p>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-arrow-up text-green-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Savings Acceleration</h4>
+                                <p class="text-sm text-gray-600 mt-1">You're saving 23% more than last quarter! Keep up the excellent momentum.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-calendar text-yellow-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Goal Timeline Optimization</h4>
+                                <p class="text-sm text-gray-600 mt-1">Based on your current savings rate, you can reach your vacation goal 2 months earlier.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-chart-line text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">Seasonal Pattern</h4>
+                                <p class="text-sm text-gray-600 mt-1">You tend to save more in Q4. Consider setting aside extra funds during high-earning months.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievement System -->
+            <div class="bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl shadow-xl overflow-hidden animate-fadeInUp" style="animation-delay: 0.7s;">
+                <div class="bg-gradient-to-r from-amber-500 to-yellow-600 p-6 text-white">
+                    <h3 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-medal mr-3"></i>
+                        Recent Achievements
+                    </h3>
+                    <p class="text-amber-100 mt-1">Milestones and badges you've earned</p>
+                </div>
+                <div class="p-6 space-y-4">
+                    <!-- Achievement 1 -->
+                    <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-gold-50 to-yellow-50 rounded-xl border border-yellow-200 hover:transform hover:scale-105 transition-all duration-200">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 flex items-center justify-center text-white">
+                            <i class="fas fa-star text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800">Consistent Saver</h4>
+                            <p class="text-sm text-gray-600">Saved money for 6 consecutive months</p>
+                        </div>
+                        <div class="text-yellow-600 font-semibold">NEW!</div>
+                    </div>
+
+                    <!-- Achievement 2 -->
+                    <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 hover:transform hover:scale-105 transition-all duration-200">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-white">
+                            <i class="fas fa-bullseye text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800">Goal Crusher</h4>
+                            <p class="text-sm text-gray-600">Completed 3 savings goals</p>
+                        </div>
+                        <div class="text-green-600 font-semibold">EARNED</div>
+                    </div>
+
+                    <!-- Achievement 3 -->
+                    <div class="flex items-center space-x-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200 hover:transform hover:scale-105 transition-all duration-200">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white">
+                            <i class="fas fa-piggy-bank text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-gray-800">Savings Milestone</h4>
+                            <p class="text-sm text-gray-600">Reached $15,000 in total savings</p>
+                        </div>
+                        <div class="text-purple-600 font-semibold">EARNED</div>
+                    </div>
+
+                    <!-- Next Achievement Progress -->
+                    <div class="p-4 bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl border border-gray-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <h4 class="font-semibold text-gray-800">Next: Emergency Fund Master</h4>
+                            <span class="text-sm text-gray-500">$2,500 to go</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="h-2 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full" style="width: 75%"></div>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Save $7,500 in emergency funds (75% complete)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="max-w-4xl mx-auto animate-fadeInUp" style="animation-delay: 0.8s;">
+            <div class="bg-gradient-to-r from-slate-800 to-gray-900 rounded-2xl p-8 text-white shadow-xl">
+                <div class="text-center mb-6">
+                    <h3 class="text-2xl font-bold mb-2">Ready to Boost Your Savings?</h3>
+                    <p class="text-gray-300">Take action based on your analytics insights</p>
+                </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a asp-action="Create" class="flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-200">
+                        <i class="fas fa-plus"></i>
+                        <span>Create New Goal</span>
+                    </a>
+                    
+                    <a asp-action="Index" class="flex items-center justify-center space-x-2 bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 transform hover:scale-105 transition-all duration-200">
+                        <i class="fas fa-piggy-bank"></i>
+                        <span>View All Goals</span>
+                    </a>
+                    
+                    <a asp-action="Challenges" class="flex items-center justify-center space-x-2 bg-gradient-to-r from-orange-600 to-red-600 px-6 py-4 rounded-xl font-semibold hover:from-orange-700 hover:to-red-700 transform hover:scale-105 transition-all duration-200">
+                        <i class="fas fa-gamepad"></i>
+                        <span>View Challenges</span>
+                    </a>
+                    
+                    <a asp-action="Notifications" class="flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-cyan-700 transform hover:scale-105 transition-all duration-200">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-10px) rotate(1deg);
+            }
+            50% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            75% {
+                transform: translateY(-5px) rotate(-1deg);
+            }
+        }
+
+        @@keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @@keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fadeInUp {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .animate-shimmer {
+            animation: shimmer 2s infinite;
+        }
+
+        .animate-countUp {
+            animation: countUp 1s ease-out;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #7c3aed, #2563eb);
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Counter animations
+            animateCounters();
+            
+            // Initialize charts
+            initializeSavingsProgressChart();
+            initializeGoalDistributionChart();
+            initializeMonthlyBreakdownChart();
+            
+            // Add sparkle effects to achievement badges
+            addSparkleEffects();
+        });
+
+        function animateCounters() {
+            // Animate counter values
+            animateCounter('totalSavedCounter', @totalSaved, '$', '');
+            animateCounter('activeGoalsCounter', @activeGoals, '', '');
+            animateCounter('monthlyAvgCounter', @monthlyAverage, '$', '');
+            animateCounter('savingsRateCounter', @savingsRate, '', '%');
+        }
+
+        function animateCounter(elementId, finalValue, prefix = '', suffix = '') {
+            const element = document.getElementById(elementId);
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = finalValue * easeOutQuart;
+                
+                if (prefix === '$') {
+                    element.textContent = prefix + currentValue.toLocaleString('en-US', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }) + suffix;
+                } else {
+                    element.textContent = prefix + Math.round(currentValue) + suffix;
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        function initializeSavingsProgressChart() {
+            const ctx = document.getElementById('savingsProgressChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Cumulative Savings',
+                        data: [500, 1200, 2100, 3400, 4800, 6500, 8200, 9800, 11600, 13200, 14500, 15250],
+                        borderColor: 'rgb(139, 92, 246)',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgb(139, 92, 246)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initializeGoalDistributionChart() {
+            const ctx = document.getElementById('goalDistributionChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Emergency', 'Travel', 'Investment', 'Education', 'Real Estate'],
+                    datasets: [{
+                        data: [35, 25, 20, 12, 8],
+                        backgroundColor: [
+                            'rgba(34, 197, 94, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(249, 115, 22, 0.8)',
+                            'rgba(236, 72, 153, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(34, 197, 94)',
+                            'rgb(59, 130, 246)',
+                            'rgb(139, 92, 246)',
+                            'rgb(249, 115, 22)',
+                            'rgb(236, 72, 153)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initializeMonthlyBreakdownChart() {
+            const ctx = document.getElementById('monthlyBreakdownChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Deposits',
+                        data: [800, 1200, 900, 1300, 1100, 1400, 1500, 1200, 1600, 1300, 1100, 1250],
+                        backgroundColor: 'rgba(34, 197, 94, 0.8)',
+                        borderColor: 'rgb(34, 197, 94)',
+                        borderWidth: 1
+                    }, {
+                        label: 'Withdrawals',
+                        data: [300, 450, 200, 100, 250, 150, 200, 300, 250, 100, 200, 500],
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                        borderColor: 'rgb(239, 68, 68)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+        }
+
+        function addSparkleEffects() {
+            const achievements = document.querySelectorAll('[data-achievement="new"]');
+            achievements.forEach(achievement => {
+                // Add sparkle animation class
+                achievement.classList.add('sparkle-effect');
+            });
+        }
+
+        function exportAnalytics() {
+            // Create a simple text report
+            const report = `
+SAVINGS ANALYTICS REPORT
+========================
+Generated on: ${new Date().toLocaleDateString()}
+
+OVERVIEW
+--------
+Total Saved: $${@totalSaved.ToString("N2")}
+Active Goals: @activeGoals
+Completed Goals: @completedGoals
+Monthly Average: $${@monthlyAverage.ToString("N2")}
+Savings Rate: @savingsRate%
+
+TOP PERFORMING GOALS
+-------------------
+1. New Car Fund - 95% Complete
+2. Vacation Fund - 87% Complete
+3. Home Down Payment - 72% Complete
+
+INSIGHTS
+--------
+- Savings acceleration: +23% vs last quarter
+- Seasonal pattern: Higher savings in Q4
+- Goal timeline optimization available
+
+RECOMMENDATIONS
+--------------
+- Consider increasing emergency fund contributions
+- Set up automatic transfers for consistent saving
+- Review and adjust goal timelines based on performance
+            `;
+            
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'savings-analytics-report.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            // Show success message
+            showNotification('Analytics report downloaded successfully!', 'success');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg text-white transform translate-x-full transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 
+                'bg-blue-500'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'times' : 'info'}-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Add hover effects to metric cards
+        document.querySelectorAll('.hover\\:transform').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05) translateY(-5px)';
+                this.style.boxShadow = '0 20px 40px rgba(0,0,0,0.1)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) translateY(0)';
+                this.style.boxShadow = '';
+            });
+        });
+    </script>
+}

@@ -1,0 +1,443 @@
+@model Thrift.ViewModels.LoanCalculatorViewModel
+@using Thrift.Models
+@{
+    ViewData["Title"] = "Loan Calculator";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 text-gray-800">
+                <i class="fas fa-calculator text-primary me-2"></i>
+                Loan Calculator
+            </h1>
+            <p class="text-muted">Calculate loan payments and compare different scenarios</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i>
+            Back to Loans
+        </a>
+    </div>
+
+    <div class="row">
+        <!-- Calculator Input -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Loan Parameters</h6>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Calculator" method="post">
+                        <div class="mb-3">
+                            <label asp-for="PrincipalAmount" class="form-label">Principal Amount</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="PrincipalAmount" class="form-control" placeholder="100000" />
+                            </div>
+                            <span asp-validation-for="PrincipalAmount" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="InterestRate" class="form-label">Annual Interest Rate</label>
+                            <div class="input-group">
+                                <input asp-for="InterestRate" class="form-control" placeholder="5.25" step="0.01" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <span asp-validation-for="InterestRate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="LoanTermMonths" class="form-label">Loan Term</label>
+                            <div class="input-group">
+                                <input asp-for="LoanTermMonths" class="form-control" placeholder="360" />
+                                <span class="input-group-text">months</span>
+                            </div>
+                            <span asp-validation-for="LoanTermMonths" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="InterestType" class="form-label">Interest Type</label>
+                            <select asp-for="InterestType" class="form-select" asp-items="Html.GetEnumSelectList<InterestType>()">
+                                <option value="">Select interest type</option>
+                            </select>
+                            <span asp-validation-for="InterestType" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ExtraPayment" class="form-label">Extra Monthly Payment (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="ExtraPayment" class="form-control" placeholder="0" />
+                            </div>
+                            <small class="form-text text-muted">Additional amount to pay each month</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="ShowAmortizationSchedule" class="form-check-input" type="checkbox" />
+                                <label asp-for="ShowAmortizationSchedule" class="form-check-label">
+                                    Show Amortization Schedule
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-calculator me-1"></i>
+                                Calculate
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div class="col-lg-8 mb-4">
+            @if (Model.MonthlyPayment > 0)
+            {
+                <!-- Payment Results -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Calculation Results</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-3 mb-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body">
+                                        <div class="card-title h6">Monthly Payment</div>
+                                        <div class="h4">@Model.MonthlyPayment.ToString("C")</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body">
+                                        <div class="card-title h6">Total Interest</div>
+                                        <div class="h4">@Model.TotalInterest.ToString("C")</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body">
+                                        <div class="card-title h6">Total Payment</div>
+                                        <div class="h4">@Model.TotalPayment.ToString("C")</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <div class="card-title h6">Principal</div>
+                                        <div class="h4">@Model.PrincipalAmount.ToString("C")</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (Model.ExtraPayment > 0 && Model.InterestSavings > 0)
+                        {
+                            <div class="alert alert-success mt-3">
+                                <h6><i class="fas fa-piggy-bank me-2"></i>Extra Payment Benefits</h6>
+                                <div class="row">                                    <div class="col-md-6">
+                                        <strong>Interest Savings:</strong> @(Model.InterestSavings.HasValue ? Model.InterestSavings.Value.ToString("C") : "$0.00")
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Time Saved:</strong> @Model.TimeSavingsMonths months
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Amortization Schedule -->
+                @if (Model.ShowAmortizationSchedule && Model.AmortizationSchedule != null && Model.AmortizationSchedule.Any())
+                {
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">Amortization Schedule</h6>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="exportSchedule('csv')">
+                                    <i class="fas fa-download me-1"></i>
+                                    Export CSV
+                                </button>
+                                <button class="btn btn-sm btn-outline-info" onclick="exportSchedule('pdf')">
+                                    <i class="fas fa-file-pdf me-1"></i>
+                                    Export PDF
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                                <table class="table table-striped table-sm" id="amortizationTable">
+                                    <thead class="table-dark sticky-top">
+                                        <tr>
+                                            <th>Payment #</th>
+                                            <th>Date</th>
+                                            <th>Payment Amount</th>
+                                            <th>Principal</th>
+                                            <th>Interest</th>
+                                            <th>Remaining Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var payment in Model.AmortizationSchedule)
+                                        {
+                                            <tr>
+                                                <td>@payment.PaymentNumber</td>
+                                                <td>@payment.PaymentDate.ToString("MMM yyyy")</td>
+                                                <td>@payment.PaymentAmount.ToString("C")</td>
+                                                <td>@payment.PrincipalPayment.ToString("C")</td>
+                                                <td>@payment.InterestPayment.ToString("C")</td>
+                                                <td>@payment.RemainingBalance.ToString("C")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Default Instructions -->
+                <div class="card shadow">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-calculator fa-4x text-gray-300 mb-4"></i>
+                        <h4 class="text-gray-500">Loan Calculator</h4>
+                        <p class="text-gray-400 mb-4">
+                            Enter your loan details in the form to calculate monthly payments, total interest, and view the amortization schedule.
+                        </p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Features:</h6>
+                                        <ul class="list-unstyled text-start">
+                                            <li><i class="fas fa-check text-success me-2"></i>Monthly payment calculation</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Total interest calculation</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Extra payment analysis</li>
+                                            <li><i class="fas fa-check text-success me-2"></i>Full amortization schedule</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Quick Examples:</h6>
+                                        <div class="d-grid gap-2 text-start">
+                                            <button class="btn btn-sm btn-outline-primary" onclick="fillExample('mortgage')">
+                                                30-Year Mortgage
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="fillExample('auto')">
+                                                Auto Loan
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="fillExample('personal')">
+                                                Personal Loan
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        function fillExample(type) {
+            switch(type) {
+                case 'mortgage':
+                    $('#PrincipalAmount').val(300000);
+                    $('#InterestRate').val(4.5);
+                    $('#LoanTermMonths').val(360);
+                    $('#InterestType').val('Compound');
+                    break;
+                case 'auto':
+                    $('#PrincipalAmount').val(25000);
+                    $('#InterestRate').val(5.9);
+                    $('#LoanTermMonths').val(60);
+                    $('#InterestType').val('Compound');
+                    break;
+                case 'personal':
+                    $('#PrincipalAmount').val(15000);
+                    $('#InterestRate').val(8.5);
+                    $('#LoanTermMonths').val(48);
+                    $('#InterestType').val('Compound');
+                    break;
+            }
+        }
+
+        function exportSchedule(format) {
+            if (format === 'csv') {
+                exportTableToCSV('amortizationTable', 'amortization_schedule.csv');
+            } else if (format === 'pdf') {
+                window.print(); // Simple PDF export via print dialog
+            }
+        }
+
+        function exportTableToCSV(tableId, filename) {
+            var csv = [];
+            var rows = document.querySelectorAll("#" + tableId + " tr");
+            
+            for (var i = 0; i < rows.length; i++) {
+                var row = [], cols = rows[i].querySelectorAll("td, th");
+                
+                for (var j = 0; j < cols.length; j++) {
+                    var data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").replace(/(\s\s)/gm, " ");
+                    data = data.replace(/"/g, '""');
+                    row.push('"' + data + '"');
+                }
+                csv.push(row.join(","));
+            }
+
+            var csvString = csv.join("\n");
+            var blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            
+            if (navigator.msSaveBlob) {
+                navigator.msSaveBlob(blob, filename);
+            } else {
+                var link = document.createElement("a");
+                if (link.download !== undefined) {
+                    var url = URL.createObjectURL(blob);
+                    link.setAttribute("href", url);
+                    link.setAttribute("download", filename);
+                    link.style.visibility = 'hidden';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            }
+        }
+
+        // Auto-format currency inputs
+        $(document).ready(function() {
+            $('#PrincipalAmount, #ExtraPayment').on('input', function() {
+                var value = this.value.replace(/[^\d.]/g, '');
+                if (value) {
+                    this.value = parseFloat(value).toLocaleString('en-US', {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 2
+                    });
+                }
+            });
+
+            // Remove formatting before form submission
+            $('form').on('submit', function() {
+                $('#PrincipalAmount, #ExtraPayment').each(function() {
+                    this.value = this.value.replace(/,/g, '');
+                });
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+        }
+
+        .input-group-text {
+            background-color: #f8f9fc;
+            border-color: #d1d3e2;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .table th {
+            border-top: none;
+        }
+
+        .sticky-top {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .bg-primary {
+            background-color: #4e73df !important;
+        }
+
+        .bg-warning {
+            background-color: #f6c23e !important;
+        }
+
+        .bg-info {
+            background-color: #36b9cc !important;
+        }
+
+        .bg-success {
+            background-color: #1cc88a !important;
+        }
+
+        .btn-primary {
+            background-color: #4e73df;
+            border-color: #4e73df;
+        }
+
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            border-color: #2653d4;
+        }
+
+        .table-responsive {
+            border-radius: 0.35rem;
+        }
+
+        .alert-success {
+            background-color: #d1edff;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+
+        .card.bg-light {
+            background-color: #f8f9fc !important;
+        }
+
+        .text-gray-300 {
+            color: #dddfeb !important;
+        }
+
+        .text-gray-400 {
+            color: #b7b9cc !important;
+        }
+
+        .text-gray-500 {
+            color: #858796 !important;
+        }
+
+        @@media print {
+            .card-header, .btn, .alert {
+                display: none !important;
+            }
+            
+            .card {
+                border: 1px solid #000 !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
+}

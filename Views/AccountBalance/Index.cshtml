@@ -1,0 +1,515 @@
+@model Thrift.Models.AccountBalanceViewModel
+@{
+    ViewData["Title"] = "Account Balance";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2 text-gray-800">
+                <i class="fas fa-wallet text-primary me-2"></i>
+                Account Balance
+            </h1>
+            <p class="text-muted">Your comprehensive financial overview</p>
+        </div>
+        <div>
+            <a asp-action="Details" class="btn btn-outline-primary me-2">
+                <i class="fas fa-chart-line me-1"></i>
+                Detailed View
+            </a>
+            <a asp-action="Refresh" class="btn btn-outline-success">
+                <i class="fas fa-sync-alt me-1"></i>
+                Refresh Data
+            </a>
+        </div>
+    </div>    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }    <!-- Main Summary Card -->
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card shadow">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-wallet me-2"></i>Account Balance Summary
+                    </h6>
+                    <button id="toggleBalance" class="btn btn-sm btn-outline-secondary" title="Toggle balance visibility">
+                        <i id="balanceToggleIcon" class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <!-- Total Balance Display -->
+                    <div class="row mb-4">
+                        <div class="col-12 text-center">
+                            <div class="mb-2">
+                                <span class="text-muted">Total Net Worth</span>
+                            </div>
+                            <div id="balanceDisplay" class="display-4 font-weight-bold @(Model.Balance.NetWorth >= 0 ? "text-success" : "text-danger")">
+                                @Model.Balance.NetWorth.ToString("C")
+                            </div>
+                            <div id="balanceHidden" class="display-4 font-weight-bold text-muted" style="display: none;">
+                                ••••••••
+                            </div>
+                            <div class="mt-2">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Last updated: @Model.Balance.LastUpdated.ToString("MMM d, yyyy h:mm tt")
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Financial Breakdown Cards -->                    <div class="row">
+                        <div class="col-lg-4 mb-4">
+                            <div class="card bg-primary text-white shadow">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-3">
+                                            <i class="fas fa-dollar-sign fa-3x"></i>
+                                        </div>
+                                        <div class="col-9 text-end">
+                                            <div class="small text-white-50">Net Worth</div>
+                                            <div class="h3 mb-0 text-white balance-value">@Model.Balance.NetWorth.ToString("C")</div>
+                                            <div class="h3 mb-0 text-white balance-hidden" style="display: none;">••••••</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-4">
+                            <div class="card bg-success text-white shadow">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-3">
+                                            <i class="fas fa-piggy-bank fa-3x"></i>
+                                        </div>
+                                        <div class="col-9 text-end">
+                                            <div class="small text-white-50">Total Assets</div>
+                                            <div class="h3 mb-0 text-white balance-value">@Model.Balance.TotalAssets.ToString("C")</div>
+                                            <div class="h3 mb-0 text-white balance-hidden" style="display: none;">••••••</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-4">
+                            <div class="card bg-danger text-white shadow">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-3">
+                                            <i class="fas fa-credit-card fa-3x"></i>
+                                        </div>
+                                        <div class="col-9 text-end">
+                                            <div class="small text-white-50">Total Liabilities</div>
+                                            <div class="h3 mb-0 text-white balance-value">@Model.Balance.TotalLiabilities.ToString("C")</div>
+                                            <div class="h3 mb-0 text-white balance-hidden" style="display: none;">••••••</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Components Summary -->
+    <div class="row">
+        <!-- Loans Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-hand-holding-usd me-1"></i> Loans
+                    </h6>
+                    <a asp-controller="Loan" asp-action="Index" class="btn btn-sm btn-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Loan Balance:</span>
+                            <span class="font-weight-bold">@Model.Balance.LoanBalance.ToString("C")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Monthly Payments:</span>
+                            <span class="font-weight-bold">@Model.Balance.MonthlyLoanPayments.ToString("C")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Upcoming Payments (30 days):</span>
+                            <span class="font-weight-bold">@Model.Balance.UpcomingLoanPayments.ToString("C")</span>
+                        </div>
+                        @if (Model.Balance.NextLoanPaymentDate.HasValue)
+                        {
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Next Payment Date:</span>
+                                <span class="font-weight-bold">@Model.Balance.NextLoanPaymentDate.Value.ToString("MMM d, yyyy")</span>
+                            </div>
+                        }
+                    </div>
+
+                    @if (Model.ActiveLoans.Any())
+                    {
+                        <h6 class="font-weight-bold small mt-4 mb-2">Active Loans</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Loan</th>
+                                        <th class="text-end">Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var loan in Model.ActiveLoans.Take(3))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a asp-controller="Loan" asp-action="Details" asp-route-id="@loan.Id">
+                                                    @loan.LoanName
+                                                </a>
+                                            </td>
+                                            <td class="text-end">@loan.RemainingBalance.ToString("C")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (Model.ActiveLoans.Count > 3)
+                        {
+                            <div class="text-center mt-2">
+                                <a asp-controller="Loan" asp-action="Index" class="small">
+                                    View all @Model.ActiveLoans.Count loans
+                                </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-3 bg-light rounded">
+                            <p class="mb-0">No active loans</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Savings Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-piggy-bank me-1"></i> Savings
+                    </h6>
+                    <a asp-controller="Savings" asp-action="Index" class="btn btn-sm btn-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Total Savings:</span>
+                            <span class="font-weight-bold">@Model.Balance.SavingsBalance.ToString("C")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Savings Goals Target:</span>
+                            <span class="font-weight-bold">@Model.Balance.SavingsGoalTarget.ToString("C")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Savings Rate:</span>
+                            <span class="font-weight-bold">@Model.Balance.SavingsRate.ToString("F1")%</span>
+                        </div>
+                    </div>
+
+                    @if (Model.TopSavingsGoals.Any())
+                    {
+                        <h6 class="font-weight-bold small mt-4 mb-2">Top Savings Goals</h6>
+                        @foreach (var goal in Model.TopSavingsGoals.Take(3))
+                        {
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between mb-1 small">
+                                    <a asp-controller="Savings" asp-action="Details" asp-route-id="@goal.Id">
+                                        @goal.Name
+                                    </a>
+                                    <span>@goal.CurrentAmount.ToString("C") / @goal.TargetAmount.ToString("C")</span>
+                                </div>
+                                <div class="progress" style="height: 10px;">
+                                    @{ 
+                                        var percentage = goal.TargetAmount > 0 ? (int)Math.Min(100, (goal.CurrentAmount / goal.TargetAmount) * 100) : 0;
+                                    }
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: @percentage%;"
+                                         aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        @if (Model.TopSavingsGoals.Count > 3)
+                        {
+                            <div class="text-center mt-2">
+                                <a asp-controller="Savings" asp-action="Index" class="small">
+                                    View all @Model.TopSavingsGoals.Count goals
+                                </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center py-3 bg-light rounded">
+                            <p class="mb-0">No savings goals</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Budget Summary -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-1"></i> Budget
+                    </h6>
+                    <a asp-controller="Budget" asp-action="Index" class="btn btn-sm btn-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Current Income:</span>
+                            <span class="font-weight-bold">@Model.Balance.CurrentBudgetIncome.ToString("C")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Current Expenses:</span>
+                            <span class="font-weight-bold">@Model.Balance.CurrentBudgetExpenses.ToString("C")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Remaining Budget:</span>
+                            <span class="font-weight-bold @(Model.Balance.CurrentBudgetRemaining >= 0 ? "text-success" : "text-danger")">
+                                @Model.Balance.CurrentBudgetRemaining.ToString("C")
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Debt-to-Income Ratio:</span>
+                            <span class="font-weight-bold">@Model.Balance.DebtToIncomeRatio.ToString("F1")%</span>
+                        </div>
+                    </div>
+
+                    @if (Model.CurrentBudget != null)
+                    {
+                        <h6 class="font-weight-bold small mt-4 mb-2">Current Budget: @Model.CurrentBudget.Name</h6>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1 small">
+                                <span>Budget Utilization</span>
+                                <span>@Model.CurrentBudget.PercentageUsed.ToString("F1")%</span>
+                            </div>
+                            <div class="progress" style="height: 10px;">
+                                @{ 
+                                    var budgetPercentage = (int)Math.Min(100, Model.CurrentBudget.PercentageUsed);
+                                    var budgetClass = budgetPercentage < 75 ? "bg-success" : 
+                                                    budgetPercentage < 90 ? "bg-warning" : "bg-danger";
+                                }
+                                <div class="progress-bar @budgetClass" role="progressbar" style="width: @budgetPercentage%;"
+                                     aria-valuenow="@budgetPercentage" aria-valuemin="0" aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="small">
+                            <div class="d-flex justify-content-between mt-2">
+                                <span>Housing:</span>
+                                <span>@Model.CurrentBudget.HousingExpenses.ToString("C")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <span>Food:</span>
+                                <span>@Model.CurrentBudget.FoodExpenses.ToString("C")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <span>Transportation:</span>
+                                <span>@Model.CurrentBudget.TransportationExpenses.ToString("C")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <span>Healthcare:</span>
+                                <span>@Model.CurrentBudget.HealthcareExpenses.ToString("C")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <span>Other Expenses:</span>
+                                <span>@(Model.CurrentBudget.EntertainmentExpenses + Model.CurrentBudget.PersonalExpenses + Model.CurrentBudget.OtherExpenses).ToString("C")</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3 bg-light rounded">
+                            <p class="mb-0">No active budget</p>
+                            <a asp-controller="Budget" asp-action="Create" class="btn btn-sm btn-outline-primary mt-2">
+                                Create Budget
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity and Upcoming Payments -->
+    <div class="row">
+        <!-- Recent Transactions -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Recent Transactions</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentTransactions.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th class="text-end">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>                                    @foreach (var transaction in Model.RecentTransactions)
+                                    {
+                                        <tr>
+                                            <td>@transaction.TransactionDate.ToString("MMM d, yyyy")</td>
+                                            <td>@transaction.Note</td>
+                                            <td class="text-end @(transaction.Amount > 0 ? "text-success" : "text-danger")">
+                                                @transaction.Amount.ToString("C")
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <p class="mb-0">No recent transactions</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Payments -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Upcoming Payments</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.UpcomingPayments.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Due Date</th>
+                                        <th>Loan</th>
+                                        <th class="text-end">Amount</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var payment in Model.UpcomingPayments)
+                                    {
+                                        var loan = Model.ActiveLoans.FirstOrDefault(l => l.Id == payment.LoanId);
+                                        <tr>
+                                            <td>@payment.DueDate.ToString("MMM d, yyyy")</td>
+                                            <td>@(loan?.LoanName ?? "Unknown Loan")</td>
+                                            <td class="text-end">@payment.PaymentAmount.ToString("C")</td>
+                                            <td>
+                                                @if (payment.Status == PaymentStatus.Paid)
+                                                {
+                                                    <span class="badge bg-success">Paid</span>
+                                                }
+                                                else if (payment.Status == PaymentStatus.Scheduled)
+                                                {
+                                                    <span class="badge bg-info">Scheduled</span>
+                                                }
+                                                else if (payment.DueDate < DateTime.Now)
+                                                {
+                                                    <span class="badge bg-danger">Overdue</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Pending</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-3">
+                            <p class="mb-0">No upcoming payments</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+            
+            // Balance toggle functionality
+            let balanceVisible = true;
+            
+            $('#toggleBalance').click(function() {
+                balanceVisible = !balanceVisible;
+                
+                if (balanceVisible) {
+                    // Show balance
+                    $('#balanceDisplay').show();
+                    $('#balanceHidden').hide();
+                    $('.balance-value').show();
+                    $('.balance-hidden').hide();
+                    $('#balanceToggleIcon').removeClass('fa-eye-slash').addClass('fa-eye');
+                    $(this).attr('title', 'Hide balance');
+                } else {
+                    // Hide balance
+                    $('#balanceDisplay').hide();
+                    $('#balanceHidden').show();
+                    $('.balance-value').hide();
+                    $('.balance-hidden').show();
+                    $('#balanceToggleIcon').removeClass('fa-eye').addClass('fa-eye-slash');
+                    $(this).attr('title', 'Show balance');
+                }
+                
+                // Store preference in localStorage
+                localStorage.setItem('balanceVisible', balanceVisible);
+            });
+            
+            // Restore balance visibility preference
+            const savedPreference = localStorage.getItem('balanceVisible');
+            if (savedPreference === 'false') {
+                $('#toggleBalance').click();
+            }
+            
+            // Add smooth transitions
+            $('#balanceDisplay, #balanceHidden, .balance-value, .balance-hidden').css({
+                'transition': 'all 0.3s ease-in-out'
+            });
+        });
+    </script>
+}
